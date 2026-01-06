@@ -41,7 +41,7 @@
         "Track progress and resume capability"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Be respectful with rate limiting. Save progress to allow resuming if interrupted."
     },
     {
