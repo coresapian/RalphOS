@@ -1,0 +1,39 @@
+{
+  "branchName": "main",
+  "projectName": "MartiniWorks Build Thread Scraper",
+  "targetUrl": "https://martiniworks.com/build-threads",
+  "outputDir": "scraped_builds",
+  "completedAt": "2026-01-06T14:50:11",
+  "stats": {
+    "totalUrls": 1000,
+    "successfulScrapes": 999,
+    "failedScrapes": 1
+  },
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Create scraper directory structure",
+      "priority": 1,
+      "passes": true
+    },
+    {
+      "id": "US-002", 
+      "title": "Scrape all build thread URLs from gallery",
+      "priority": 2,
+      "passes": true
+    },
+    {
+      "id": "US-003",
+      "title": "Create HTML scraping script",
+      "priority": 3,
+      "passes": true
+    },
+    {
+      "id": "US-004",
+      "title": "Execute full scrape of all build threads",
+      "priority": 4,
+      "passes": true
+    }
+  ]
+}
+

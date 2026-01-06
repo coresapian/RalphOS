@@ -1,0 +1,102 @@
+{
+  "projectName": "Q1 2026 Earnings Analysis",
+  "branchName": "main",
+  "description": "Research and analyze quarterly earnings reports for top tech stocks",
+  "tickers": ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA"],
+  "quarters": ["2025_Q3", "2025_Q4", "2026_Q1"],
+  "outputDir": "earnings_data",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Setup earnings data directory structure",
+      "acceptanceCriteria": [
+        "Create earnings_data/ directory",
+        "Create subdirectory for each ticker (AAPL/, MSFT/, etc.)",
+        "Create transcripts/ subdirectory in each ticker folder",
+        "Initialize empty calendar.json file"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": "Standard setup before data collection"
+    },
+    {
+      "id": "US-002",
+      "title": "Fetch earnings calendar and dates",
+      "acceptanceCriteria": [
+        "Use web search to find upcoming earnings dates for each ticker",
+        "Check Yahoo Finance, Nasdaq, or earnings calendars",
+        "Save to earnings_data/calendar.json",
+        "Include: ticker, date, time (BMO/AMC), estimated EPS"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Sources: Yahoo Finance earnings calendar, Nasdaq earnings"
+    },
+    {
+      "id": "US-003",
+      "title": "Collect historical earnings data",
+      "acceptanceCriteria": [
+        "For each ticker, gather last 4 quarters of earnings",
+        "Include: EPS estimate, EPS actual, surprise %, revenue, guidance",
+        "Save to earnings_data/{TICKER}/earnings_history.json",
+        "Include stock price reaction on earnings day"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Use Yahoo Finance historical data, Seeking Alpha"
+    },
+    {
+      "id": "US-004",
+      "title": "Fetch earnings call transcripts",
+      "acceptanceCriteria": [
+        "For each ticker, find last 2 earnings call transcripts",
+        "Save as text files in earnings_data/{TICKER}/transcripts/",
+        "Filename format: YYYY_QN.txt (e.g., 2025_Q4.txt)",
+        "Include prepared remarks and Q&A sections"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Sources: Seeking Alpha, Motley Fool, company IR pages"
+    },
+    {
+      "id": "US-005",
+      "title": "Analyze individual ticker earnings trends",
+      "acceptanceCriteria": [
+        "For each ticker, analyze earnings history",
+        "Calculate: beat rate, average surprise, revenue trend",
+        "Identify key themes from transcripts",
+        "Generate earnings_data/{TICKER}/analysis.md"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Focus on patterns, risks, and opportunities"
+    },
+    {
+      "id": "US-006",
+      "title": "Create sector comparison analysis",
+      "acceptanceCriteria": [
+        "Compare all tickers across key metrics",
+        "Rank by: EPS growth, revenue growth, beat consistency",
+        "Identify sector trends and themes",
+        "Save to earnings_data/sector_comparison.json"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Cross-ticker analysis for portfolio context"
+    },
+    {
+      "id": "US-007",
+      "title": "Generate investment insights report",
+      "acceptanceCriteria": [
+        "Compile all analysis into final report",
+        "Include: summary, top picks, risks, upcoming catalysts",
+        "Provide actionable insights for each ticker",
+        "Save to earnings_data/investment_report.md"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "Executive summary format, data-driven recommendations"
+    }
+  ]
+}
+
