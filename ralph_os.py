@@ -10,8 +10,23 @@ import socketserver
 import urllib.request
 import urllib.error
 import ssl
+import re
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime
+from pathlib import Path
+
+# --- Load .env file ---
+def load_dotenv():
+    env_path = Path(__file__).parent / ".env"
+    if env_path.exists():
+        with open(env_path) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ.setdefault(key.strip(), value.strip())
+
+load_dotenv()
 
 # --- Configuration ---
 PORT = 8000
@@ -21,14 +36,14 @@ LOG_FILE = ".ralph_history.json"
 QUEUE_FILE = ".ralph_queue.json"
 
 # --- Z AI Configuration ---
-ZAI_API_KEY = "60d06b15165945f388f66800a973eb01.rXT0FqpZniBHzQJj"
+ZAI_API_KEY = os.environ.get("ZAI_API_KEY", "")
 ZAI_MODEL = "glm-4.7"
 ZAI_API_URL = "https://api.z.ai/api/paas/v4/chat/completions"
 
 # --- Z AI MCP Server Endpoints ---
 MCP_SERVERS = {
     "web_search": {
-        "url": "https://api.z.ai/api/mcp/web_search_prime/mcp",
+        "url": "https://api.z.ai/api/mcp/web_search/mcp",
         "description": "Search the web for real-time information"
     },
     "web_reader": {
@@ -42,40 +57,50 @@ MCP_SERVERS = {
 }
 
 # --- MCP Tools Definition for GLM Function Calling ---
+# These match the actual MCP server tool names
 MCP_TOOLS = [
     {
         "type": "function",
         "function": {
-            "name": "web_search",
-            "description": "Search the web for real-time information, news, documentation, or any query. Use this when you need current information from the internet.",
+            "name": "webSearchPro",
+            "description": "Search the web for real-time information, news, documentation, or any query. Returns web page titles, URLs, and summaries.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "query": {
+                    "search_query": {
                         "type": "string",
-                        "description": "The search query to look up on the web"
+                        "description": "The search query (max 70 characters recommended)"
                     },
                     "count": {
                         "type": "integer",
-                        "description": "Number of results to return (default: 10)",
-                        "default": 10
+                        "description": "Number of results (1-50, default: 10)"
+                    },
+                    "content_size": {
+                        "type": "string",
+                        "description": "Summary length: 'medium' (400-600 chars) or 'high' (2500 chars)",
+                        "enum": ["medium", "high"]
                     }
                 },
-                "required": ["query"]
+                "required": ["search_query"]
             }
         }
     },
     {
         "type": "function",
         "function": {
-            "name": "web_reader",
-            "description": "Read and extract the full content from a web page URL. Use this to get detailed information from a specific webpage.",
+            "name": "webReader",
+            "description": "Fetch and read the full content from a web page URL. Returns markdown-formatted content.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "url": {
                         "type": "string",
                         "description": "The URL of the webpage to read"
+                    },
+                    "return_format": {
+                        "type": "string",
+                        "description": "Response format: 'markdown' or 'text'",
+                        "enum": ["markdown", "text"]
                     }
                 },
                 "required": ["url"]
@@ -85,64 +110,68 @@ MCP_TOOLS = [
     {
         "type": "function",
         "function": {
-            "name": "zread_search_doc",
-            "description": "Search documentation, code, and comments within a GitHub repository. Use this to understand how a project works.",
+            "name": "search_doc",
+            "description": "Search documentation, issues, and commits of a GitHub repository.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "repository": {
+                    "repo_name": {
                         "type": "string",
-                        "description": "GitHub repository in format 'owner/repo' (e.g., 'facebook/react')"
+                        "description": "GitHub repository: owner/repo (e.g., 'facebook/react')"
                     },
                     "query": {
                         "type": "string",
-                        "description": "Search query for documentation or code"
+                        "description": "Search keywords or question about the repository"
+                    },
+                    "language": {
+                        "type": "string",
+                        "description": "Response language: 'en' or 'zh'",
+                        "enum": ["en", "zh"]
                     }
                 },
-                "required": ["repository", "query"]
+                "required": ["repo_name", "query"]
             }
         }
     },
     {
         "type": "function",
         "function": {
-            "name": "zread_get_structure",
-            "description": "Get the directory structure and file list of a GitHub repository. Use this to understand a project's layout.",
+            "name": "get_repo_structure",
+            "description": "Get the directory structure and file list of a GitHub repository.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "repository": {
+                    "repo_name": {
                         "type": "string",
-                        "description": "GitHub repository in format 'owner/repo' (e.g., 'facebook/react')"
+                        "description": "GitHub repository: owner/repo (e.g., 'facebook/react')"
                     },
-                    "path": {
+                    "dir_path": {
                         "type": "string",
-                        "description": "Optional path within the repository to list (default: root)",
-                        "default": ""
+                        "description": "Directory path to inspect (default: root '/')"
                     }
                 },
-                "required": ["repository"]
+                "required": ["repo_name"]
             }
         }
     },
     {
         "type": "function",
         "function": {
-            "name": "zread_read_file",
-            "description": "Read the complete content of a specific file from a GitHub repository.",
+            "name": "read_file",
+            "description": "Read the full code content of a specific file in a GitHub repository.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "repository": {
+                    "repo_name": {
                         "type": "string",
-                        "description": "GitHub repository in format 'owner/repo' (e.g., 'facebook/react')"
+                        "description": "GitHub repository: owner/repo (e.g., 'facebook/react')"
                     },
-                    "path": {
+                    "file_path": {
                         "type": "string",
-                        "description": "Path to the file within the repository"
+                        "description": "Relative path to the file (e.g., 'src/index.ts')"
                     }
                 },
-                "required": ["repository", "path"]
+                "required": ["repo_name", "file_path"]
             }
         }
     }
@@ -185,8 +214,25 @@ def git_commit(message):
 
 # --- MCP Client Functions ---
 
+def parse_sse_response(response_text):
+    """Parse Server-Sent Events response format."""
+    # SSE format: event:message\ndata:{json}\n\n
+    lines = response_text.strip().split('\n')
+    data_line = None
+    for line in lines:
+        if line.startswith('data:'):
+            data_line = line[5:]  # Remove 'data:' prefix
+            break
+    
+    if data_line:
+        try:
+            return json.loads(data_line)
+        except json.JSONDecodeError:
+            return {"error": f"Failed to parse SSE data: {data_line}"}
+    return {"error": f"No data in SSE response: {response_text}"}
+
 def mcp_request(server_name, method, params=None):
-    """Make a JSON-RPC request to an MCP server."""
+    """Make a JSON-RPC request to an MCP server with SSE support."""
     if server_name not in MCP_SERVERS:
         return {"error": f"Unknown MCP server: {server_name}"}
     
@@ -201,6 +247,7 @@ def mcp_request(server_name, method, params=None):
     
     headers = {
         "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream",  # Required for MCP SSE
         "Authorization": f"Bearer {ZAI_API_KEY}"
     }
     
@@ -210,14 +257,26 @@ def mcp_request(server_name, method, params=None):
         ctx = ssl.create_default_context()
         
         with urllib.request.urlopen(req, timeout=60, context=ctx) as response:
-            result = json.loads(response.read().decode('utf-8'))
+            response_text = response.read().decode('utf-8')
+            # Parse SSE response
+            result = parse_sse_response(response_text)
+            
             if "error" in result:
-                return {"error": result["error"]}
-            return result.get("result", result)
+                return result
+            if "result" in result:
+                return result["result"]
+            return result
     
     except urllib.error.HTTPError as e:
         error_body = e.read().decode('utf-8') if e.fp else str(e)
-        return {"error": f"HTTP {e.code}: {error_body}"}
+        # Try to parse error as JSON
+        try:
+            error_json = json.loads(error_body)
+            if "message" in error_json:
+                return {"error": error_json["message"]}
+        except:
+            pass
+        return {"error": f"HTTP {e.code}: {error_body[:200]}"}
     except Exception as e:
         return {"error": str(e)}
 
@@ -226,59 +285,46 @@ def execute_tool(tool_name, arguments):
     log(f"🔧 Executing tool: {tool_name}")
     
     try:
-        if tool_name == "web_search":
+        # Map tool to MCP server and actual tool name
+        if tool_name in ["webSearchPro", "webSearchStd", "webSearchSogou", "webSearchQuark"]:
             result = mcp_request("web_search", "tools/call", {
-                "name": "web_search",
-                "arguments": {
-                    "query": arguments.get("query", ""),
-                    "count": arguments.get("count", 10)
-                }
+                "name": tool_name,
+                "arguments": arguments
             })
         
-        elif tool_name == "web_reader":
+        elif tool_name == "webReader":
             result = mcp_request("web_reader", "tools/call", {
-                "name": "read_url",
-                "arguments": {
-                    "url": arguments.get("url", "")
-                }
+                "name": "webReader",
+                "arguments": arguments
             })
         
-        elif tool_name == "zread_search_doc":
+        elif tool_name in ["search_doc", "read_file", "get_repo_structure"]:
             result = mcp_request("zread", "tools/call", {
-                "name": "search_doc",
-                "arguments": {
-                    "repository": arguments.get("repository", ""),
-                    "query": arguments.get("query", "")
-                }
-            })
-        
-        elif tool_name == "zread_get_structure":
-            result = mcp_request("zread", "tools/call", {
-                "name": "get_structure",
-                "arguments": {
-                    "repository": arguments.get("repository", ""),
-                    "path": arguments.get("path", "")
-                }
-            })
-        
-        elif tool_name == "zread_read_file":
-            result = mcp_request("zread", "tools/call", {
-                "name": "read_file",
-                "arguments": {
-                    "repository": arguments.get("repository", ""),
-                    "path": arguments.get("path", "")
-                }
+                "name": tool_name,
+                "arguments": arguments
             })
         
         else:
             result = {"error": f"Unknown tool: {tool_name}"}
         
-        # Format result for logging
-        if isinstance(result, dict) and "error" in result:
-            log(f"❌ Tool error: {result['error'][:100]}...")
-        else:
-            log(f"✅ Tool completed successfully")
+        # Extract content from MCP result
+        if isinstance(result, dict):
+            if "content" in result:
+                # MCP tools return content array
+                content_items = result["content"]
+                if isinstance(content_items, list):
+                    texts = [item.get("text", "") for item in content_items if item.get("type") == "text"]
+                    result_text = "\n".join(texts)
+                    if result.get("isError"):
+                        log(f"❌ Tool error: {result_text[:100]}...")
+                        return json.dumps({"error": result_text})
+                    log(f"✅ Tool completed successfully")
+                    return result_text if result_text else json.dumps(result)
+            elif "error" in result:
+                log(f"❌ Tool error: {str(result['error'])[:100]}...")
+                return json.dumps(result)
         
+        log(f"✅ Tool completed")
         return json.dumps(result) if isinstance(result, (dict, list)) else str(result)
     
     except Exception as e:
@@ -294,7 +340,7 @@ def run_ai_iteration(prompt_text):
 ---
 CRITICAL INSTRUCTION:
 You are running in an automated loop with access to powerful tools.
-1. Use the available tools (web_search, web_reader, zread_*) when you need external information.
+1. Use the available tools (webSearchPro, webReader, search_doc, get_repo_structure, read_file) when you need external information.
 2. Perform the task completely.
 3. If you COMPLETE the task successfully, you MUST output the exact word: {STOP_TOKEN}
 4. If you FAIL or are NOT DONE, do not output {STOP_TOKEN}. Just output the code/fixes.
@@ -383,7 +429,7 @@ def ralph_worker():
         if active and iter_count < MAX_ITERATIONS:
             if iter_count == 0:
                 log("Starting new task...")
-                log("🛠️ MCP Tools: web_search, web_reader, zread")
+                log("🛠️ MCP Tools: webSearchPro, webReader, zread tools")
                 update_status("running", "Initializing Ralph Loop...", 0)
                 time.sleep(1)
             
@@ -428,7 +474,6 @@ class RalphHandler(http.server.BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps(dict(task_state)).encode())
         
         elif self.path == '/tools':
-            # Endpoint to list available MCP tools
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -485,12 +530,21 @@ def start_server():
         print(f"\n🚀 Ralph-OS Server running at http://localhost:{PORT}")
         print("💡 Open the URL above in your browser to control Ralph.")
         print("\n🛠️  MCP Tools Enabled:")
-        print("   • web_search    - Search the web for real-time info")
-        print("   • web_reader    - Read full webpage content")
-        print("   • zread_*       - Search/read GitHub repositories\n")
+        print("   • webSearchPro   - Search the web for real-time info")
+        print("   • webReader      - Read full webpage content")
+        print("   • search_doc     - Search GitHub repo documentation")
+        print("   • get_repo_structure - Get GitHub repo file tree")
+        print("   • read_file      - Read file from GitHub repo\n")
         httpd.serve_forever()
 
 if __name__ == "__main__":
+    # Check for API key
+    if not ZAI_API_KEY:
+        print("❌ Error: ZAI_API_KEY not found!")
+        print("   Create a .env file with: ZAI_API_KEY=your_api_key")
+        sys.exit(1)
+    
+    # Check for git
     try:
         subprocess.run(["git", "status"], capture_output=True, check=True)
     except:
