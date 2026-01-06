@@ -1,61 +1,61 @@
 {
   "branchName": "main",
-  "projectName": "OnAllCylinders Featured Vehicles Scraper",
-  "targetUrl": "https://www.onallcylinders.com/category/rods-rides-rigs/",
-  "outputDir": "scraped_builds/onallcylinders",
+  "projectName": "Gateway Classic Cars Inventory Scraper",
+  "targetUrl": "https://www.gatewayclassiccars.com/inventory",
+  "outputDir": "scraped_builds/gateway_classic_cars",
   "userStories": [
     {
       "id": "US-001",
       "title": "Create scraper directory structure",
       "acceptanceCriteria": [
-        "Create scraped_builds/onallcylinders/ directory",
-        "Create scraped_builds/onallcylinders/urls.json for storing discovered URLs",
-        "Create scraped_builds/onallcylinders/html/ subdirectory for HTML files"
+        "Create scraped_builds/gateway_classic_cars/ directory",
+        "Create scraped_builds/gateway_classic_cars/urls.json for storing discovered URLs",
+        "Create scraped_builds/gateway_classic_cars/html/ subdirectory for HTML files"
       ],
       "priority": 1,
-      "passes": true,
+      "passes": false,
       "notes": "Setup output directories before scraping"
     },
     {
       "id": "US-002",
-      "title": "Scrape all article URLs from paginated gallery",
+      "title": "Scrape all vehicle URLs from inventory",
       "acceptanceCriteria": [
-        "Navigate to https://www.onallcylinders.com/category/rods-rides-rigs/",
-        "Handle pagination (45 pages, URL pattern: /page/2/, /page/3/, etc)",
-        "Extract all individual article URLs from each page",
-        "Save URLs to scraped_builds/onallcylinders/urls.json",
-        "Log total count of URLs found (expected ~746 articles)"
+        "Navigate to https://www.gatewayclassiccars.com/inventory",
+        "Handle pagination (investigate pagination pattern)",
+        "Extract all individual vehicle URLs from each page",
+        "Save URLs to scraped_builds/gateway_classic_cars/urls.json",
+        "Log total count of URLs found"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": "Standard pagination, not infinite scroll. Each article card has link to full article."
+      "passes": false,
+      "notes": "Investigate pagination pattern - may be different from blog-style sites"
     },
     {
       "id": "US-003",
       "title": "Create HTML scraping script",
       "acceptanceCriteria": [
-        "Read URLs from scraped_builds/onallcylinders/urls.json",
+        "Read URLs from scraped_builds/gateway_classic_cars/urls.json",
         "For each URL, fetch full HTML content",
-        "Save HTML to scraped_builds/onallcylinders/html/[slug].html",
+        "Save HTML to scraped_builds/gateway_classic_cars/html/[slug].html",
         "Handle rate limiting with delays between requests",
         "Track progress and resume capability"
       ],
       "priority": 3,
-      "passes": true,
+      "passes": false,
       "notes": "Be respectful with rate limiting. Save progress to allow resuming if interrupted."
     },
     {
       "id": "US-004",
-      "title": "Execute full scrape of all articles",
+      "title": "Execute full scrape of all vehicles",
       "acceptanceCriteria": [
         "Run the scraping script",
-        "All article HTMLs saved to disk",
-        "Create scraped_builds/onallcylinders/manifest.json with metadata",
+        "All vehicle HTMLs saved to disk",
+        "Create scraped_builds/gateway_classic_cars/manifest.json with metadata",
         "Log completion summary with counts"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": "Scraped 446 articles (not 746 as initially estimated). Manifest includes: url, filename, title, scraped_at, file_size_bytes"
+      "passes": false,
+      "notes": "This may take a while depending on inventory size. Manifest should include: url, filename, title, scraped_at, file_size_bytes"
     }
   ]
 }

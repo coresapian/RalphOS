@@ -2,9 +2,9 @@
 Started: 2026-01-06
 
 ---
-## CURRENT PROJECT: OnAllCylinders Featured Vehicles Scraper
-Project: OnAllCylinders Featured Vehicles Scraper
-Target: https://www.onallcylinders.com/category/rods-rides-rigs/
+## CURRENT PROJECT: Gateway Classic Cars Inventory Scraper
+Project: Gateway Classic Cars Inventory Scraper
+Target: https://www.gatewayclassiccars.com/inventory
 
 ## Codebase Patterns
 - **SOURCES QUEUE**: Check `scripts/ralph/sources.json` for all target sources
@@ -17,37 +17,49 @@ Target: https://www.onallcylinders.com/category/rods-rides-rigs/
 - **MULTI-SOURCE**: When PRD complete, update sources.json status and generate next PRD
 
 ## Current Project
-- Target site: https://www.onallcylinders.com/category/rods-rides-rigs/
-- Output dir: scraped_builds/onallcylinders/
-- Standard pagination (45 pages), URL pattern: /page/2/, /page/3/, etc
-- ~746 articles in Featured Vehicles category
+- Target site: https://www.gatewayclassiccars.com/inventory
+- Output dir: scraped_builds/gateway_classic_cars/
+- Unknown pagination pattern - needs investigation
+- Classic car dealer inventory
 
 ## Directory Structure
 ```
 scraped_builds/
-├── martiniworks/           # Previous project (COMPLETED)
+├── martiniworks/           # COMPLETED: 999 build threads
 │   ├── html/               # 999 HTML files
 │   ├── manifest.json
 │   ├── scrape_progress.json
 │   └── urls.json
 │
-└── onallcylinders/         # Current project
+├── onallcylinders/         # COMPLETED: 446 articles
+│   ├── html/               # 446 HTML files
+│   ├── manifest.json
+│   ├── scrape_progress.json
+│   └── urls.json
+│
+└── gateway_classic_cars/   # CURRENT PROJECT
     ├── html/               # HTML files go here
     └── urls.json           # URLs go here
 ```
 
 ## Key Files
 - scripts/ralph/prd.json - Task definitions
-- scripts/ralph/progress.txt - This file  
-- scraped_builds/onallcylinders/urls.json - Discovered URLs
-- scraped_builds/onallcylinders/html/ - Saved HTML files
-- scraped_builds/onallcylinders/manifest.json - Scrape metadata (create after scraping)
+- scripts/ralph/progress.txt - This file
+- scripts/ralph/sources.json - Sources queue
 
-## Site Structure (from inspection)
-- Gallery URL: https://www.onallcylinders.com/category/rods-rides-rigs/
-- Pagination: 45 pages, /page/N/ URL pattern
-- Articles include: SEMA coverage, Lot Shots, Build features, Tech articles
-- Individual articles have slugs like /[year]/[month]/[article-slug]/
+---
+
+## PROJECT COMPLETED: OnAllCylinders Featured Vehicles Scraper
+- Successfully scraped 446 articles from Summit Racing's blog
+- All stories passed (US-001 through US-004)
+- Data archived in: scraped_builds/onallcylinders/
+
+---
+
+## [2026-01-06] - Project Transition: OnAllCylinders → Gateway Classic Cars
+- Updated sources.json: marked onallcylinders as completed (446 articles)
+- Set gateway_classic_cars to "in_progress"
+- Generated new PRD for Gateway Classic Cars Inventory Scraper
 
 ---
 

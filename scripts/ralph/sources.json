@@ -1,0 +1,136 @@
+{
+  "description": "Queue of sources for Ralph to scrape. When current PRD is complete, pick next pending source.",
+  "sources": [
+    {
+      "id": "onallcylinders",
+      "name": "OnAllCylinders Featured Vehicles",
+      "url": "https://www.onallcylinders.com/category/rods-rides-rigs/",
+      "outputDir": "scraped_builds/onallcylinders",
+      "status": "completed",
+      "completedAt": "2026-01-06",
+      "stats": {
+        "urlsFound": 446,
+        "htmlScraped": 446
+      },
+      "notes": "Summit Racing blog. 446 articles across 45 pages, standard pagination /page/N/"
+    },
+    {
+      "id": "gateway_classic_cars",
+      "name": "Gateway Classic Cars Inventory",
+      "url": "https://www.gatewayclassiccars.com/inventory",
+      "outputDir": "scraped_builds/gateway_classic_cars",
+      "status": "in_progress",
+      "notes": "Classic car dealer inventory"
+    },
+    {
+      "id": "modified_rides",
+      "name": "Modified Rides News",
+      "url": "https://www.modifiedrides.net/news/modified-cars/",
+      "outputDir": "scraped_builds/modified_rides",
+      "status": "pending",
+      "notes": "Modified cars news/features"
+    },
+    {
+      "id": "custom_wheel_offset",
+      "name": "Custom Wheel Offset Gallery",
+      "url": "https://www.customwheeloffset.com/wheel-offset-gallery",
+      "outputDir": "scraped_builds/custom_wheel_offset",
+      "status": "pending",
+      "notes": "Wheel fitment gallery with specs"
+    },
+    {
+      "id": "extremeterrain",
+      "name": "ExtremeTerrain",
+      "url": "https://www.extremeterrain.com/",
+      "outputDir": "scraped_builds/extremeterrain",
+      "status": "pending",
+      "notes": "Off-road/Jeep builds and parts"
+    },
+    {
+      "id": "oneoff_autos",
+      "name": "OneOff Autos Listings",
+      "url": "https://oneoffautos.com/listings",
+      "outputDir": "scraped_builds/oneoff_autos",
+      "status": "pending",
+      "notes": "Custom/unique vehicle listings"
+    },
+    {
+      "id": "racemarket",
+      "name": "RaceMarket",
+      "url": "https://racemarket.net/",
+      "outputDir": "scraped_builds/racemarket",
+      "status": "pending",
+      "notes": "Race car marketplace"
+    },
+    {
+      "id": "lomar_refined",
+      "name": "Lomar Refined Builds",
+      "url": "https://www.lomarefined.com/pages/refined-builds",
+      "outputDir": "scraped_builds/lomar_refined",
+      "status": "pending",
+      "notes": "Custom refined vehicle builds"
+    },
+    {
+      "id": "total_cost_involved",
+      "name": "Total Cost Involved Customer Showcase",
+      "url": "https://totalcostinvolved.com/customer-showcase/",
+      "outputDir": "scraped_builds/total_cost_involved",
+      "status": "pending",
+      "notes": "TCI suspension customer builds"
+    },
+    {
+      "id": "ecd_auto_design",
+      "name": "ECD Auto Design Showcase",
+      "url": "https://ecdautodesign.com/ecd-showcase/",
+      "outputDir": "scraped_builds/ecd_auto_design",
+      "status": "pending",
+      "notes": "Custom Land Rover/Defender builds"
+    },
+    {
+      "id": "charlies_custom_creations",
+      "name": "Charlie's Custom Creations",
+      "url": "https://charliescustomcreations.com/",
+      "outputDir": "scraped_builds/charlies_custom_creations",
+      "status": "pending",
+      "notes": "Custom vehicle builds"
+    },
+    {
+      "id": "utv_source",
+      "name": "UTV Source Gallery",
+      "url": "https://www.utvsource.com/gallery",
+      "outputDir": "scraped_builds/utv_source",
+      "status": "pending",
+      "notes": "UTV/side-by-side gallery"
+    },
+    {
+      "id": "creative_bespoke",
+      "name": "Creative Bespoke Vehicles",
+      "url": "https://creativebespoke.com/vehicles",
+      "outputDir": "scraped_builds/creative_bespoke",
+      "status": "pending",
+      "notes": "Bespoke custom vehicles"
+    },
+    {
+      "id": "revmatch",
+      "name": "RevMatch App",
+      "url": "https://www.revmatch.app/",
+      "outputDir": "scraped_builds/revmatch",
+      "status": "pending",
+      "notes": "Vehicle enthusiast platform"
+    },
+    {
+      "id": "martiniworks",
+      "name": "MartiniWorks Build Threads",
+      "url": "https://martiniworks.com/build-threads",
+      "outputDir": "scraped_builds/martiniworks",
+      "status": "completed",
+      "completedAt": "2026-01-06",
+      "stats": {
+        "urlsFound": 1000,
+        "htmlScraped": 999
+      },
+      "notes": "Infinite scroll gallery, ~1037 builds"
+    }
+  ]
+}
+
