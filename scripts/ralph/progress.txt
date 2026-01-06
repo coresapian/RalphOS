@@ -1,71 +1,77 @@
 # Ralph Progress Log
 Started: 2026-01-06
-Project: MartiniWorks Build Thread Scraper
+
+---
+## CURRENT PROJECT: OnAllCylinders Featured Vehicles Scraper
+Project: OnAllCylinders Featured Vehicles Scraper
+Target: https://www.onallcylinders.com/category/rods-rides-rigs/
 
 ## Codebase Patterns
-- Target site: https://martiniworks.com/build-threads
-- Gallery has ~1,037 build threads
-- Uses infinite scroll to load more builds
-- Each build card links to individual build page
-- Be respectful: add delays between requests
+- **SOURCES QUEUE**: Check `scripts/ralph/sources.json` for all target sources
+- **DIRECTORY STRUCTURE**: Each source gets its own folder in `scraped_builds/{source}/`
+- **AUTO-SETUP**: Always check if `outputDir` exists, create if not (including urls.json, html/)
+- **URL STORAGE**: urls.json format: `{"urls": [...], "lastUpdated": "ISO8601", "totalCount": N}`
+- **RATE LIMITING**: Always use 1.5s+ delay between requests
+- **PROGRESS TRACKING**: Save scrape_progress.json to allow resuming
+- **MANIFEST**: Create manifest.json after scraping with url, filename, scraped_at, file_size_bytes
+- **MULTI-SOURCE**: When PRD complete, update sources.json status and generate next PRD
+
+## Current Project
+- Target site: https://www.onallcylinders.com/category/rods-rides-rigs/
+- Output dir: scraped_builds/onallcylinders/
+- Standard pagination (45 pages), URL pattern: /page/2/, /page/3/, etc
+- ~746 articles in Featured Vehicles category
+
+## Directory Structure
+```
+scraped_builds/
+├── martiniworks/           # Previous project (COMPLETED)
+│   ├── html/               # 999 HTML files
+│   ├── manifest.json
+│   ├── scrape_progress.json
+│   └── urls.json
+│
+└── onallcylinders/         # Current project
+    ├── html/               # HTML files go here
+    └── urls.json           # URLs go here
+```
 
 ## Key Files
 - scripts/ralph/prd.json - Task definitions
 - scripts/ralph/progress.txt - This file  
-- scraped_builds/urls.json - Discovered URLs
-- scraped_builds/html/ - Saved HTML files
-- scraped_builds/manifest.json - Scrape metadata
+- scraped_builds/onallcylinders/urls.json - Discovered URLs
+- scraped_builds/onallcylinders/html/ - Saved HTML files
+- scraped_builds/onallcylinders/manifest.json - Scrape metadata (create after scraping)
 
 ## Site Structure (from inspection)
-- Gallery URL: https://martiniworks.com/build-threads
-- Build types: Street/Daily (912), Show (327), Track (242), Drift (46), Drag (44)
-- Has filters for: Year, Make, Model, Color, Wheel specs, Tire specs, Suspension
-- Individual builds have slugs like /build-threads/[vehicle-name-slug]
-
-## [2026-01-06] - US-001
-- Created scraper directory structure
-- Files created:
-  - scraped_builds/urls.json (empty template for URLs)
-  - scraped_builds/html/ (directory for HTML files)
-- **Learnings:**
-  - Git only commits files, not empty directories (html/ dir not in commit)
-  - urls.json needs structured format: urls array, lastUpdated, totalCount
+- Gallery URL: https://www.onallcylinders.com/category/rods-rides-rigs/
+- Pagination: 45 pages, /page/N/ URL pattern
+- Articles include: SEMA coverage, Lot Shots, Build features, Tech articles
+- Individual articles have slugs like /[year]/[month]/[article-slug]/
 
 ---
 
-## [2026-01-06] - US-002 & US-003
-- Created scrape_urls.py for extracting build thread URLs from gallery
-- Created scrape_html.py for fetching and saving HTML content
+## [2026-01-06] - US-001 (OnAllCylinders) ✅
+- Created scraper directory structure for OnAllCylinders
 - Files created:
-  - scrape_urls.py (Selenium-based scraper with infinite scroll handling)
-  - scrape_html.py (requests-based scraper with progress tracking)
+  - scraped_builds/onallcylinders/urls.json (empty template)
+  - scraped_builds/onallcylinders/html/ (directory for HTML files)
 - **Learnings:**
-  - Selenium requires Chrome and chromedriver to be installed
+  - Organized scraped_builds/ by source (martiniworks/, onallcylinders/)
+  - Each scrape project gets its own subfolder
+
+---
+
+## PREVIOUS PROJECT: MartiniWorks Build Thread Scraper (COMPLETED)
+- Successfully scraped 999 build threads from martiniworks.com
+- Files archived in: scraped_builds/martiniworks/
+- Learnings from that project:
+  - Selenium required for infinite scroll pages
   - Use `--headless=new` for modern Chrome headless mode
   - requests library is lighter than Selenium for simple HTTP fetching
   - Progress file allows resuming interrupted scrapes
   - Rate limiting (1.5s delay) is important for respectful scraping
   - Retry strategy with backoff helps handle transient failures
-  - Slug extraction from URL: use urlparse to get path, strip "build-threads/", replace "/" with "-"
-
----
-
-## [2026-01-06] - US-004
-- Executed full scrape of all build threads
-- Successfully scraped 999 out of 1000 build thread URLs
-- All HTML files saved to scraped_builds/html/
-- Created scraped_builds/manifest.json with metadata
-- Created create_manifest.py script to generate manifest from progress data
-- Files created:
-  - scraped_builds/html/ (999 HTML files)
-  - scraped_builds/manifest.json (with url, filename, scraped_at, file_size_bytes)
-  - scraped_builds/scrape_progress.json (progress tracking)
-  - create_manifest.py (manifest generation script)
-- **Learnings:**
-  - Scraping 1000 URLs with 1.5s delay takes ~30 minutes to complete
-  - One URL failed due to malformed path (double slash: /build-threads//unknown-...)
-  - Running scraping script in background allows monitoring progress via progress file
-  - Manifest generation should be done programmatically from progress data
-  - File size metadata in manifest useful for tracking download sizes
+  - Scraping 1000 URLs with 1.5s delay takes ~30 minutes
 
 ---
