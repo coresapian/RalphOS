@@ -1,0 +1,61 @@
+{
+  "branchName": "main",
+  "projectName": "MartiniWorks Build Thread Scraper",
+  "targetUrl": "https://martiniworks.com/build-threads",
+  "outputDir": "scraped_builds",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Create scraper directory structure",
+      "acceptanceCriteria": [
+        "Create scraped_builds/ directory",
+        "Create scraped_builds/urls.json for storing discovered URLs",
+        "Create scraped_builds/html/ subdirectory for HTML files"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Setup output directories before scraping"
+    },
+    {
+      "id": "US-002", 
+      "title": "Scrape all build thread URLs from gallery",
+      "acceptanceCriteria": [
+        "Navigate to https://martiniworks.com/build-threads",
+        "Handle infinite scroll to load all 1,037+ builds",
+        "Extract all individual build thread URLs",
+        "Save URLs to scraped_builds/urls.json",
+        "Log total count of URLs found"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Gallery uses infinite scroll. Each build card has 'Check out this Build' link. URLs follow pattern like /build-threads/[slug]"
+    },
+    {
+      "id": "US-003",
+      "title": "Create HTML scraping script",
+      "acceptanceCriteria": [
+        "Read URLs from scraped_builds/urls.json",
+        "For each URL, fetch full HTML content",
+        "Save HTML to scraped_builds/html/[slug].html",
+        "Handle rate limiting with delays between requests",
+        "Track progress and resume capability"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Be respectful with rate limiting. Save progress to allow resuming if interrupted."
+    },
+    {
+      "id": "US-004",
+      "title": "Execute full scrape of all build threads",
+      "acceptanceCriteria": [
+        "Run the scraping script",
+        "All build thread HTMLs saved to disk",
+        "Create scraped_builds/manifest.json with metadata",
+        "Log completion summary with counts"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "This may take a while with 1000+ pages. Manifest should include: url, filename, scraped_at timestamp"
+    }
+  ]
+}

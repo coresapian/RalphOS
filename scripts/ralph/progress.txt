@@ -1,0 +1,34 @@
+# Ralph Progress Log
+Started: 2026-01-06
+Project: MartiniWorks Build Thread Scraper
+
+## Codebase Patterns
+- Target site: https://martiniworks.com/build-threads
+- Gallery has ~1,037 build threads
+- Uses infinite scroll to load more builds
+- Each build card links to individual build page
+- Be respectful: add delays between requests
+
+## Key Files
+- scripts/ralph/prd.json - Task definitions
+- scripts/ralph/progress.txt - This file  
+- scraped_builds/urls.json - Discovered URLs
+- scraped_builds/html/ - Saved HTML files
+- scraped_builds/manifest.json - Scrape metadata
+
+## Site Structure (from inspection)
+- Gallery URL: https://martiniworks.com/build-threads
+- Build types: Street/Daily (912), Show (327), Track (242), Drift (46), Drag (44)
+- Has filters for: Year, Make, Model, Color, Wheel specs, Tire specs, Suspension
+- Individual builds have slugs like /build-threads/[vehicle-name-slug]
+
+## [2026-01-06] - US-001
+- Created scraper directory structure
+- Files created:
+  - scraped_builds/urls.json (empty template for URLs)
+  - scraped_builds/html/ (directory for HTML files)
+- **Learnings:**
+  - Git only commits files, not empty directories (html/ dir not in commit)
+  - urls.json needs structured format: urls array, lastUpdated, totalCount
+
+---
