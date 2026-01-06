@@ -13,7 +13,7 @@
         "Create scraped_builds/gateway_classic_cars/html/ subdirectory for HTML files"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "Setup output directories before scraping"
     },
     {
