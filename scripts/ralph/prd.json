@@ -54,8 +54,8 @@
         "Log completion summary with counts"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": "This may take a while with 700+ pages. Manifest should include: url, filename, title, scraped_at timestamp"
+      "passes": true,
+      "notes": "Scraped 446 articles (not 746 as initially estimated). Manifest includes: url, filename, title, scraped_at, file_size_bytes"
     }
   ]
 }

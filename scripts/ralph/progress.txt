@@ -62,6 +62,22 @@ scraped_builds/
 
 ---
 
+## [2026-01-06] - US-004 (OnAllCylinders) ✅
+- Executed full scrape of all 446 articles from OnAllCylinders
+- Actual count was 446 (not ~746 as initially estimated)
+- Files created:
+  - 446 HTML files in scraped_builds/onallcylinders/html/
+  - manifest.json with metadata (url, filename, title, scraped_at, file_size_bytes)
+- Total data size: 54.4 MB
+- Scrape duration: ~15 minutes (446 URLs × 1.5s delay)
+- **Learnings:**
+  - Estimated article counts from pagination can be inaccurate
+  - OnAllCylinders site has fewer articles than pagination suggested
+  - Running scraper in background with TaskOutput works for long-running tasks
+  - Title extraction from HTML <title> tags needs cleanup (remove site suffix)
+
+---
+
 ## PREVIOUS PROJECT: MartiniWorks Build Thread Scraper (COMPLETED)
 - Successfully scraped 999 build threads from martiniworks.com
 - Files archived in: scraped_builds/martiniworks/
