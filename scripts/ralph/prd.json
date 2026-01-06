@@ -17,7 +17,7 @@
       "notes": "Setup output directories before scraping"
     },
     {
-      "id": "US-002", 
+      "id": "US-002",
       "title": "Scrape all build thread URLs from gallery",
       "acceptanceCriteria": [
         "Navigate to https://martiniworks.com/build-threads",
@@ -27,7 +27,7 @@
         "Log total count of URLs found"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Gallery uses infinite scroll. Each build card has 'Check out this Build' link. URLs follow pattern like /build-threads/[slug]"
     },
     {
@@ -41,7 +41,7 @@
         "Track progress and resume capability"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Be respectful with rate limiting. Save progress to allow resuming if interrupted."
     },
     {
@@ -54,7 +54,7 @@
         "Log completion summary with counts"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "This may take a while with 1000+ pages. Manifest should include: url, filename, scraped_at timestamp"
     }
   ]

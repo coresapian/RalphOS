@@ -32,3 +32,40 @@ Project: MartiniWorks Build Thread Scraper
   - urls.json needs structured format: urls array, lastUpdated, totalCount
 
 ---
+
+## [2026-01-06] - US-002 & US-003
+- Created scrape_urls.py for extracting build thread URLs from gallery
+- Created scrape_html.py for fetching and saving HTML content
+- Files created:
+  - scrape_urls.py (Selenium-based scraper with infinite scroll handling)
+  - scrape_html.py (requests-based scraper with progress tracking)
+- **Learnings:**
+  - Selenium requires Chrome and chromedriver to be installed
+  - Use `--headless=new` for modern Chrome headless mode
+  - requests library is lighter than Selenium for simple HTTP fetching
+  - Progress file allows resuming interrupted scrapes
+  - Rate limiting (1.5s delay) is important for respectful scraping
+  - Retry strategy with backoff helps handle transient failures
+  - Slug extraction from URL: use urlparse to get path, strip "build-threads/", replace "/" with "-"
+
+---
+
+## [2026-01-06] - US-004
+- Executed full scrape of all build threads
+- Successfully scraped 999 out of 1000 build thread URLs
+- All HTML files saved to scraped_builds/html/
+- Created scraped_builds/manifest.json with metadata
+- Created create_manifest.py script to generate manifest from progress data
+- Files created:
+  - scraped_builds/html/ (999 HTML files)
+  - scraped_builds/manifest.json (with url, filename, scraped_at, file_size_bytes)
+  - scraped_builds/scrape_progress.json (progress tracking)
+  - create_manifest.py (manifest generation script)
+- **Learnings:**
+  - Scraping 1000 URLs with 1.5s delay takes ~30 minutes to complete
+  - One URL failed due to malformed path (double slash: /build-threads//unknown-...)
+  - Running scraping script in background allows monitoring progress via progress file
+  - Manifest generation should be done programmatically from progress data
+  - File size metadata in manifest useful for tracking download sizes
+
+---
