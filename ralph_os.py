@@ -197,6 +197,7 @@ class RalphHandler(http.server.BaseHTTPRequestHandler):
 # --- Main Entry Point ---
 
 def start_server():
+    socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), RalphHandler) as httpd:
         print(f"\n🚀 Ralph-OS Server running at http://localhost:{PORT}")
         print("💡 Open the URL above in your browser to control Ralph.\n")
