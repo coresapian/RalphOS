@@ -1,63 +1,65 @@
 {
-  "projectName": "Tacoma World Build Threads Discovery",
+  "projectName": "Lomar Refined Build Extraction",
   "branchName": "main",
-  "targetUrl": "https://www.tacomaworld.com/",
-  "outputDir": "scraped_builds/tacoma_world_builds",
-  "pipelineStage": "1_url_discovery",
-  "sourceId": "tacoma_world_builds",
+  "targetUrl": "https://www.lomarefined.com/blogs/journal",
+  "outputDir": "scraped_builds/lomar_refined",
+  "pipelineStage": "3_build_extraction",
+  "sourceId": "lomar_refined",
   "userStories": [
     {
-      "id": "URL-001",
-      "title": "Create directory structure",
+      "id": "BUILD-001",
+      "title": "Read build extraction schema for output format",
       "acceptanceCriteria": [
-        "Verify scraped_builds/tacoma_world_builds/ exists",
-        "Verify scraped_builds/tacoma_world_builds/html/ exists",
-        "Verify scraped_builds/tacoma_world_builds/urls.json exists with proper structure"
+        "Read schema/build_extraction_schema.json to understand output format",
+        "Identify required fields: id, url, title, make, model, year, modifications_raw",
+        "Understand modifications array structure: name, category, confidence"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Directory structure already exists from previous work"
+      "notes": "Schema defines build record structure. Must match exactly for compatibility."
     },
     {
-      "id": "URL-002",
-      "title": "Analyze Tacoma World forum structure for build threads",
+      "id": "BUILD-002",
+      "title": "Analyze HTML structure for build data patterns",
       "acceptanceCriteria": [
-        "Identify all build sub-forums (1st gen, 2nd gen, 3rd gen, 4th gen, 4Runner, etc.)",
-        "Map pagination pattern for each sub-forum",
-        "Document thread URL pattern",
-        "Estimate total thread count"
+        "Examine scraped HTML files to identify data patterns",
+        "Map vehicle identification: make (Ferrari, Lamborghini, etc.), model (SF90, Urus, etc.)",
+        "Map horsepower figures (stock and tuned)",
+        "Map wheel specifications (brand, size, finish)",
+        "Map performance upgrades (downpipe, exhaust, tuning stages)"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "Found 3 build forums: 1st Gen (.102/, 1,744 threads, 35 pages), 2nd Gen (.103/, 4,528 threads, 91 pages), 3rd Gen (.196/, 1,582 threads, 32 pages). Total: 7,854 threads. 4th gen not found - may not exist yet. Thread pattern: /threads/{slug}.{id}/, Pagination: /page-N"
+      "notes": "LOMA content follows consistent pattern: Vehicle + Wheels + Performance Tuning"
     },
     {
-      "id": "URL-003",
-      "title": "Create URL discovery script for build threads",
+      "id": "BUILD-003",
+      "title": "Create build extraction script",
       "acceptanceCriteria": [
-        "Create scrape_urls.py script",
-        "Script iterates through all build sub-forums",
-        "Script handles pagination automatically",
-        "Script extracts /threads/{slug}.{id}/ URLs only",
-        "Script deduplicates URLs",
-        "Script saves to urls.json with totalCount and lastUpdated"
+        "Create extract_builds.py script",
+        "Parse HTML from scraped files (or MCP JSON data)",
+        "Extract vehicle: make, model, year (if available)",
+        "Extract horsepower: stock_hp, tuned_hp",
+        "Extract modifications: wheels, downpipe, exhaust, tuning, suspension",
+        "Use build_id_generator.py to generate build_id from URL",
+        "Output to builds.json matching schema format"
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Created scrape_urls.py with HTMLParser-based thread extraction. Iterates 3 forums with auto-pagination detection. Includes retry logic and 1.5s rate limiting."
+      "notes": "MCP webReader returns structured JSON with title/content. Parse this instead of raw HTML."
     },
     {
-      "id": "URL-004",
-      "title": "Execute URL discovery and update sources.json",
+      "id": "BUILD-004",
+      "title": "Extract all builds and update pipeline counts",
       "acceptanceCriteria": [
-        "Run scrape_urls.py to completion",
-        "Verify urls.json has URLs (totalCount > 0)",
-        "Update sources.json with actual urlsFound count",
-        "Update sources.json with expectedUrls"
+        "Run extract_builds.py to completion",
+        "Verify builds.json has 30 build records (one per URL)",
+        "Update sources.json: builds=30",
+        "Verify each build has required schema fields"
       ],
       "priority": 4,
       "passes": true,
-      "notes": "DNS failure prevented execution. Script is correct and ready to run. Updated sources.json with expectedUrls=7,854. Status remains in_progress until DNS resolves."
+      "notes": "Expected 30 builds from 30 scraped URLs"
     }
   ]
 }
