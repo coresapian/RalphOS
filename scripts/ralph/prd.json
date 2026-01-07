@@ -44,8 +44,8 @@
         "Validate output matches schema requirements"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": "This should process all HTML files and create builds.json. Update sources.json pipeline.builds count when complete."
+      "passes": true,
+      "notes": "Successfully extracted 618 builds with 100% success rate. All files processed. builds.json created with all required fields."
     },
     {
       "id": "BUILD-004",
@@ -58,8 +58,8 @@
         "Commit changes: feat: BUILD-004 - Extract all builds from Tacoma World"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": "After this, Tacoma World will be complete (no mod extraction expected for gallery index data)."
+      "passes": true,
+      "notes": "All 618 builds extracted successfully. sources.json updated with builds=618, status=completed. No mod extraction needed (limited data)."
     }
   ]
 }

@@ -284,3 +284,22 @@ scraped_builds/
   - Location can be inferred from URL path (e.g., /vehicles/cha/ = Charlotte, NC)
   - Gateway Classic Cars has 9 showroom locations across the US
 ---
+
+## [2026-01-07] - BUILD-001, BUILD-002, BUILD-003, BUILD-004 (Tacoma World) ✅
+- Successfully extracted 618 builds from Tacoma World media gallery
+- Files created:
+  - extract_tacoma_world_builds.py (BeautifulSoup4-based parser for gallery media)
+  - scraped_builds/tacoma_world/builds.json (618 build records)
+- Pipeline status: urlsFound=618, htmlScraped=618, builds=618, mods=0 (no mod data available)
+- 100% success rate - all HTML files extracted
+- **Learnings:**
+  - Tacoma World has no JSON-LD structured data - must parse HTML with BeautifulSoup4
+  - Media detail pages require login - only gallery index data available
+  - Available data: title, owner_username, image URL, album, upload date
+  - Year/make/model must be inferred from title patterns (e.g., "08 RCLT" → 2008 Toyota Tacoma)
+  - build_type inferred from keywords: Off-Road, PreRunner, Overland, Work Truck, Stance
+  - Image URLs need path fix: convert relative URLs to /full?d= for full resolution
+  - All builds default to make="Toyota", model="Tacoma" (site-specific)
+  - Lower extraction_confidence (0.6) due to limited data availability
+  - No mod extraction possible - media pages don't contain modification lists
+---
