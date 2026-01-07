@@ -215,7 +215,7 @@ show_source() {
     if [[ "$current_status" == "blocked" || "$correct_status" == "blocked" ]]; then
         echo ""
         echo -e "  ${YELLOW}Run stealth scraper:${NC}"
-        echo -e "  python scripts/ralph/stealth_scraper.py --source $id"
+        echo -e "  python scripts/tools/stealth_scraper.py --source $id"
     fi
     
     echo ""
@@ -320,7 +320,7 @@ show_blocked() {
         echo -e "${RED}●${NC} ${BOLD}$name${NC} ($id)"
         echo -e "  Scraped: $scraped / $found ($(format_percent "$scraped" "$found"))"
         echo -e "  Blocked: $blocked URLs remaining"
-        echo -e "  ${YELLOW}→ python scripts/ralph/stealth_scraper.py --source $id${NC}"
+        echo -e "  ${YELLOW}→ python scripts/tools/stealth_scraper.py --source $id${NC}"
         echo ""
     done <<< "$sources"
 }

@@ -49,23 +49,23 @@ Each sub-ralph has its own prompt in `scripts/ralph/prompts/`.
 | `build_id_generator.py` | Generate build_id from URL | `from build_id_generator import url_to_build_id` |
 | `category_detector.py` | Assign mod categories | `from category_detector import detect_category` |
 | `check_completion.sh` | Validate source status | `./scripts/ralph/check_completion.sh --summary` |
-| `pipeline_monitor.py` | Track pipeline progress | `python scripts/ralph/pipeline_monitor.py --source {id}` |
-| `stealth_scraper.py` | Anti-bot scraping (human runs) | `python scripts/ralph/stealth_scraper.py --source {id}` |
-| `diagnose_scraper.py` | **Diagnose scraper issues** | `python scripts/ralph/diagnose_scraper.py {outputDir}/` |
-| `test_url_discovery.py` | **Test URL discovery** | `python scripts/ralph/test_url_discovery.py {outputDir}/` |
-| `test_scraper.py` | **Test HTML scraper** | `python scripts/ralph/test_scraper.py {outputDir}/scrape_html.py` |
+| `pipeline_monitor.py` | Track pipeline progress | `python scripts/dashboard/pipeline_monitor.py --source {id}` |
+| `stealth_scraper.py` | Anti-bot scraping (human runs) | `python scripts/tools/stealth_scraper.py --source {id}` |
+| `diagnose_scraper.py` | **Diagnose scraper issues** | `python scripts/tools/diagnose_scraper.py {outputDir}/` |
+| `test_url_discovery.py` | **Test URL discovery** | `python scripts/tools/test_url_discovery.py {outputDir}/` |
+| `test_scraper.py` | **Test HTML scraper** | `python scripts/tools/test_scraper.py {outputDir}/scrape_html.py` |
 
 ## REQUIRED: Run Tests Before Marking Complete
 
 **Stage 1 (URL Discovery)**: Must pass before marking URL stories complete:
 ```bash
-python scripts/ralph/test_url_discovery.py {outputDir}/
+python scripts/tools/test_url_discovery.py {outputDir}/
 # Exit code 0 = PASS, Exit code 1 = FAIL
 ```
 
 **Stage 2 (HTML Scraping)**: Must pass before marking HTML stories complete:
 ```bash
-python scripts/ralph/test_scraper.py {outputDir}/scrape_html.py
+python scripts/tools/test_scraper.py {outputDir}/scrape_html.py
 # Exit code 0 = PASS, Exit code 1 = FAIL
 # Tests check: script exists AND scraping progress >= 95%
 ```
@@ -92,7 +92,7 @@ python scripts/ralph/test_scraper.py {outputDir}/scrape_html.py
 
 **When scraping has errors or stalls:**
 ```bash
-python scripts/ralph/diagnose_scraper.py {outputDir}/
+python scripts/tools/diagnose_scraper.py {outputDir}/
 ```
 
 The diagnostic tool will:
@@ -244,7 +244,7 @@ HTML-003: Verify all URLs scraped, update htmlScraped count
    ```json
    "htmlBlocked": <remaining_count>,
    "blockEvents": [{"timestamp": "ISO8601", "type": "403", "afterUrls": <scraped_so_far>}],
-   "notes": "BLOCKED: 403 after X/Y URLs. Run: python scripts/ralph/stealth_scraper.py --source {id}"
+   "notes": "BLOCKED: 403 after X/Y URLs. Run: python scripts/tools/stealth_scraper.py --source {id}"
    ```
 
 ### Stage 3: Build Extraction
@@ -267,12 +267,12 @@ MOD-004: Extract all mods to {outputDir}/mods.json, update mods count
 
 **ALWAYS use the category detector when extracting modifications.**
 
-The category detector (`scripts/ralph/category_detector.py`) automatically predicts with a confidance score, the correct category to any vehicle modification based on the `Vehicle_Componets.json` schema.
+The category detector (`scripts/tools/category_detector.py`) automatically predicts with a confidance score, the correct category to any vehicle modification based on the `Vehicle_Componets.json` schema.
 
 # Detect Modification Category
 
 ```bash
-python scripts/ralph/category_detector.py --json "BC Racing Coilovers"
+python scripts/tools/category_detector.py --json "BC Racing Coilovers"
 # Output: {"input": "BC Racing Coilovers", "category": "Suspension", "confidence": 1.0}
 ```
 
@@ -283,7 +283,7 @@ python scripts/ralph/category_detector.py --json "BC Racing Coilovers"
 """Extract modifications from builds using category detector."""
 import json
 import sys
-sys.path.insert(0, "scripts/ralph")
+sys.path.insert(0, "scripts/tools")
 from category_detector import detect_category
 
 def extract_mods(builds_file, output_file):
@@ -312,7 +312,7 @@ def extract_mods(builds_file, output_file):
 ## Directory Structure Convention
 
 ```
-scraped_builds/
+data/
 ├── {source_name}/
 │   ├── urls.json              # {"urls": [...], "totalCount": N, "lastUpdated": "ISO8601"}
 │   ├── html/                  # Downloaded HTML files (one per URL)
@@ -381,7 +381,7 @@ If ALL stories in prd.json have `passes: true`:
 4. **Update sources.json with CORRECT status** (see Completion Criteria above)
 
 5. **If blocked - do NOT retry:**
-   - Add note: `"BLOCKED: {error} after {htmlScraped}/{urlsFound} URLs. Run: python scripts/ralph/stealth_scraper.py --source {id}"`
+   - Add note: `"BLOCKED: {error} after {htmlScraped}/{urlsFound} URLs. Run: python scripts/tools/stealth_scraper.py --source {id}"`
    - Move to next pending source (skip stealth scraper - human will run it)
 
 6. If source truly complete (100% scraped, no blocks, builds extracted), pick next pending source
@@ -413,7 +413,7 @@ If ALL stories in prd.json have `passes: true`:
 **When blocked:**
 1. Set `status: "blocked"` (NOT "in_progress" or "completed")
 2. Record block event with timestamp and count
-3. Add note: `"BLOCKED: {type} after {count}/{total}. Run: python scripts/ralph/stealth_scraper.py --source {id}"`
+3. Add note: `"BLOCKED: {type} after {count}/{total}. Run: python scripts/tools/stealth_scraper.py --source {id}"`
 4. Document the block in progress.txt
 5. **Move to next source** - do NOT auto-retry or auto-switch to stealth
 
@@ -427,7 +427,7 @@ You are in the project root. All paths in prd.json are relative to here.
 
 - `projectName`: Human-readable project name
 - `targetUrl`: The URL to scrape
-- `outputDir`: Where to save scraped files (e.g., `scraped_builds/onallcylinders`)
+- `outputDir`: Where to save scraped files (e.g., `data/onallcylinders`)
 - `userStories`: Array of tasks to complete
 - `pipelineStage`: Which stage this PRD is working on (1-4)
 
@@ -492,7 +492,7 @@ A source is **ONLY complete** when ALL of these are true:
    ```json
    "blockEvents": [{"timestamp": "2026-01-06T19:15:00Z", "type": "403", "afterUrls": 69}]
    ```
-4. Add note: `"BLOCKED: 403 after 69/4497 URLs. Run: python scripts/ralph/stealth_scraper.py --source {id}"`
+4. Add note: `"BLOCKED: 403 after 69/4497 URLs. Run: python scripts/tools/stealth_scraper.py --source {id}"`
 5. **Move to the next pending source** - do NOT auto-switch to stealth scraper
 6. Human will manually run stealth scraper when ready
 
@@ -519,5 +519,5 @@ A source is **ONLY complete** when ALL of these are true:
   "htmlBlocked": 4428
 },
 "blockEvents": [{"timestamp": "2026-01-06T19:15:00Z", "type": "403", "afterUrls": 69}],
-"notes": "BLOCKED: 403 after 69/4497 URLs. Run: python scripts/ralph/stealth_scraper.py --source custom_wheel_offset"
+"notes": "BLOCKED: 403 after 69/4497 URLs. Run: python scripts/tools/stealth_scraper.py --source custom_wheel_offset"
 ```

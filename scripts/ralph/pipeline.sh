@@ -98,7 +98,7 @@ is_running() {
 # Count items for trigger checks
 count_urls() {
     local source_id=$1
-    local urls_file="$PROJECT_ROOT/scraped_builds/$source_id/urls.json"
+    local urls_file="$PROJECT_ROOT/data/$source_id/urls.json"
     if [ -f "$urls_file" ]; then
         jq -r '.urls | length' "$urls_file" 2>/dev/null || echo 0
     else
@@ -108,7 +108,7 @@ count_urls() {
 
 count_html() {
     local source_id=$1
-    local html_dir="$PROJECT_ROOT/scraped_builds/$source_id/html"
+    local html_dir="$PROJECT_ROOT/data/$source_id/html"
     if [ -d "$html_dir" ]; then
         find "$html_dir" -name "*.html" 2>/dev/null | wc -l | tr -d ' '
     else
@@ -118,7 +118,7 @@ count_html() {
 
 count_builds() {
     local source_id=$1
-    local builds_file="$PROJECT_ROOT/scraped_builds/$source_id/builds.json"
+    local builds_file="$PROJECT_ROOT/data/$source_id/builds.json"
     if [ -f "$builds_file" ]; then
         jq -r '.builds | length' "$builds_file" 2>/dev/null || echo 0
     else
@@ -128,7 +128,7 @@ count_builds() {
 
 count_mods() {
     local source_id=$1
-    local mods_file="$PROJECT_ROOT/scraped_builds/$source_id/mods.json"
+    local mods_file="$PROJECT_ROOT/data/$source_id/mods.json"
     if [ -f "$mods_file" ]; then
         jq -r '.mods | length' "$mods_file" 2>/dev/null || echo 0
     else
@@ -150,7 +150,7 @@ start_sub_ralph() {
     
     # Build the context for Claude
     local context="Source ID: $source_id
-Output Directory: scraped_builds/$source_id
+Output Directory: data/$source_id
 Source Info:
 $(get_source "$source_id")"
     

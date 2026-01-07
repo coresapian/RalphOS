@@ -36,17 +36,35 @@ claude --version
 
 ```
 RalphOS/
-├── scripts/ralph/
-│   ├── ralph.sh          # Main loop script
-│   ├── prompt.md         # Agent instructions
-│   ├── prd.json          # Current project tasks
-│   ├── progress.txt      # Learnings & patterns
-│   ├── sources.json      # Queue of projects (optional)
-│   └── archive/          # Completed project archives
-├── scraped_builds/       # Output directory (example)
+├── scripts/
+│   ├── ralph/              # Core orchestration
+│   │   ├── ralph.sh        # Main loop script
+│   │   ├── prompt.md       # Agent instructions
+│   │   ├── prd.json        # Current project tasks
+│   │   ├── progress.txt    # Learnings & patterns
+│   │   ├── sources.json    # Queue of projects
+│   │   └── archive/        # Completed archives
+│   │
+│   ├── tools/              # Utility scripts
+│   │   ├── sync_progress.py
+│   │   ├── stealth_scraper.py
+│   │   ├── diagnose_scraper.py
+│   │   └── ...
+│   │
+│   └── dashboard/          # Monitoring UI
+│       ├── dashboard.html
+│       └── dashboard_server.py
+│
+├── data/                   # Scraped data output
 │   ├── source_a/
 │   ├── source_b/
 │   └── ...
+│
+├── logs/                   # Log files
+│   ├── ralph_output.log
+│   └── ralph_debug.log
+│
+├── schema/                 # Data schemas
 └── README.md
 ```
 
@@ -68,7 +86,7 @@ RalphOS/
 {
   "projectName": "My Awesome Project",
   "branchName": "main",
-  "outputDir": "output/my_project",
+  "outputDir": "data/my_project",
   "userStories": [
     {
       "id": "US-001",
@@ -113,7 +131,7 @@ Ralph accumulates learnings across iterations:
 
 ## [2026-01-06] - US-001
 - Created project structure
-- Files: output/my_project/config.json
+- Files: data/my_project/config.json
 - **Learnings:**
   - Git doesn't track empty directories
   - Use .gitkeep for empty folders
@@ -122,7 +140,7 @@ Ralph accumulates learnings across iterations:
 
 ## [2026-01-06] - US-002
 - Fetched data from API
-- Files: output/my_project/data.json
+- Files: data/my_project/data.json
 - **Learnings:**
   - API returns paginated results
   - Need to handle 429 rate limit errors
@@ -149,21 +167,21 @@ For processing multiple projects sequentially:
       "id": "project_a",
       "name": "Project A",
       "url": "https://example.com/a",
-      "outputDir": "output/project_a",
+      "outputDir": "data/project_a",
       "status": "completed"
     },
     {
       "id": "project_b",
       "name": "Project B", 
       "url": "https://example.com/b",
-      "outputDir": "output/project_b",
+      "outputDir": "data/project_b",
       "status": "in_progress"
     },
     {
       "id": "project_c",
       "name": "Project C",
       "url": "https://example.com/c",
-      "outputDir": "output/project_c",
+      "outputDir": "data/project_c",
       "status": "pending"
     }
   ]
@@ -211,11 +229,20 @@ When a project completes, Ralph automatically archives:
 # Run with 50 iterations
 ./scripts/ralph/ralph.sh 50
 
+# Scrape-only mode (skip extraction)
+./scripts/ralph/ralph.sh 25 --scrape-only
+
 # View logs
-cat ralph_output.log
+cat logs/ralph_output.log
 
 # Check current status
 cat scripts/ralph/prd.json | jq '.userStories[] | {id, title, passes}'
+
+# Sync progress from disk
+python3 scripts/tools/sync_progress.py
+
+# Diagnose scraper issues
+python3 scripts/tools/diagnose_scraper.py data/source_name/
 ```
 
 ## 💡 Use Cases
@@ -260,7 +287,7 @@ cp examples/earnings_analysis/progress.txt scripts/ralph/
 1. **Permissions**: Ralph runs with `--dangerously-skip-permissions` - only use in trusted environments
 2. **Rate Limiting**: Add delays for API calls and web scraping
 3. **Iterations**: Set max iterations appropriate for your task complexity
-4. **Monitoring**: Watch the terminal output and `ralph_output.log` for progress
+4. **Monitoring**: Watch the terminal output and `logs/ralph_output.log` for progress
 
 ## 📄 License
 
@@ -269,4 +296,3 @@ MIT License - Use freely, modify as needed.
 ---
 
 **Built for autonomous AI workflows.** 🤖
-

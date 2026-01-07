@@ -26,7 +26,7 @@
       "id": "oneoff_autos",
       "name": "OneOff Autos",
       "url": "https://oneoffautos.com/listings",
-      "outputDir": "scraped_builds/oneoff_autos",
+      "outputDir": "data/oneoff_autos",
       "status": "completed",
       "pipeline": {
         "expectedUrls": 0,
@@ -43,7 +43,7 @@
       "id": "racemarket",
       "name": "RaceMarket",
       "url": "https://racemarket.net/",
-      "outputDir": "scraped_builds/racemarket",
+      "outputDir": "data/racemarket",
       "status": "completed",
       "pipeline": {
         "expectedUrls": 0,
@@ -60,7 +60,7 @@
       "id": "lomar_refined",
       "name": "Lomar Refined",
       "url": "https://www.lomarefined.com/blogs/journal",
-      "outputDir": "scraped_builds/lomar_refined",
+      "outputDir": "data/lomar_refined",
       "status": "completed",
       "pipeline": {
         "expectedUrls": 30,
@@ -77,7 +77,7 @@
       "id": "total_cost_involved",
       "name": "Total Cost Involved",
       "url": "https://totalcostinvolved.com/customer-showcase/",
-      "outputDir": "scraped_builds/total_cost_involved",
+      "outputDir": "data/total_cost_involved",
       "status": "completed",
       "pipeline": {
         "expectedUrls": 0,
@@ -94,7 +94,7 @@
       "id": "ecd_auto_design",
       "name": "ECD Auto Design",
       "url": "https://ecdautodesign.com/ecd-showcase/",
-      "outputDir": "scraped_builds/ecd_auto_design",
+      "outputDir": "data/ecd_auto_design",
       "status": "completed",
       "pipeline": {
         "expectedUrls": 23,
@@ -119,7 +119,7 @@
       "id": "charlies_custom_creations",
       "name": "Charlie's Custom Creations",
       "url": "https://charliescustomcreations.com/",
-      "outputDir": "scraped_builds/charlies_custom_creations",
+      "outputDir": "data/charlies_custom_creations",
       "status": "completed",
       "pipeline": {
         "expectedUrls": 0,
@@ -136,7 +136,7 @@
       "id": "utv_source",
       "name": "UTV Source",
       "url": "https://www.utvsource.com/gallery",
-      "outputDir": "scraped_builds/utv_source",
+      "outputDir": "data/utv_source",
       "status": "completed",
       "pipeline": {
         "expectedUrls": 0,
@@ -153,7 +153,7 @@
       "id": "creative_bespoke",
       "name": "Creative Bespoke",
       "url": "https://creativebespoke.com/vehicles",
-      "outputDir": "scraped_builds/creative_bespoke",
+      "outputDir": "data/creative_bespoke",
       "status": "completed",
       "pipeline": {
         "expectedUrls": 0,
@@ -170,7 +170,7 @@
       "id": "lifted_trucks",
       "name": "Lifted Trucks",
       "url": "https://www.liftedtrucks.com/used-inventory/index.htm",
-      "outputDir": "scraped_builds/lifted_trucks",
+      "outputDir": "data/lifted_trucks",
       "status": "completed",
       "pipeline": {
         "expectedUrls": 0,
@@ -187,7 +187,7 @@
       "id": "revmatch",
       "name": "RevMatch",
       "url": "https://www.revmatch.app/",
-      "outputDir": "scraped_builds/revmatch",
+      "outputDir": "data/revmatch",
       "status": "completed",
       "pipeline": {
         "expectedUrls": 0,
@@ -204,7 +204,7 @@
       "id": "tacoma_world_builds",
       "name": "Tacoma World Build Threads",
       "url": "https://www.tacomaworld.com/",
-      "outputDir": "scraped_builds/tacoma_world_builds",
+      "outputDir": "data/tacoma_world_builds",
       "status": "blocked",
       "pipeline": {
         "expectedUrls": 7854,

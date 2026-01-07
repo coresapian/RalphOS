@@ -55,7 +55,7 @@ VERBOSE=false
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 START_TIME=$(date +%s)
-LOG_FILE="$PROJECT_ROOT/ralph_output.log"
+LOG_FILE="$PROJECT_ROOT/logs/ralph_output.log"
 PRD_FILE="$SCRIPT_DIR/prd.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
 SOURCES_FILE="$SCRIPT_DIR/sources.json"
@@ -421,7 +421,7 @@ if [ "$BLOCKED_SOURCES" -gt 0 ]; then
   echo ""
   log_warning "${RED}$BLOCKED_SOURCES${NC} blocked sources need stealth scraper intervention:"
   # List blocked sources with commands
-  jq -r '.sources[] | select(.status == "blocked") | "  → python scripts/ralph/stealth_scraper.py --source \(.id)"' "$SOURCES_FILE" 2>/dev/null | head -5
+  jq -r '.sources[] | select(.status == "blocked") | "  → python scripts/tools/stealth_scraper.py --source \(.id)"' "$SOURCES_FILE" 2>/dev/null | head -5
   if [ "$BLOCKED_SOURCES" -gt 5 ]; then
     echo -e "  ${DIM}... and $((BLOCKED_SOURCES - 5)) more${NC}"
   fi
@@ -439,7 +439,7 @@ for ((i=1; i<=$ITERATIONS; i++)); do
   echo ""
   
   # Sync progress from disk to sources.json (silent)
-  python3 "$SCRIPT_DIR/sync_progress.py" >/dev/null 2>&1 || true
+  python3 "$PROJECT_ROOT/scripts/tools/sync_progress.py" >/dev/null 2>&1 || true
   
   echo -e "${YELLOW}═══════════════════════════════════════════════════════════════${NC}"
   echo -e "${YELLOW}═══ ${WHITE}${BOLD}Iteration $i of $ITERATIONS${NC} ${DIM}│ $(elapsed_time) elapsed${NC} ${YELLOW}═══════════════════${NC}"

@@ -25,7 +25,7 @@ The system iterates through user stories, implements solutions, commits changes,
 
 ```bash
 # View real-time output log
-cat ralph_output.log
+cat logs/ralph_output.log
 
 # Check current project status
 cat scripts/ralph/prd.json | jq '.userStories[] | {id, title, passes}'
@@ -37,17 +37,23 @@ cat scripts/ralph/progress.txt
 cat scripts/ralph/sources.json | jq '.sources[]'
 ```
 
-### Scraping Scripts
+### Utility Tools
 
 ```bash
-# Scrape URLs (example - modify for specific source)
-python3 scrape_urls.py
+# Sync progress from disk to sources.json
+python3 scripts/tools/sync_progress.py
 
-# Scrape HTML content
-python3 scrape_html.py
+# Diagnose scraper issues
+python3 scripts/tools/diagnose_scraper.py data/source_name/
 
-# Generate manifest from scraped data
-python3 create_manifest.py
+# Test URL discovery
+python3 scripts/tools/test_url_discovery.py data/source_name/
+
+# Test HTML scraper
+python3 scripts/tools/test_scraper.py data/source_name/scrape_html.py
+
+# Run stealth scraper for blocked sources
+python3 scripts/tools/stealth_scraper.py --source source_id
 ```
 
 ## Architecture
@@ -82,7 +88,7 @@ python3 create_manifest.py
   "projectName": "Project Name",
   "branchName": "main",
   "targetUrl": "https://example.com",
-  "outputDir": "scraped_builds/source_name",
+  "outputDir": "data/source_name",
   "userStories": [
     {
       "id": "US-001",
@@ -106,23 +112,60 @@ python3 create_manifest.py
 - Tracks status: pending/in_progress/completed
 - Auto-generates new PRDs when current project completes
 
-### Scraping Architecture
+### Project Structure
 
-**Output Structure:**
 ```
-scraped_builds/
-├── {source_name}/
-│   ├── urls.json              # Discovered URLs
-│   ├── html/                  # Saved HTML files
-│   ├── manifest.json          # Scrape metadata
-│   └── scrape_progress.json   # Progress tracking
+RalphOS/
+├── scripts/
+│   ├── ralph/              # Core orchestration
+│   │   ├── ralph.sh        # Main loop script
+│   │   ├── ralph-parallel.sh
+│   │   ├── pipeline.sh
+│   │   ├── check_completion.sh
+│   │   ├── prompt.md       # Agent instructions
+│   │   ├── prompts/        # Specialized prompts
+│   │   ├── sources.json    # Source registry
+│   │   ├── progress.txt    # Learnings
+│   │   └── archive/        # Archived PRDs
+│   │
+│   ├── tools/              # Utility scripts
+│   │   ├── sync_progress.py
+│   │   ├── stealth_scraper.py
+│   │   ├── diagnose_scraper.py
+│   │   ├── build_id_generator.py
+│   │   ├── category_detector.py
+│   │   ├── create_manifest.py
+│   │   ├── test_scraper.py
+│   │   └── test_url_discovery.py
+│   │
+│   └── dashboard/          # Monitoring UI
+│       ├── dashboard.html
+│       ├── dashboard_server.py
+│       ├── pipeline_monitor.py
+│       └── Build_Scrape_Progress.html
+│
+├── data/                   # Scraped data output
+│   ├── {source_name}/
+│   │   ├── urls.json       # Discovered URLs
+│   │   ├── html/           # Saved HTML files
+│   │   ├── builds.json     # Extracted build data
+│   │   ├── mods.json       # Extracted modifications
+│   │   └── scrape_progress.json
+│   └── ...
+│
+├── schema/                 # Data schemas
+│   ├── build_extraction_schema.json
+│   └── Vehicle_Componets.json
+│
+├── logs/                   # Log files
+│   ├── ralph_output.log
+│   └── ralph_debug.log
+│
+├── archive/                # Blocked source data
+├── CLAUDE.md
+├── README.md
+└── requirements.txt
 ```
-
-**Python Scrapers:**
-- `scrape_urls.py` - URL discovery with pagination/infinite scroll handling
-- `scrape_html.py` - HTML fetching with retry logic, progress tracking, resume capability
-- Both use `requests` library with retry adapters for robustness
-- Rate limiting built-in (1.5s delay between requests)
 
 ### Standard User Stories
 
@@ -186,5 +229,5 @@ Completed projects are automatically archived with timestamp:
 
 - Ralph runs with `--dangerously-skip-permissions` - only use in trusted environments
 - Always implement respectful rate limiting for web scraping
-- Monitor `ralph_output.log` for progress and errors
+- Monitor `logs/ralph_output.log` for progress and errors
 - Set appropriate max iterations based on task complexity
