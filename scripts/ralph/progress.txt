@@ -265,3 +265,22 @@ scraped_builds/
   - create_manifest.py script works reliably for generating metadata from HTML files
   - BeautifulSoup4 title extraction handles Tacoma World's title format correctly
 ---
+
+## [2026-01-06] - BUILD-002, BUILD-003, BUILD-004 (Gateway Classic Cars) ✅
+- Successfully extracted 2,822 builds from Gateway Classic Cars HTML files
+- Files created:
+  - extract_gateway_builds.py (reusable extraction script for dealer inventory sites)
+  - scraped_builds/gateway_classic_cars/builds.json (2,822 build records)
+- Pipeline status: urlsFound=2823, htmlScraped=2823, builds=2822
+- 1 file failed (no JSON-LD data): sct--2011-chevrolet-corvette-gs-convertible.html
+- **Learnings:**
+  - Gateway Classic Cars uses Schema.org JSON-LD structured data for all vehicle info
+  - JSON-LD is much more reliable than HTML scraping - no fragile CSS selectors
+  - Vehicle data includes: name, year, make, model, price, mileage, VIN, engine, transmission
+  - manifest.json can be either a list or a dict - need to handle both formats
+  - build_type inference from year/make/model works reasonably well for dealer inventory
+  - Classic cars (pre-1980) mostly classified as "Hot Rod" or "Classic"
+  - Modern cars (2000+) classified by origin: USDM, Euro, JDM
+  - Location can be inferred from URL path (e.g., /vehicles/cha/ = Charlotte, NC)
+  - Gateway Classic Cars has 9 showroom locations across the US
+---

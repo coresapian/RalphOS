@@ -1,61 +1,65 @@
 {
   "branchName": "main",
-  "projectName": "Gateway Classic Cars Inventory Scraper",
+  "projectName": "Gateway Classic Cars Build Extraction",
   "targetUrl": "https://www.gatewayclassiccars.com/inventory",
   "outputDir": "scraped_builds/gateway_classic_cars",
   "userStories": [
     {
-      "id": "US-001",
-      "title": "Create scraper directory structure",
+      "id": "BUILD-001",
+      "title": "Read build extraction schema and analyze HTML structure",
       "acceptanceCriteria": [
-        "Create scraped_builds/gateway_classic_cars/ directory",
-        "Create scraped_builds/gateway_classic_cars/urls.json for storing discovered URLs",
-        "Create scraped_builds/gateway_classic_cars/html/ subdirectory for HTML files"
+        "Read schema/build_extraction_schema.json to understand required output format",
+        "Analyze sample HTML files from scraped_builds/gateway_classic_cars/html/",
+        "Identify HTML patterns for: year, make, model, price, mileage, VIN, engine, transmission",
+        "Document HTML selectors and patterns for extraction"
       ],
       "priority": 1,
-      "passes": true,
-      "notes": "Setup output directories before scraping"
+      "passes": false,
+      "notes": "Gateway Classic Cars uses JSON-LD structured data in <script type='application/ld+json'> tags. Extract from JSON-LD for best reliability."
     },
     {
-      "id": "US-002",
-      "title": "Scrape all vehicle URLs from inventory",
+      "id": "BUILD-002",
+      "title": "Create build extraction script for Gateway Classic Cars",
       "acceptanceCriteria": [
-        "Navigate to https://www.gatewayclassiccars.com/inventory",
-        "Handle pagination (investigate pagination pattern)",
-        "Extract all individual vehicle URLs from each page",
-        "Save URLs to scraped_builds/gateway_classic_cars/urls.json",
-        "Log total count of URLs found"
+        "Create Python script that reads all HTML files from scraped_builds/gateway_classic_cars/html/",
+        "Extract build data from JSON-LD structured data",
+        "Generate build_id using scripts/ralph/build_id_generator.py",
+        "Set source_type to 'listing' (dealer inventory)",
+        "Infer build_type from year/make/model context (Restomod, Classic, Hot Rod, etc.)",
+        "Extract sale_data: price_numeric, listing_price, mileage, vin, status, location",
+        "Output to scraped_builds/gateway_classic_cars/builds.json",
+        "Include all required fields: build_id, source_type, build_type, build_source, source_url, year, make, model"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "Pagination uses ?page=N query parameter. Found 110 pages with 2823 vehicles. URLs extracted from JSON-LD structured data."
+      "notes": "Created extract_gateway_builds.py with JSON-LD parsing, build_type inference, and sale_data extraction."
     },
     {
-      "id": "US-003",
-      "title": "Create HTML scraping script",
+      "id": "BUILD-003",
+      "title": "Execute build extraction for all vehicles",
       "acceptanceCriteria": [
-        "Read URLs from scraped_builds/gateway_classic_cars/urls.json",
-        "For each URL, fetch full HTML content",
-        "Save HTML to scraped_builds/gateway_classic_cars/html/[slug].html",
-        "Handle rate limiting with delays between requests",
-        "Track progress and resume capability"
+        "Run the extraction script against all 2,823 HTML files",
+        "Generate builds.json with all extracted build records",
+        "Log extraction summary with counts",
+        "Validate output matches schema requirements"
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Be respectful with rate limiting. Save progress to allow resuming if interrupted."
+      "notes": "Extracted 2,822 builds (1 file had no JSON-LD data). Output: scraped_builds/gateway_classic_cars/builds.json"
     },
     {
-      "id": "US-004",
-      "title": "Execute full scrape of all vehicles",
+      "id": "BUILD-004",
+      "title": "Verify build extraction and update pipeline",
       "acceptanceCriteria": [
-        "Run the scraping script",
-        "All vehicle HTMLs saved to disk",
-        "Create scraped_builds/gateway_classic_cars/manifest.json with metadata",
-        "Log completion summary with counts"
+        "Verify builds.json contains 2,823 build records",
+        "Validate required fields are present for all builds",
+        "Update sources.json: set pipeline.builds = 2823",
+        "Append learnings to progress.txt",
+        "Commit changes: feat: BUILD-004 - Extract all builds from Gateway Classic Cars"
       ],
       "priority": 4,
       "passes": true,
-      "notes": "This may take a while depending on inventory size. Manifest should include: url, filename, title, scraped_at, file_size_bytes"
+      "notes": "Verified 2,822 builds extracted. Updated sources.json pipeline.builds = 2822. Ready for Stage 4 (Mod Extraction)."
     }
   ]
 }

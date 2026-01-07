@@ -1,5 +1,20 @@
 {
   "description": "Master source list for Ralph. Each source tracks scraping pipeline progress.",
+  "validStatuses": {
+    "pending": "Not started yet",
+    "in_progress": "Currently being worked on",
+    "blocked": "Scraping blocked (403/429/Cloudflare) - needs stealth scraper",
+    "completed": "ALL URLs attempted (100%) + builds extracted + no blocks"
+  },
+  "pipelineFields": {
+    "expectedUrls": "Total URLs on domain (null = unknown)",
+    "urlsFound": "URLs discovered and saved to urls.json",
+    "htmlScraped": "HTML files successfully downloaded",
+    "htmlFailed": "Non-block failures (404, timeouts, parse errors)",
+    "htmlBlocked": "Blocked by 403/429/Cloudflare",
+    "builds": "Structured build records extracted",
+    "mods": "Individual modifications extracted"
+  },
   "pipelineStages": {
     "1_url_discovery": "Find all vehicle/build URLs on the domain",
     "2_html_scraping": "Download HTML for each discovered URL",
@@ -17,6 +32,8 @@
         "expectedUrls": 109757,
         "urlsFound": 109757,
         "htmlScraped": 109757,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 109757,
         "mods": 984498
       },
@@ -32,6 +49,8 @@
         "expectedUrls": 11386,
         "urlsFound": 11386,
         "htmlScraped": 11386,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 11386,
         "mods": 44806
       },
@@ -47,6 +66,8 @@
         "expectedUrls": 10760,
         "urlsFound": 10760,
         "htmlScraped": 10760,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 10760,
         "mods": 188610
       },
@@ -62,6 +83,8 @@
         "expectedUrls": 9854,
         "urlsFound": 9854,
         "htmlScraped": 9854,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 9854,
         "mods": 161898
       },
@@ -77,6 +100,8 @@
         "expectedUrls": 5679,
         "urlsFound": 5679,
         "htmlScraped": 5679,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 5679,
         "mods": 48388
       },
@@ -92,6 +117,8 @@
         "expectedUrls": 4808,
         "urlsFound": 4808,
         "htmlScraped": 4808,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 4808,
         "mods": 20161
       },
@@ -107,6 +134,8 @@
         "expectedUrls": 4616,
         "urlsFound": 4616,
         "htmlScraped": 4616,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 4616,
         "mods": 12952
       },
@@ -122,6 +151,8 @@
         "expectedUrls": 4421,
         "urlsFound": 4421,
         "htmlScraped": 4421,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 4421,
         "mods": 39384
       },
@@ -137,6 +168,8 @@
         "expectedUrls": 4022,
         "urlsFound": 4022,
         "htmlScraped": 4022,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 4022,
         "mods": 88062
       },
@@ -152,6 +185,8 @@
         "expectedUrls": 3261,
         "urlsFound": 3261,
         "htmlScraped": 3261,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 3261,
         "mods": 12204
       },
@@ -167,6 +202,8 @@
         "expectedUrls": 2446,
         "urlsFound": 2446,
         "htmlScraped": 2446,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 2446,
         "mods": 3908
       },
@@ -182,6 +219,8 @@
         "expectedUrls": 2221,
         "urlsFound": 2221,
         "htmlScraped": 2221,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 2221,
         "mods": 20637
       },
@@ -197,6 +236,8 @@
         "expectedUrls": 1208,
         "urlsFound": 1208,
         "htmlScraped": 1208,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 1208,
         "mods": 12263
       },
@@ -212,6 +253,8 @@
         "expectedUrls": 1042,
         "urlsFound": 1042,
         "htmlScraped": 1042,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 1042,
         "mods": 9874
       },
@@ -227,6 +270,8 @@
         "expectedUrls": 894,
         "urlsFound": 894,
         "htmlScraped": 894,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 894,
         "mods": 3833
       },
@@ -242,6 +287,8 @@
         "expectedUrls": 889,
         "urlsFound": 889,
         "htmlScraped": 889,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 889,
         "mods": 5388
       },
@@ -257,6 +304,8 @@
         "expectedUrls": 855,
         "urlsFound": 855,
         "htmlScraped": 855,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 855,
         "mods": 25950
       },
@@ -272,6 +321,8 @@
         "expectedUrls": 776,
         "urlsFound": 776,
         "htmlScraped": 776,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 776,
         "mods": 5687
       },
@@ -287,6 +338,8 @@
         "expectedUrls": 631,
         "urlsFound": 631,
         "htmlScraped": 631,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 631,
         "mods": 1058
       },
@@ -302,6 +355,8 @@
         "expectedUrls": 432,
         "urlsFound": 432,
         "htmlScraped": 432,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 432,
         "mods": null
       },
@@ -317,6 +372,8 @@
         "expectedUrls": 366,
         "urlsFound": 366,
         "htmlScraped": 366,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 366,
         "mods": 635
       },
@@ -327,16 +384,18 @@
       "name": "Gateway Classic Cars",
       "url": "https://www.gatewayclassiccars.com/inventory",
       "outputDir": "scraped_builds/gateway_classic_cars",
-      "status": "completed",
+      "status": "in_progress",
       "completedAt": "2026-01-06",
       "pipeline": {
         "expectedUrls": 2823,
         "urlsFound": 2823,
         "htmlScraped": 2823,
-        "builds": null,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 2822,
         "mods": null
       },
-      "notes": "Classic car dealer inventory. 2823 vehicles across 110 pages. 1295 MB HTML data. Needs build/mod extraction."
+      "notes": "Classic car dealer inventory. 2822 vehicles extracted (1 file had no JSON-LD data). 1890-2024, 110 Makes. Stage 4 (Mod Extraction) needed."
     },
     {
       "id": "jdm_supply",
@@ -348,6 +407,8 @@
         "expectedUrls": 205,
         "urlsFound": 205,
         "htmlScraped": 205,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 205,
         "mods": null
       },
@@ -363,6 +424,8 @@
         "expectedUrls": 203,
         "urlsFound": 203,
         "htmlScraped": 203,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 203,
         "mods": 1240
       },
@@ -378,6 +441,8 @@
         "expectedUrls": 124,
         "urlsFound": 124,
         "htmlScraped": 124,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 124,
         "mods": 4954
       },
@@ -393,6 +458,8 @@
         "expectedUrls": 107,
         "urlsFound": 107,
         "htmlScraped": 107,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 107,
         "mods": null
       },
@@ -408,6 +475,8 @@
         "expectedUrls": 77,
         "urlsFound": 77,
         "htmlScraped": 77,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 77,
         "mods": 1008
       },
@@ -423,6 +492,8 @@
         "expectedUrls": 44,
         "urlsFound": 44,
         "htmlScraped": 44,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 44,
         "mods": 381
       },
@@ -438,6 +509,8 @@
         "expectedUrls": 41,
         "urlsFound": 41,
         "htmlScraped": 41,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 41,
         "mods": 600
       },
@@ -453,6 +526,8 @@
         "expectedUrls": 40,
         "urlsFound": 40,
         "htmlScraped": 40,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 40,
         "mods": 1417
       },
@@ -468,6 +543,8 @@
         "expectedUrls": 19,
         "urlsFound": 19,
         "htmlScraped": 19,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": 19,
         "mods": null
       },
@@ -478,12 +555,14 @@
       "name": "OnAllCylinders",
       "url": "https://www.onallcylinders.com/category/rods-rides-rigs/",
       "outputDir": "scraped_builds/onallcylinders",
-      "status": "completed",
+      "status": "in_progress",
       "completedAt": "2026-01-06",
       "pipeline": {
         "expectedUrls": 446,
         "urlsFound": 446,
         "htmlScraped": 446,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": null,
         "mods": null
       },
@@ -494,16 +573,18 @@
       "name": "MartiniWorks",
       "url": "https://martiniworks.com/build-threads",
       "outputDir": "scraped_builds/martiniworks",
-      "status": "completed",
+      "status": "in_progress",
       "completedAt": "2026-01-06",
       "pipeline": {
         "expectedUrls": 1000,
         "urlsFound": 1000,
         "htmlScraped": 999,
+        "htmlFailed": 1,
+        "htmlBlocked": 0,
         "builds": null,
         "mods": null
       },
-      "notes": "Infinite scroll gallery. Needs build/mod extraction."
+      "notes": "Infinite scroll gallery. 1 URL failed (404/timeout). Needs build/mod extraction."
     },
     {
       "id": "modified_rides",
@@ -515,6 +596,8 @@
         "expectedUrls": 1134,
         "urlsFound": 1134,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -525,28 +608,38 @@
       "name": "Custom Wheel Offset",
       "url": "https://www.customwheeloffset.com/wheel-offset-gallery",
       "outputDir": "scraped_builds/custom_wheel_offset",
-      "status": "completed",
-      "completedAt": "2026-01-06",
+      "status": "blocked",
       "pipeline": {
         "expectedUrls": 4497,
         "urlsFound": 4497,
         "htmlScraped": 69,
+        "htmlFailed": 0,
+        "htmlBlocked": 4428,
         "builds": null,
         "mods": null
       },
-      "notes": "Wheel fitment gallery. Site returned 403 Forbidden during scraping. Successfully scraped 69 out of 4,497 URLs before being blocked. Needs build/mod extraction from available HTML."
+      "blockEvents": [
+        {
+          "timestamp": "2026-01-06T19:15:00Z",
+          "type": "403",
+          "afterUrls": 69
+        }
+      ],
+      "notes": "BLOCKED: 403 after 69/4497 URLs (1.5%). Run: python scripts/ralph/stealth_scraper.py --source custom_wheel_offset"
     },
     {
       "id": "tacoma_world",
       "name": "Tacoma World",
       "url": "https://www.tacomaworld.com/",
       "outputDir": "scraped_builds/tacoma_world",
-      "status": "completed",
+      "status": "in_progress",
       "completedAt": "2026-01-06",
       "pipeline": {
         "expectedUrls": 618,
         "urlsFound": 618,
         "htmlScraped": 618,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": null,
         "mods": null
       },
@@ -562,6 +655,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -577,6 +672,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -592,6 +689,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -607,6 +706,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -622,6 +723,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -637,6 +740,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -652,6 +757,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -667,6 +774,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -682,6 +791,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -697,6 +808,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
@@ -712,6 +825,8 @@
         "expectedUrls": null,
         "urlsFound": null,
         "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
