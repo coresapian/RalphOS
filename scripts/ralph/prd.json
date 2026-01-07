@@ -1,57 +1,57 @@
 {
-  "projectName": "RaceMarket URL Discovery",
+  "projectName": "Lomar Refined URL Discovery",
   "branchName": "main",
-  "targetUrl": "https://racemarket.net/",
-  "outputDir": "scraped_builds/racemarket",
+  "targetUrl": "https://www.lomarefined.com/blogs/journal",
+  "outputDir": "scraped_builds/lomar_refined",
   "pipelineStage": "1_url_discovery",
-  "sourceId": "racemarket",
+  "sourceId": "lomar_refined",
   "userStories": [
     {
       "id": "URL-001",
       "title": "Create directory structure",
       "acceptanceCriteria": [
-        "Create scraped_builds/racemarket/",
-        "Create scraped_builds/racemarket/html/",
-        "Create scraped_builds/racemarket/urls.json"
+        "Create scraped_builds/lomar_refined/",
+        "Create scraped_builds/lomar_refined/html/",
+        "Create scraped_builds/lomar_refined/urls.json"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "RaceMarket uses Osclass CMS with 6,857+ ads across motorsport categories"
+      "notes": "Lomar Refined uses Shopify blog with build articles"
     },
     {
       "id": "URL-002",
       "title": "Analyze site structure and pagination",
       "acceptanceCriteria": [
-        "Determine pagination pattern (likely ?iPage=N)",
-        "Estimate total number of listings",
-        "Identify item URL pattern: /index.php?page=item&id=XXXXXX"
+        "Determine pagination pattern",
+        "Estimate total number of articles",
+        "Identify article URL pattern"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "Osclass 3.6.1 CMS - standard pagination: /index.php?page=search&sCategory=0&iPage=N"
+      "notes": "Shopify blog: /blogs/journal?page=N, articles follow /blogs/journal/article-slug pattern"
     },
     {
       "id": "URL-003",
-      "title": "Scrape all vehicle/build URLs",
+      "title": "Scrape all article URLs",
       "acceptanceCriteria": [
         "Create URL discovery script",
-        "Extract all item URLs from search results",
+        "Extract all article URLs from journal pages",
         "Save to urls.json with metadata"
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Created scrape_urls.py - uses urllib and regex for URL extraction. Will iterate through all pages."
+      "notes": "Created scrape_urls.py - will iterate through all blog pages"
     },
     {
       "id": "URL-004",
       "title": "Verify URL count and update expectedUrls",
       "acceptanceCriteria": [
-        "Document findings about site structure",
-        "Update sources.json with status"
+        "Run test_url_discovery.py to verify results",
+        "Update sources.json with urlsFound count"
       ],
       "priority": 4,
       "passes": true,
-      "notes": "SITE REQUIRES JAVASCRIPT: Listings loaded via AJAX/masonry after page load. Static HTML contains no item URLs. Requires browser automation (Selenium/Puppeteer) to extract data."
+      "notes": "Test passed - 18 build articles discovered"
     }
   ]
 }

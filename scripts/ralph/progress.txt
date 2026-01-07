@@ -394,3 +394,20 @@ scraped_builds/
   - Marked as "completed" with 0 URLs - not feasible for current scraping approach
 ---
 
+
+
+## [2026-01-07] - Lomar Refined - URL-001, URL-002, URL-003, URL-004
+- Successfully discovered 18 build articles from LOMA Refined Shopify blog
+- Target: https://www.lomarefined.com/blogs/journal
+- Created scrape_urls.py using urllib and regex
+- Pagination: 2 pages (9 articles per page)
+- Article topics: Ferrari SF90, 12Cilindri, Purosangue, Roma, Lamborghini Temerario, Aston Martin DBX, Porsche 918, Rolls-Royce Ghost, etc.
+- Pipeline status: expectedUrls=18, urlsFound=18
+- **Learnings:**
+  - Shopify blogs render server-side - fully scrapable with HTTP requests
+  - Blog pagination uses ?page=N parameter
+  - Article URLs follow pattern: /blogs/journal/{article-slug}
+  - Test suite confirms all URLs are valid and unique
+  - Low URL count (18) is correct - boutique builder with exclusive builds
+---
+
