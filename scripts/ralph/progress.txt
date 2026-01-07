@@ -251,3 +251,17 @@ scraped_builds/
   - Partial data (69 builds) is still valuable for extraction testing
   - Always check process state - stuck processes waste resources
 ---
+
+## [2026-01-06] - US-004 (Tacoma World) ✅
+- Verified completion and created manifest.json for Tacoma World scraper
+- All 618 URLs successfully scraped (100% success rate)
+- Files created:
+  - scraped_builds/tacoma_world/manifest.json (618 entries with metadata)
+  - Total data size: 22.5 MB
+  - Updated sources.json: marked Tacoma World as completed
+- **Learnings:**
+  - Tacoma World detail pages require login - only gallery index data available
+  - Media gallery shows 593,156 total items but pagination only exposes 618 recent items
+  - create_manifest.py script works reliably for generating metadata from HTML files
+  - BeautifulSoup4 title extraction handles Tacoma World's title format correctly
+---

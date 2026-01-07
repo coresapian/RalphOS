@@ -51,7 +51,8 @@
         "Create manifest.json with metadata"
       ],
       "priority": 4,
-      "passes": false
+      "passes": true,
+      "notes": "Created manifest.json with 618 entries. Total data size: 22.5 MB. All scraping complete."
     }
   ]
 }
