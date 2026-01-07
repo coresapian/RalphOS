@@ -38,7 +38,7 @@
         "Handle rate limiting (1-2s delays)"
       ],
       "priority": 3,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-004",
