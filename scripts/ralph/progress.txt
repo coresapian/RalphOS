@@ -70,6 +70,16 @@ scraped_builds/
 - **Decision**: SKIP - This is not the target content type (we need individual build pages with detailed specs, photos, modification lists)
 - **Status**: Marked as completed with 0 URLs - not scrapable as individual build pages
 
+## [2026-01-07] - ECD Auto Design Analysis - DNS Blocked
+- **Discovery Method**: Used MCP webReader to bypass Python DNS block
+- **Finding**: 17 paginated pages with ~24 projects per page = ~408 total project pages
+- **Project Structure**: Each project has name, image, and "Read more" link to individual detail page
+- **Sample Projects**: Project Kaimana, Project Camel Trophy, Project Slow Horse, Project Oliver, etc.
+- **Pagination Pattern**: /ecd-showcase/page/2/, /ecd-showcase/page/3/, etc.
+- **Limitation**: MCP webReader converts to markdown and loses href URLs in link text
+- **Status**: URL discovery script ready (previously created) but blocked by Python DNS
+- **Action Required**: Execute scrape_urls.py when DNS resolves
+
 ## [2026-01-07] - Tacoma World URL Discovery - Environmental Blocker
 - **Work Completed**:
   - Analyzed Tacoma World forum structure for 3 build forums

@@ -97,7 +97,7 @@
       "outputDir": "scraped_builds/ecd_auto_design",
       "status": "in_progress",
       "pipeline": {
-        "expectedUrls": 527,
+        "expectedUrls": 408,
         "urlsFound": null,
         "htmlScraped": null,
         "htmlFailed": null,
@@ -105,7 +105,7 @@
         "builds": null,
         "mods": null
       },
-      "notes": "DNS failure - URL discovery script created with pagination support. ~527 builds across 17 pages. Network issue, not code issue."
+      "notes": "DNS failure - Verified via MCP webReader: 17 pages × 24 projects = ~408 total. Individual project pages with 'Read more' links. URL discovery script ready but blocked by Python DNS. Execute scrape_urls.py when DNS resolves."
     },
     {
       "id": "charlies_custom_creations",
