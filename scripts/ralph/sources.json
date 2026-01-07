@@ -1,42 +1,554 @@
 {
-  "description": "Queue of sources for Ralph to scrape. When current PRD is complete, pick next pending source.",
+  "description": "Master source list for Ralph. Each source tracks scraping pipeline progress.",
+  "pipelineStages": {
+    "1_url_discovery": "Find all vehicle/build URLs on the domain",
+    "2_html_scraping": "Download HTML for each discovered URL",
+    "3_build_extraction": "Extract structured build data from HTML",
+    "4_mod_extraction": "Extract modifications/parts from build data"
+  },
   "sources": [
     {
+      "id": "bring_a_trailer",
+      "name": "Bring a Trailer",
+      "url": "https://bringatrailer.com/",
+      "outputDir": "scraped_builds/bring_a_trailer",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 109757,
+        "urlsFound": 109757,
+        "htmlScraped": 109757,
+        "builds": 109757,
+        "mods": 984498
+      },
+      "notes": "Premium auction platform. 1897-2024, 1,173 Makes, 25,995 Mod Brands"
+    },
+    {
+      "id": "fitment_industries",
+      "name": "Fitment Industries",
+      "url": "https://www.fitmentindustries.com/",
+      "outputDir": "scraped_builds/fitment_industries",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 11386,
+        "urlsFound": 11386,
+        "htmlScraped": 11386,
+        "builds": 11386,
+        "mods": 44806
+      },
+      "notes": "Wheel/suspension gallery. 1955-2026, 55 Makes"
+    },
+    {
+      "id": "revkit",
+      "name": "RevKit",
+      "url": "https://revkit.com/",
+      "outputDir": "scraped_builds/revkit",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 10760,
+        "urlsFound": 10760,
+        "htmlScraped": 10760,
+        "builds": 10760,
+        "mods": 188610
+      },
+      "notes": "Jeep-focused builds. 1926-2024, 55 Makes"
+    },
+    {
+      "id": "mecum",
+      "name": "Mecum Auctions",
+      "url": "https://www.mecum.com/",
+      "outputDir": "scraped_builds/mecum",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 9854,
+        "urlsFound": 9854,
+        "htmlScraped": 9854,
+        "builds": 9854,
+        "mods": 161898
+      },
+      "notes": "Collector car auctions. 1898-2025, 256 Makes"
+    },
+    {
+      "id": "pcarmarket",
+      "name": "PCarmarket",
+      "url": "https://pcarmarket.com/",
+      "outputDir": "scraped_builds/pcarmarket",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 5679,
+        "urlsFound": 5679,
+        "htmlScraped": 5679,
+        "builds": 5679,
+        "mods": 48388
+      },
+      "notes": "Porsche-focused marketplace. 1920-2025, 156 Makes"
+    },
+    {
+      "id": "barrett_jackson",
+      "name": "Barrett-Jackson",
+      "url": "https://www.barrett-jackson.com/",
+      "outputDir": "scraped_builds/barrett_jackson",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 4808,
+        "urlsFound": 4808,
+        "htmlScraped": 4808,
+        "builds": 4808,
+        "mods": 20161
+      },
+      "notes": "Collector car auctions. 1907-2025, 189 Makes"
+    },
+    {
+      "id": "modified1",
+      "name": "Modified1",
+      "url": "https://modified1.com/",
+      "outputDir": "scraped_builds/modified1",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 4616,
+        "urlsFound": 4616,
+        "htmlScraped": 4616,
+        "builds": 4616,
+        "mods": 12952
+      },
+      "notes": "Modified cars. 1979-2021, 28 Makes"
+    },
+    {
+      "id": "racing_junk",
+      "name": "Racing Junk",
+      "url": "https://www.racingjunk.com/",
+      "outputDir": "scraped_builds/racing_junk",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 4421,
+        "urlsFound": 4421,
+        "htmlScraped": 4421,
+        "builds": 4421,
+        "mods": 39384
+      },
+      "notes": "Race car marketplace. 1918-2026, 233 Makes"
+    },
+    {
+      "id": "speedhunters",
+      "name": "Speedhunters",
+      "url": "https://www.speedhunters.com/",
+      "outputDir": "scraped_builds/speedhunters",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 4022,
+        "urlsFound": 4022,
+        "htmlScraped": 4022,
+        "builds": 4022,
+        "mods": 88062
+      },
+      "notes": "Car culture media. 1905-2023, 77 Makes"
+    },
+    {
+      "id": "american_trucks",
+      "name": "American Trucks",
+      "url": "https://www.americantrucks.com/",
+      "outputDir": "scraped_builds/american_trucks",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 3261,
+        "urlsFound": 3261,
+        "htmlScraped": 3261,
+        "builds": 3261,
+        "mods": 12204
+      },
+      "notes": "Truck builds. 2010-2024, 3 Makes (Ford, Chevy, GMC)"
+    },
+    {
+      "id": "cars_and_bids",
+      "name": "Cars and Bids",
+      "url": "https://carsandbids.com/",
+      "outputDir": "scraped_builds/cars_and_bids",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 2446,
+        "urlsFound": 2446,
+        "htmlScraped": 2446,
+        "builds": 2446,
+        "mods": 3908
+      },
+      "notes": "Doug DeMuro auction site. 1930-2022, 116 Makes"
+    },
+    {
+      "id": "holley",
+      "name": "Holley",
+      "url": "https://www.holley.com/",
+      "outputDir": "scraped_builds/holley",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 2221,
+        "urlsFound": 2221,
+        "htmlScraped": 2221,
+        "builds": 2221,
+        "mods": 20637
+      },
+      "notes": "Performance parts builds. 1920-2024, 45 Makes"
+    },
+    {
+      "id": "the_foat",
+      "name": "The FOAT",
+      "url": "https://thefoat.com/",
+      "outputDir": "scraped_builds/the_foat",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 1208,
+        "urlsFound": 1208,
+        "htmlScraped": 1208,
+        "builds": 1208,
+        "mods": 12263
+      },
+      "notes": "Build showcase platform. 1923-2025, 80 Makes"
+    },
+    {
+      "id": "grassroots_motorsports",
+      "name": "Grassroots Motorsports",
+      "url": "https://grassrootsmotorsports.com/",
+      "outputDir": "scraped_builds/grassroots_motorsports",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 1042,
+        "urlsFound": 1042,
+        "htmlScraped": 1042,
+        "builds": 1042,
+        "mods": 9874
+      },
+      "notes": "Grassroots racing builds. 1926-2025, 176 Makes"
+    },
+    {
+      "id": "hagerty",
+      "name": "Hagerty",
+      "url": "https://www.hagerty.com/",
+      "outputDir": "scraped_builds/hagerty",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 894,
+        "urlsFound": 894,
+        "htmlScraped": 894,
+        "builds": 894,
+        "mods": 3833
+      },
+      "notes": "Classic car insurance/media. 1951-2024, 91 Makes"
+    },
+    {
+      "id": "jdm_buy_sell",
+      "name": "JDM Buy Sell",
+      "url": "https://jdmbuysell.com/",
+      "outputDir": "scraped_builds/jdm_buy_sell",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 889,
+        "urlsFound": 889,
+        "htmlScraped": 889,
+        "builds": 889,
+        "mods": 5388
+      },
+      "notes": "JDM marketplace. 1966-2012, 19 Makes"
+    },
+    {
+      "id": "street_car_market",
+      "name": "Street Car Market",
+      "url": "https://streetcarmarket.com/",
+      "outputDir": "scraped_builds/street_car_market",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 855,
+        "urlsFound": 855,
+        "htmlScraped": 855,
+        "builds": 855,
+        "mods": 25950
+      },
+      "notes": "Street car marketplace. 1955-2024, 25 Makes"
+    },
+    {
+      "id": "hemmings",
+      "name": "Hemmings",
+      "url": "https://www.hemmings.com/",
+      "outputDir": "scraped_builds/hemmings",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 776,
+        "urlsFound": 776,
+        "htmlScraped": 776,
+        "builds": 776,
+        "mods": 5687
+      },
+      "notes": "Classic car marketplace. 1886-2022, 90 Makes"
+    },
+    {
+      "id": "build_threads",
+      "name": "Build Threads",
+      "url": "https://build-threads.com/",
+      "outputDir": "scraped_builds/build_threads",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 631,
+        "urlsFound": 631,
+        "htmlScraped": 631,
+        "builds": 631,
+        "mods": 1058
+      },
+      "notes": "Build thread aggregator. 1928-2012, 40 Makes"
+    },
+    {
+      "id": "jdm_expo",
+      "name": "JDM Expo",
+      "url": "https://jdm-expo.com/",
+      "outputDir": "scraped_builds/jdm_expo",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 432,
+        "urlsFound": 432,
+        "htmlScraped": 432,
+        "builds": 432,
+        "mods": null
+      },
+      "notes": "JDM car exporter. 1985-2002, 8 Makes. No mod extraction yet."
+    },
+    {
+      "id": "built_for_backroads",
+      "name": "Built for Backroads",
+      "url": "https://builtforbackroads.com/",
+      "outputDir": "scraped_builds/built_for_backroads",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 366,
+        "urlsFound": 366,
+        "htmlScraped": 366,
+        "builds": 366,
+        "mods": 635
+      },
+      "notes": "Driving enthusiast builds. 1955-2024, 21 Makes"
+    },
+    {
+      "id": "gateway_classic_cars",
+      "name": "Gateway Classic Cars",
+      "url": "https://www.gatewayclassiccars.com/inventory",
+      "outputDir": "scraped_builds/gateway_classic_cars",
+      "status": "completed",
+      "completedAt": "2026-01-06",
+      "pipeline": {
+        "expectedUrls": 2823,
+        "urlsFound": 2823,
+        "htmlScraped": 2823,
+        "builds": null,
+        "mods": null
+      },
+      "notes": "Classic car dealer inventory. 2823 vehicles across 110 pages. 1295 MB HTML data. Needs build/mod extraction."
+    },
+    {
+      "id": "jdm_supply",
+      "name": "JDM Supply",
+      "url": "https://jdmsupply.com/",
+      "outputDir": "scraped_builds/jdm_supply",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 205,
+        "urlsFound": 205,
+        "htmlScraped": 205,
+        "builds": 205,
+        "mods": null
+      },
+      "notes": "JDM parts/cars. 1985-2005, 6 Makes. No mod extraction yet."
+    },
+    {
+      "id": "exotic_car_trader",
+      "name": "Exotic Car Trader",
+      "url": "https://exoticcartrader.com/",
+      "outputDir": "scraped_builds/exotic_car_trader",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 203,
+        "urlsFound": 203,
+        "htmlScraped": 203,
+        "builds": 203,
+        "mods": 1240
+      },
+      "notes": "Exotic car marketplace. 1928-2025, 39 Makes"
+    },
+    {
+      "id": "buildsheet_qr",
+      "name": "BuildSheet QR",
+      "url": "https://buildsheetqr.com/",
+      "outputDir": "scraped_builds/buildsheet_qr",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 124,
+        "urlsFound": 124,
+        "htmlScraped": 124,
+        "builds": 124,
+        "mods": 4954
+      },
+      "notes": "Build documentation platform. 1987-2025, 10 Makes"
+    },
+    {
+      "id": "tuner_dealer",
+      "name": "Tuner Dealer",
+      "url": "https://tunerdealer.com/",
+      "outputDir": "scraped_builds/tuner_dealer",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 107,
+        "urlsFound": 107,
+        "htmlScraped": 107,
+        "builds": 107,
+        "mods": null
+      },
+      "notes": "Tuner car dealer. 1990-2020, 10 Makes. No mod extraction yet."
+    },
+    {
+      "id": "specs_and_mods",
+      "name": "Specs and Mods",
+      "url": "https://specsandmods.com/",
+      "outputDir": "scraped_builds/specs_and_mods",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 77,
+        "urlsFound": 77,
+        "htmlScraped": 77,
+        "builds": 77,
+        "mods": 1008
+      },
+      "notes": "Build specs database. 1956-2022, 27 Makes"
+    },
+    {
+      "id": "ringbrothers",
+      "name": "Ringbrothers",
+      "url": "https://ringbrothers.com/",
+      "outputDir": "scraped_builds/ringbrothers",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 44,
+        "urlsFound": 44,
+        "htmlScraped": 44,
+        "builds": 44,
+        "mods": 381
+      },
+      "notes": "Custom muscle car builder. 1948-2013, 13 Makes"
+    },
+    {
+      "id": "kindig_it",
+      "name": "Kindig-it Design",
+      "url": "https://kindigit.com/",
+      "outputDir": "scraped_builds/kindig_it",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 41,
+        "urlsFound": 41,
+        "htmlScraped": 41,
+        "builds": 41,
+        "mods": 600
+      },
+      "notes": "Custom builds (Bitchin Rides). 1939-1972, 11 Makes"
+    },
+    {
+      "id": "xoverland",
+      "name": "Xoverland",
+      "url": "https://xoverland.com/",
+      "outputDir": "scraped_builds/xoverland",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 40,
+        "urlsFound": 40,
+        "htmlScraped": 40,
+        "builds": 40,
+        "mods": 1417
+      },
+      "notes": "Overland builds. 2008-2023, 4 Makes"
+    },
+    {
+      "id": "restomods",
+      "name": "RestoMods",
+      "url": "https://restomods.com/",
+      "outputDir": "scraped_builds/restomods",
+      "status": "completed",
+      "pipeline": {
+        "expectedUrls": 19,
+        "urlsFound": 19,
+        "htmlScraped": 19,
+        "builds": 19,
+        "mods": null
+      },
+      "notes": "Restomod builds. 1960-1975, 5 Makes. No mod extraction yet."
+    },
+    {
       "id": "onallcylinders",
-      "name": "OnAllCylinders Featured Vehicles",
+      "name": "OnAllCylinders",
       "url": "https://www.onallcylinders.com/category/rods-rides-rigs/",
       "outputDir": "scraped_builds/onallcylinders",
       "status": "completed",
       "completedAt": "2026-01-06",
-      "stats": {
+      "pipeline": {
+        "expectedUrls": 446,
         "urlsFound": 446,
-        "htmlScraped": 446
+        "htmlScraped": 446,
+        "builds": null,
+        "mods": null
       },
-      "notes": "Summit Racing blog. 446 articles across 45 pages, standard pagination /page/N/"
+      "notes": "Summit Racing blog. 446 articles. Needs build/mod extraction."
     },
     {
-      "id": "gateway_classic_cars",
-      "name": "Gateway Classic Cars Inventory",
-      "url": "https://www.gatewayclassiccars.com/inventory",
-      "outputDir": "scraped_builds/gateway_classic_cars",
-      "status": "in_progress",
-      "notes": "Classic car dealer inventory"
+      "id": "martiniworks",
+      "name": "MartiniWorks",
+      "url": "https://martiniworks.com/build-threads",
+      "outputDir": "scraped_builds/martiniworks",
+      "status": "completed",
+      "completedAt": "2026-01-06",
+      "pipeline": {
+        "expectedUrls": 1000,
+        "urlsFound": 1000,
+        "htmlScraped": 999,
+        "builds": null,
+        "mods": null
+      },
+      "notes": "Infinite scroll gallery. Needs build/mod extraction."
     },
     {
       "id": "modified_rides",
-      "name": "Modified Rides News",
+      "name": "Modified Rides",
       "url": "https://www.modifiedrides.net/news/modified-cars/",
       "outputDir": "scraped_builds/modified_rides",
-      "status": "pending",
-      "notes": "Modified cars news/features"
+      "status": "in_progress",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": 0,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
+      "notes": "Modified cars news/features. US-001 complete: directory structure created."
     },
     {
       "id": "custom_wheel_offset",
-      "name": "Custom Wheel Offset Gallery",
+      "name": "Custom Wheel Offset",
       "url": "https://www.customwheeloffset.com/wheel-offset-gallery",
       "outputDir": "scraped_builds/custom_wheel_offset",
-      "status": "pending",
+      "status": "in_progress",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
       "notes": "Wheel fitment gallery with specs"
+    },
+    {
+      "id": "tacoma_world",
+      "name": "Tacoma World",
+      "url": "https://www.tacomaworld.com/",
+      "outputDir": "scraped_builds/tacoma_world",
+      "status": "in_progress",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
+      "notes": "Toyota Tacoma forum/builds"
     },
     {
       "id": "extremeterrain",
@@ -44,14 +556,28 @@
       "url": "https://www.extremeterrain.com/",
       "outputDir": "scraped_builds/extremeterrain",
       "status": "pending",
-      "notes": "Off-road/Jeep builds and parts"
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
+      "notes": "Jeep/truck aftermarket parts builds"
     },
     {
       "id": "oneoff_autos",
-      "name": "OneOff Autos Listings",
+      "name": "OneOff Autos",
       "url": "https://oneoffautos.com/listings",
       "outputDir": "scraped_builds/oneoff_autos",
       "status": "pending",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
       "notes": "Custom/unique vehicle listings"
     },
     {
@@ -60,30 +586,58 @@
       "url": "https://racemarket.net/",
       "outputDir": "scraped_builds/racemarket",
       "status": "pending",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
       "notes": "Race car marketplace"
     },
     {
       "id": "lomar_refined",
-      "name": "Lomar Refined Builds",
+      "name": "Lomar Refined",
       "url": "https://www.lomarefined.com/pages/refined-builds",
       "outputDir": "scraped_builds/lomar_refined",
       "status": "pending",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
       "notes": "Custom refined vehicle builds"
     },
     {
       "id": "total_cost_involved",
-      "name": "Total Cost Involved Customer Showcase",
+      "name": "Total Cost Involved",
       "url": "https://totalcostinvolved.com/customer-showcase/",
       "outputDir": "scraped_builds/total_cost_involved",
       "status": "pending",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
       "notes": "TCI suspension customer builds"
     },
     {
       "id": "ecd_auto_design",
-      "name": "ECD Auto Design Showcase",
+      "name": "ECD Auto Design",
       "url": "https://ecdautodesign.com/ecd-showcase/",
       "outputDir": "scraped_builds/ecd_auto_design",
       "status": "pending",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
       "notes": "Custom Land Rover/Defender builds"
     },
     {
@@ -92,45 +646,74 @@
       "url": "https://charliescustomcreations.com/",
       "outputDir": "scraped_builds/charlies_custom_creations",
       "status": "pending",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
       "notes": "Custom vehicle builds"
     },
     {
       "id": "utv_source",
-      "name": "UTV Source Gallery",
+      "name": "UTV Source",
       "url": "https://www.utvsource.com/gallery",
       "outputDir": "scraped_builds/utv_source",
       "status": "pending",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
       "notes": "UTV/side-by-side gallery"
     },
     {
       "id": "creative_bespoke",
-      "name": "Creative Bespoke Vehicles",
+      "name": "Creative Bespoke",
       "url": "https://creativebespoke.com/vehicles",
       "outputDir": "scraped_builds/creative_bespoke",
       "status": "pending",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
       "notes": "Bespoke custom vehicles"
     },
     {
+      "id": "lifted_trucks",
+      "name": "Lifted Trucks",
+      "url": "https://www.liftedtrucks.com/used-inventory/index.htm",
+      "outputDir": "scraped_builds/lifted_trucks",
+      "status": "pending",
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
+      },
+      "notes": "Used lifted trucks and SUVs dealership"
+    },
+    {
       "id": "revmatch",
-      "name": "RevMatch App",
+      "name": "RevMatch",
       "url": "https://www.revmatch.app/",
       "outputDir": "scraped_builds/revmatch",
       "status": "pending",
-      "notes": "Vehicle enthusiast platform"
-    },
-    {
-      "id": "martiniworks",
-      "name": "MartiniWorks Build Threads",
-      "url": "https://martiniworks.com/build-threads",
-      "outputDir": "scraped_builds/martiniworks",
-      "status": "completed",
-      "completedAt": "2026-01-06",
-      "stats": {
-        "urlsFound": 1000,
-        "htmlScraped": 999
+      "pipeline": {
+        "expectedUrls": null,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "builds": null,
+        "mods": null
       },
-      "notes": "Infinite scroll gallery, ~1037 builds"
+      "notes": "Vehicle enthusiast platform"
     }
   ]
 }
-
