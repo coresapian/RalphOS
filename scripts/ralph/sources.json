@@ -543,12 +543,12 @@
       "status": "in_progress",
       "pipeline": {
         "expectedUrls": null,
-        "urlsFound": null,
+        "urlsFound": 0,
         "htmlScraped": null,
         "builds": null,
         "mods": null
       },
-      "notes": "Toyota Tacoma forum/builds"
+      "notes": "Toyota Tacoma forum/builds - US-001 complete: directory structure created"
     },
     {
       "id": "extremeterrain",
