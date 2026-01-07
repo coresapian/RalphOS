@@ -80,6 +80,33 @@ scraped_builds/
 - **Status**: URL discovery script ready (previously created) but blocked by Python DNS
 - **Action Required**: Execute scrape_urls.py when DNS resolves
 
+## [2026-01-07] - Charlie's Custom Creations Analysis - Static Gallery (SKIP)
+- **Discovery Method**: Used MCP webReader to bypass Python DNS block
+- **Finding**: Single-page gallery with ~69 car builds
+- **Build Format**: Image thumbnails with captions (e.g., "Michaels 1956 Ford F100", "Jameys 1968 Plymouth Road Runner")
+- **No Individual Detail Pages**: Builds embedded as HTML content, filterable by category (Cars/Trucks/Other)
+- **Decision**: SKIP - Not target content type (need individual build pages)
+
+## [2026-01-07] - UTV Source Analysis - DNS Blocked
+- **Discovery Method**: Used MCP webReader to bypass Python DNS block
+- **Finding**: Paginated gallery with 47 builds on page 1
+- **Pagination**: Has "next" link to /gallery/?page=2
+- **Build Format**: Individual build pages with names like "2024 Can-Am Maverick R - Janey Lee"
+- **Status**: URL discovery script ready but blocked by Python DNS
+- **Action Required**: Execute scrape_urls.py when DNS resolves
+
+## [2026-01-07] - Creative Bespoke Analysis - Dealership Inventory (SKIP)
+- **Discovery Method**: Used MCP webReader to bypass Python DNS block
+- **Finding**: Dealer inventory showing luxury cars for sale (Bentley, Ferrari, Lamborghini, McLaren)
+- **Content**: Dealer listings with prices and "Photos (21)" links to inventory detail pages
+- **Decision**: SKIP - Dealership inventory, not custom build projects
+
+## [2026-01-07] - Lifted Trucks Analysis - Dealership Inventory (SKIP)
+- **Discovery Method**: Used MCP webReader to bypass Python DNS block
+- **Finding**: Marketing page about "why buy a lifted truck" with no listings visible
+- **Content**: JavaScript-heavy dealer site showing lifted trucks/SUVs for sale
+- **Decision**: SKIP - Dealership inventory, not custom build projects
+
 ## [2026-01-07] - Tacoma World URL Discovery - Environmental Blocker
 - **Work Completed**:
   - Analyzed Tacoma World forum structure for 3 build forums

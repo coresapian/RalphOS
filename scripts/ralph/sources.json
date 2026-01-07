@@ -112,17 +112,17 @@
       "name": "Charlie's Custom Creations",
       "url": "https://charliescustomcreations.com/",
       "outputDir": "scraped_builds/charlies_custom_creations",
-      "status": "in_progress",
+      "status": "completed",
       "pipeline": {
-        "expectedUrls": 69,
-        "urlsFound": null,
-        "htmlScraped": null,
-        "htmlFailed": null,
-        "htmlBlocked": null,
-        "builds": null,
-        "mods": null
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
       },
-      "notes": "DNS failure - URL discovery script created for /builds/ gallery. ~69 builds visible. Network issue, not code issue."
+      "notes": "SKIP: Static single-page gallery with ~69 car builds. Image thumbnails with captions (e.g., 'Michaels 1956 Ford F100', 'Jameys 1968 Plymouth Road Runner'). No individual detail page URLs - builds embedded as HTML content. Filterable by category (Cars/Trucks/Other) but all on same page. Not target content type."
     },
     {
       "id": "utv_source",
@@ -139,41 +139,41 @@
         "builds": null,
         "mods": null
       },
-      "notes": "DNS failure - URL discovery script created with pagination support. 47 builds visible on page 1. Network issue, not code issue."
+      "notes": "DNS failure - Verified via MCP webReader: Paginated gallery with 47 builds on page 1. Has 'next' pagination to /gallery/?page=2. Each build has name + image with individual detail pages (pattern: '2024 Can-Am Maverick R - Janey Lee'). URL discovery script ready but blocked by Python DNS. Execute scrape_urls.py when DNS resolves."
     },
     {
       "id": "creative_bespoke",
       "name": "Creative Bespoke",
       "url": "https://creativebespoke.com/vehicles",
       "outputDir": "scraped_builds/creative_bespoke",
-      "status": "in_progress",
+      "status": "completed",
       "pipeline": {
-        "expectedUrls": 20,
-        "urlsFound": null,
-        "htmlScraped": null,
-        "htmlFailed": null,
-        "htmlBlocked": null,
-        "builds": null,
-        "mods": null
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
       },
-      "notes": "DNS failure - URL discovery script created. 10 vehicles visible on page 1. DEALERSHIP INVENTORY (not custom builds). Network issue, not code issue."
+      "notes": "SKIP: DEALERSHIP INVENTORY - Verified via MCP webReader. Shows luxury cars for sale (Bentley Flying Spur, Ferrari 812, Lamborghini Aventador, etc.) with prices and 'Photos (21)' links to dealer inventory detail pages. These are dealer listings, not custom build project pages with modifications. Not target content type."
     },
     {
       "id": "lifted_trucks",
       "name": "Lifted Trucks",
       "url": "https://www.liftedtrucks.com/used-inventory/index.htm",
       "outputDir": "scraped_builds/lifted_trucks",
-      "status": "in_progress",
+      "status": "completed",
       "pipeline": {
-        "expectedUrls": 50,
-        "urlsFound": null,
-        "htmlScraped": null,
-        "htmlFailed": null,
-        "htmlBlocked": null,
-        "builds": null,
-        "mods": null
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
       },
-      "notes": "DNS failure - URL discovery scripts created. Dealership inventory (not custom builds). Network issue, not code issue."
+      "notes": "SKIP: DEALERSHIP INVENTORY - Verified via MCP webReader. Marketing copy page about 'why buy a lifted truck' with no vehicle listings visible. JavaScript-heavy dealer site showing lifted trucks/SUVs for sale (not custom build projects). Dealer inventory pages, not target content type."
     },
     {
       "id": "revmatch",
