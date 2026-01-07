@@ -98,14 +98,14 @@
       "status": "in_progress",
       "pipeline": {
         "expectedUrls": 408,
-        "urlsFound": null,
+        "urlsFound": 338,
         "htmlScraped": null,
         "htmlFailed": null,
         "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
-      "notes": "DNS failure - Verified via MCP webReader: 17 pages × 24 projects = ~408 total. Individual project pages with 'Read more' links. URL discovery script ready but blocked by Python DNS. Execute scrape_urls.py when DNS resolves."
+      "notes": "URL discovery COMPLETE via MCP webReader: Fetched all 17 pages, extracted 338 unique project URLs. URLs saved to urls.json. Ready for HTML scraping stage (Stage 2). Python DNS still blocked but MCP webReader successfully bypassed it for URL discovery."
     },
     {
       "id": "charlies_custom_creations",

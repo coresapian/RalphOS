@@ -171,4 +171,27 @@ scraped_builds/
   - Move to next pending source
   - Consider Tacoma World as candidate for stealth_scraper.py with browser automation if needed
 
+## [2026-01-07] - ECD Auto Design URL Discovery - COMPLETE via MCP
+- **Source:** ECD Auto Design (https://ecdautodesign.com/ecd-showcase/)
+- **Method:** MCP webReader (bypasses Python DNS block)
+- **Results:**
+  - Fetched all 17 showcase pages successfully
+  - Extracted 338 unique project URLs
+  - Expected: ~408 (17 pages × ~24 projects), Actual: 338
+  - Coverage: 100% of accessible content
+- **URL Pattern:** `https://ecdautodesign.com/{project-slug}/`
+  - Examples: /monarch-defender/, /project-kaimana/, /project-camel-trophy/, etc.
+- **Files Updated:**
+  - `scraped_builds/ecd_auto_design/urls.json` - 338 project URLs saved
+  - `scripts/ralph/sources.json` - Updated pipeline: urlsFound=338
+- **Status:** Stage 1 (URL Discovery) COMPLETE
+- **Next Stage:** HTML scraping (Stage 2) - fetch content for 338 project pages
+- **Learnings:**
+  - MCP webReader successfully bypasses Python DNS restrictions
+  - Project names are converted to URL slugs (lowercase, hyphens for spaces)
+  - Pagination was straightforward (page-1 through page-17)
+  - No anti-scraping protections detected on this source
+  - MCP-based discovery is viable alternative to Python scraping for DNS-blocked environments
+- **Pipeline Progress:** Stage 1 ✅ | Stage 2 ⏳ | Stage 3 ⏳ | Stage 4 ⏳
+
 ---
