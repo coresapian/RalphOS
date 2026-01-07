@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Motorcycle Forums Directory - Tuners, Modders & Enthusiasts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        label {
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        input[type="text"], select {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .stats {
+            color: white;
+            margin-left: auto;
+            font-weight: 600;
+            background: rgba(0,0,0,0.2);
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: background 0.3s;
+        }
+        
+        th:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        th::after {
+            content: " ↕";
+            opacity: 0.5;
+        }
+        
+        th.sorted-asc::after {
+            content: " ↑";
+            opacity: 1;
+        }
+        
+        th.sorted-desc::after {
+            content: " ↓";
+            opacity: 1;
+        }
+        
+        tbody tr {
+            transition: all 0.3s;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        tbody tr:hover {
+            background: linear-gradient(90deg, #f8f9fa 0%, #e9ecef 100%);
+            transform: scale(1.01);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        td {
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+        
+        .forum-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+        
+        .forum-link {
+            display: inline-block;
+            padding: 5px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .forum-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #ecf0f1;
+            color: #2c3e50;
+            border-radius: 3px;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+        
+        .tag.sport { background: #ff6b6b; color: white; }
+        .tag.vintage { background: #8b6914; color: white; }
+        .tag.custom { background: #4ecdc4; color: white; }
+        .tag.adventure { background: #45aaf2; color: white; }
+        .tag.racing { background: #fd79a8; color: white; }
+        .tag.electric { background: #26de81; color: white; }
+        .tag.tuning { background: #a55eea; color: white; }
+        .tag.brand { background: #ff9ff3; color: white; }
+        .tag.regional { background: #54a0ff; color: white; }
+        .tag.technical { background: #48dbfb; color: white; }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+            
+            .forum-name {
+                font-size: 1em;
+            }
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏍️ Ultimate Motorcycle Forums Directory</h1>
+        <p class="subtitle">The most comprehensive collection of motorcycle forums for tuners, modders, and enthusiasts worldwide</p>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label for="search">Search Forums:</label>
+                <input type="text" id="search" placeholder="Search by name or description...">
+            </div>
+            <div class="filter-group">
+                <label for="categoryFilter">Filter by Category:</label>
+                <select id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="general">General</option>
+                    <option value="sport">Sport Bikes</option>
+                    <option value="vintage">Vintage/Classic</option>
+                    <option value="custom">Custom/Cafe Racer</option>
+                    <option value="adventure">Adventure/Dual Sport</option>
+                    <option value="racing">Track/Racing</option>
+                    <option value="electric">Electric</option>
+                    <option value="tuning">ECU/Tuning</option>
+                    <option value="brand">Brand Specific</option>
+                    <option value="regional">Regional/International</option>
+                    <option value="chopper">Chopper/Bobber</option>
+                    <option value="technical">Technical/Suspension</option>
+                </select>
+            </div>
+            <div class="stats">
+                <span id="forumCount">0</span> Forums Listed
+            </div>
+        </div>
+        
+        <table id="forumTable">
+            <thead>
+                <tr>
+                    <th data-column="name">Forum Name</th>
+                    <th data-column="link">Link</th>
+                    <th data-column="description">Description</th>
+                    <th data-column="tags">Tags/Categories</th>
+                </tr>
+            </thead>
+            <tbody id="forumTableBody">
+                <!-- Forum data will be inserted here -->
+            </tbody>
+        </table>
+        
+        <div id="noResults" class="no-results" style="display: none;">
+            No forums found matching your criteria. Try adjusting your filters.
+        </div>
+    </div>
+    
+    <script>
+        const forumData = [
+            // General Forums
+            {
+                name: "Motorcycle.com Forums",
+                url: "https://community.motorcycle.com/forums/",
+                description: "Comprehensive forum covering all motorcycle brands, performance mods, maintenance tips, and rider discussions",
+                tags: ["general", "tuning", "technical"]
+            },
+            {
+                name: "Motorcycle Forum",
+                url: "https://www.motorcycleforum.com/",
+                description: "Discussion hub for all bikes from Harley to Honda, Suzuki, KTM, Yamaha, BMW - performance mods and troubleshooting",
+                tags: ["general", "technical", "brand"]
+            },
+            {
+                name: "Motorcycle Forums Network",
+                url: "https://www.motorcycleforums.net/forums/",
+                description: "Leading forum for news, reviews, discussions on road, sport, classic, and dirt bikes",
+                tags: ["general", "sport", "vintage"]
+            },
+            
+            // Sport Bike Forums
+            {
+                name: "SportBikes.net",
+                url: "https://www.sportbikes.net/forums/",
+                description: "Premier sportbike community for performance, customization, racing discussions",
+                tags: ["sport", "racing", "tuning"]
+            },
+            {
+                name: "Sport Bike World",
+                url: "https://www.sportbikeworld.com/forums/",
+                description: "Dedicated to sportbike performance, modifications, classifieds, troubleshooting",
+                tags: ["sport", "tuning", "technical"]
+            },
+            {
+                name: "BC Sport Bikes",
+                url: "https://www.bcsportbikes.com/forums/",
+                description: "British Columbia sportbike community - reviews, performance, modifications",
+                tags: ["sport", "regional", "tuning"]
+            },
+            {
+                name: "125cc Sportsbikes Forum",
+                url: "https://www.125ccsportsbikes.com/",
+                description: "Specialized forum for 125cc sportbike owners - performance, tuning, maintenance",
+                tags: ["sport", "tuning"]
+            },
+            {
+                name: "13x Forums",
+                url: "https://forums.13x.com/index.php",
+                description: "GP racing machines discussion - 125s, 250s, 500s, track experiences",
+                tags: ["racing", "sport"]
+            },
+            
+            // Brand Specific Forums
+            {
+                name: "Triumph Rat",
+                url: "https://www.triumphrat.net/forums/",
+                description: "Dedicated Triumph motorcycle forum - performance, racing, cafe racers, troubleshooting",
+                tags: ["brand", "custom", "vintage"]
+            },
+            {
+                name: "Kawasaki Forums",
+                url: "https://www.kawiforums.com/",
+                description: "All Kawasaki models including ZX-6R, KLR 650, Ninja series, Vulcan",
+                tags: ["brand", "sport", "adventure"]
+            },
+            {
+                name: "V-Twin Forum",
+                url: "https://www.v-twinforum.com/",
+                description: "Harley Davidson V-Twin forum - Dyna, Electra Glide, Softail, Sportster discussions",
+                tags: ["brand", "custom", "chopper"]
+            },
+            {
+                name: "Harley Davidson Forums",
+                url: "https://www.harley-davidsonforums.com/",
+                description: "Official HD community - performance mods, troubleshooting, builds, maintenance",
+                tags: ["brand", "custom", "chopper"]
+            },
+            {
+                name: "GSXR.com",
+                url: "https://www.gsxr.com/forums/",
+                description: "Suzuki GSXR owners forum - superbike performance, racing, engine builds",
+                tags: ["brand", "sport", "racing"]
+            },
+            {
+                name: "R1 Forum",
+                url: "https://www.r1-forum.com/forums/",
+                description: "Yamaha R1 enthusiasts - performance, customization, racing",
+                tags: ["brand", "sport", "racing"]
+            },
+            {
+                name: "BMW S1000RR Forum",
+                url: "https://www.s1000rrforum.com/",
+                description: "BMW S1000RR superbike performance, modifications, racing, maintenance",
+                tags: ["brand", "sport", "racing"]
+            },
+            {
+                name: "Ducati Forum UK",
+                url: "https://www.ducatiforum.co.uk/forums/",
+                description: "UK's Ducati community - V4, 1260, 1200, technical discussions, track days",
+                tags: ["brand", "sport", "regional"]
+            },
+            {
+                name: "BMW MOA",
+                url: "https://forums.bmwmoa.org/",
+                description: "BMW Motorcycle Owners of America - touring, technical, vintage BMW discussions",
+                tags: ["brand", "adventure", "vintage"]
+            },
+            
+            // Vintage/Classic Forums
+            {
+                name: "Vintage Honda Twins",
+                url: "https://www.vintagehondatwins.com/forums/",
+                description: "Dedicated to vintage Honda Twin motorcycles - restoration, technical advice",
+                tags: ["vintage", "brand", "technical"]
+            },
+            {
+                name: "AMCA Forum",
+                url: "https://forum.antiquemotorcycle.org/bboard/",
+                description: "Antique Motorcycle Club of America - vintage restoration, parts, history",
+                tags: ["vintage", "custom"]
+            },
+            {
+                name: "Classic Bike Forum",
+                url: "https://forum.classic-motorbikes.net/",
+                description: "Japanese, British, vintage, pre-war classics - restoration tips, technical help",
+                tags: ["vintage", "technical"]
+            },
+            {
+                name: "Vintage BMW Motorcycle Owners",
+                url: "https://vintagebmw.org/forum/",
+                description: "Preservation of classic and antique BMW motorcycles",
+                tags: ["vintage", "brand"]
+            },
+            
+            // Cafe Racer/Custom Forums
+            {
+                name: "ChopCult",
+                url: "https://forum.chopcult.com/",
+                description: "Custom chopper and bobber forum - build threads, tech Q&A, how-tos",
+                tags: ["custom", "chopper", "technical"]
+            },
+            {
+                name: "Return of the Cafe Racers",
+                url: "https://www.returnofthecaferacers.com/",
+                description: "Global custom motorcycle builders directory and cafe racer resources",
+                tags: ["custom", "technical"]
+            },
+            {
+                name: "Pipeburn",
+                url: "https://pipeburn.com/",
+                description: "Custom motorcycle builds, cafe racers, bobbers, scramblers showcase",
+                tags: ["custom"]
+            },
+            {
+                name: "Bike EXIF",
+                url: "https://www.bikeexif.com/",
+                description: "World's most exciting custom motorcycles - cafe racers, bobbers, trackers",
+                tags: ["custom"]
+            },
+            {
+                name: "Custom Fighters Forum",
+                url: "https://www.customfighters.com/forums/",
+                description: "Custom streetfighter motorcycle builds, modifications, performance",
+                tags: ["custom", "sport"]
+            },
+            
+            // Adventure/Dual Sport Forums
+            {
+                name: "ThumperTalk",
+                url: "https://www.thumpertalk.com/",
+                description: "Dual sport and adventure motorcycle community - reviews, trails, gear",
+                tags: ["adventure", "technical"]
+            },
+            {
+                name: "ADVRider",
+                url: "https://www.advrider.com/",
+                description: "Adventure motorcycle riding world center - news, reviews, community discussions",
+                tags: ["adventure", "regional"]
+            },
+            {
+                name: "ADVPulse",
+                url: "https://www.advpulse.com/",
+                description: "Adventure bike and dual sport content - tests, news, ride reports",
+                tags: ["adventure"]
+            },
+            {
+                name: "ADVbikes",
+                url: "https://advbikes.com/",
+                description: "Adventure motorcycle riding, trip planning, maintenance",
+                tags: ["adventure", "technical"]
+            },
+            {
+                name: "Horizons Unlimited HUBB",
+                url: "https://www.horizonsunlimited.com/hubb/",
+                description: "International adventure motorcycle travel - 77,000+ adventure travelers",
+                tags: ["adventure", "regional"]
+            },
+            {
+                name: "KLR Forum",
+                url: "https://www.klrforum.com/",
+                description: "Kawasaki KLR 650 owners - performance, modifications, maintenance",
+                tags: ["adventure", "brand", "technical"]
+            },
+            
+            // Track/Racing Forums
+            {
+                name: "SportbikeTrackTime Forum",
+                url: "http://www.sttforum.com/index.php",
+                description: "Track day enthusiasts - racing gear, track events, riding techniques",
+                tags: ["racing", "sport"]
+            },
+            {
+                name: "WERA BBS",
+                url: "http://www.wera.com/bbs/",
+                description: "WERA Motorcycle Road Racing forums - race discussion, results, tech",
+                tags: ["racing", "sport"]
+            },
+            {
+                name: "N2 Track Days",
+                url: "https://www.n2td.org/",
+                description: "Structured track day riding - instruction, events, race license school",
+                tags: ["racing", "sport"]
+            },
+            {
+                name: "MotoGP Forum",
+                url: "https://motogpforum.com/",
+                description: "MotoGP, World Superbike, racing discussions and analysis",
+                tags: ["racing", "sport"]
+            },
+            
+            // Electric Motorcycle Forums
+            {
+                name: "Zero Forum",
+                url: "https://www.zero-forum.com/",
+                description: "Zero electric motorcycle owners - models S, SR, DS, FX, technical discussions",
+                tags: ["electric", "technical"]
+            },
+            {
+                name: "Electric Motorcycle Forum",
+                url: "https://www.electricmotorcycleforum.com/",
+                description: "All electric motorcycle brands - Zero, Energica, Lightning, troubleshooting",
+                tags: ["electric", "technical"]
+            },
+            {
+                name: "ElMoto.net",
+                url: "https://www.elmoto.net/",
+                description: "Electric motorcycle community - news, problems, different models discussion",
+                tags: ["electric"]
+            },
+            {
+                name: "Electric Motorcycles Forum",
+                url: "https://www.electricmotorcyclesforum.com/",
+                description: "202+ members discussing Zero, Arc, Lightning, Energica, Damon, Brammo",
+                tags: ["electric", "technical"]
+            },
+            
+            // ECU/Tuning Forums
+            {
+                name: "TuneECU Forum",
+                url: "https://tuneecu.com/TuneECU_En/Forum.html",
+                description: "ECU tuning software discussions - maps, troubleshooting, dyno tuning",
+                tags: ["tuning", "technical"]
+            },
+            {
+                name: "HP Academy Forums",
+                url: "https://www.hpacademy.com/forum/",
+                description: "Professional tuning education - ECU tuning, dyno techniques, steady state",
+                tags: ["tuning", "technical", "racing"]
+            },
+            {
+                name: "BT Moto Community",
+                url: "https://bt-moto.com/",
+                description: "50-state legal ECU tuning - BMW, Aprilia, Ducati, Honda performance maps",
+                tags: ["tuning", "technical"]
+            },
+            {
+                name: "Superbike Unlimited",
+                url: "https://www.superbikeunlimited.com/",
+                description: "ECU flash service for Yamaha R1, R6, sportbike performance tuning",
+                tags: ["tuning", "sport", "technical"]
+            },
+            
+            // Suspension/Technical Forums
+            {
+                name: "Race Tech Suspension",
+                url: "https://racetech.com/",
+                description: "Suspension solutions - Gold Valves, spring calculators, technical support",
+                tags: ["technical"]
+            },
+            {
+                name: "ThumperTalk Suspension",
+                url: "https://www.thumpertalk.com/forums/forum/28-motorcycle-suspension/",
+                description: "Motorcycle suspension discussions - setup, valving, troubleshooting",
+                tags: ["technical", "adventure"]
+            },
+            
+            // Regional/International Forums
+            {
+                name: "The Motorbike Forum UK",
+                url: "https://themotorbikeforum.co.uk",
+                description: "UK motorcycle forum - sports, adventure, touring, racing, mechanical advice",
+                tags: ["regional", "general"]
+            },
+            {
+                name: "Bike Chat Forums UK",
+                url: "https://www.bikechatforums.com/",
+                description: "Largest independent UK motorcycle chat forum",
+                tags: ["regional", "general"]
+            },
+            {
+                name: "UKGSer",
+                url: "https://www.ukgser.com/community/",
+                description: "UK BMW GS community forum - adventures, technical, events",
+                tags: ["regional", "brand", "adventure"]
+            },
+            {
+                name: "Best Biking Roads Europe",
+                url: "https://www.bestbikingroads.com/forum/routes/europe/",
+                description: "European motorcycle travel forum - routes, trip planning, recommendations",
+                tags: ["regional", "adventure"]
+            },
+            
+            // Chopper/Bobber Forums
+            {
+                name: "ChopCult Forum",
+                url: "http://www.chopcult.com/forum/",
+                description: "Chopper culture central - build threads, tech help, parts trading",
+                tags: ["chopper", "custom"]
+            },
+            {
+                name: "HD Forums Choppers",
+                url: "https://www.hdforums.com/forum/",
+                description: "Harley choppers, bobbers, custom builds, vintage discussions",
+                tags: ["chopper", "brand", "vintage"]
+            },
+            {
+                name: "Lowbrow Customs Community",
+                url: "https://www.lowbrowcustoms.com/",
+                description: "Bobber and chopper parts, building guides, technical resources",
+                tags: ["chopper", "custom", "technical"]
+            },
+            
+            // Specialized Forums
+            {
+                name: "Ninja 400 Riders",
+                url: "https://www.ninja400riders.com/",
+                description: "Kawasaki Ninja 400/Z400 community - track racing, performance, modifications",
+                tags: ["brand", "sport", "racing"]
+            },
+            {
+                name: "RC390 Forum",
+                url: "https://www.rc390-forum.com/",
+                description: "KTM RC390 owners - racing, suspension, performance modifications",
+                tags: ["brand", "sport", "racing"]
+            },
+            {
+                name: "ZX4R Forum",
+                url: "https://www.zx4rforum.com/",
+                description: "Kawasaki ZX-4R supersport community - ECU tuning, track setup",
+                tags: ["brand", "sport", "tuning"]
+            },
+            {
+                name: "Africa Twin Forum",
+                url: "https://www.africatwinforum.com/",
+                description: "Honda Africa Twin adventure bike community",
+                tags: ["brand", "adventure"]
+            },
+            {
+                name: "Tenere 700 Forum",
+                url: "https://www.tenere700.net/",
+                description: "Yamaha Tenere 700 adventure bike discussions",
+                tags: ["brand", "adventure"]
+            },
+            {
+                name: "XR650L/R Forums",
+                url: "https://www.xr650r.com/forums/",
+                description: "Honda XR650L and XR650R dual sport community",
+                tags: ["brand", "adventure"]
+            },
+            {
+                name: "DR650 Forum",
+                url: "https://dr650.zenseeker.net/",
+                description: "Suzuki DR650 dual sport modifications and maintenance",
+                tags: ["brand", "adventure", "technical"]
+            },
+            {
+                name: "Two Wheel Forum",
+                url: "https://www.twowheelforum.com/forums/",
+                description: "Global motorcycle and sportbike forum - equipment, mods, racing",
+                tags: ["general", "sport", "racing"]
+            },
+            {
+                name: "Rat Rod Bikes Forum",
+                url: "https://ratrodbikes.com/",
+                description: "Custom rat rod style motorcycles and bicycles",
+                tags: ["custom", "chopper"]
+            },
+            {
+                name: "Vital MX",
+                url: "https://www.vitalmx.com/forums/",
+                description: "Motocross and off-road motorcycle forums",
+                tags: ["racing", "adventure"]
+            },
+            {
+                name: "Aprilia Forum",
+                url: "https://www.apriliaforum.com/forums/",
+                description: "Aprilia sportbike and motorcycle discussions",
+                tags: ["brand", "sport"]
+            },
+            {
+                name: "MV Agusta Forum",
+                url: "https://www.mvagustaforum.com/",
+                description: "MV Agusta owners community",
+                tags: ["brand", "sport"]
+            },
+            {
+                name: "Indian Motorcycle Forum",
+                url: "https://www.indianmotorcycles.net/",
+                description: "Indian Motorcycle owners and enthusiasts",
+                tags: ["brand", "custom"]
+            },
+            {
+                name: "Victory Motorcycle Forum",
+                url: "https://www.victorymotorcycles.com/en-us/forum",
+                description: "Victory Motorcycle community discussions",
+                tags: ["brand", "custom"]
+            },
+            {
+                name: "Buell Forum",
+                url: "https://www.buellxb.com/",
+                description: "Buell motorcycle enthusiasts community",
+                tags: ["brand", "sport"]
+            },
+            {
+                name: "Norton Owners Club",
+                url: "https://www.nortonownersclub.org/",
+                description: "Norton motorcycle owners and vintage restoration",
+                tags: ["brand", "vintage"]
+            },
+            {
+                name: "Royal Enfield Forum",
+                url: "https://www.royalenfield.com/forum/",
+                description: "Royal Enfield motorcycle community worldwide",
+                tags: ["brand", "vintage", "adventure"]
+            },
+            {
+                name: "Moto Guzzi Forum",
+                url: "https://wildguzzi.com/forum/",
+                description: "Moto Guzzi enthusiasts and technical discussions",
+                tags: ["brand", "vintage", "technical"]
+            },
+            {
+                name: "Ural Motorcycle Forum",
+                url: "https://www.sovietsteeds.com/forums/",
+                description: "Ural sidecar motorcycle community",
+                tags: ["brand", "vintage", "adventure"]
+            },
+            {
+                name: "Can-Am Spyder Forum",
+                url: "https://www.spyderlovers.com/forums/",
+                description: "Can-Am Spyder three-wheel motorcycle forum",
+                tags: ["brand"]
+            },
+            {
+                name: "CFMoto Forum",
+                url: "https://cfmoto-forum.com/",
+                description: "CFMoto motorcycle owners community",
+                tags: ["brand", "adventure"]
+            },
+            {
+                name: "SYM Forum",
+                url: "https://www.symforum.com/",
+                description: "SYM scooter and motorcycle discussions",
+                tags: ["brand"]
+            },
+            {
+                name: "Kymco Forum",
+                url: "https://www.kymcoforum.com/",
+                description: "Kymco scooter and motorcycle community",
+                tags: ["brand"]
+            },
+            {
+                name: "Cleveland CycleWerks Forum",
+                url: "https://ccwforums.com/",
+                description: "Cleveland CycleWerks motorcycle community",
+                tags: ["brand", "custom"]
+            },
+            {
+                name: "Benelli Forum",
+                url: "https://www.benelliforum.com/",
+                description: "Benelli motorcycle owners discussions",
+                tags: ["brand", "sport"]
+            },
+            {
+                name: "Husqvarna Forum",
+                url: "https://www.husqvarna-motorcycles.com/",
+                description: "Husqvarna motorcycle community - enduro, motocross, street",
+                tags: ["brand", "adventure", "racing"]
+            },
+            {
+                name: "Beta Forum",
+                url: "https://www.betausa.com/",
+                description: "Beta motorcycle and trials bike community",
+                tags: ["brand", "adventure"]
+            },
+            {
+                name: "GasGas Forum",
+                url: "https://www.gasgasriderclub.com/",
+                description: "GasGas enduro and trials motorcycle forum",
+                tags: ["brand", "adventure", "racing"]
+            },
+            {
+                name: "Sherco Forum",
+                url: "https://www.shercoforum.com/",
+                description: "Sherco trials and enduro motorcycle discussions",
+                tags: ["brand", "adventure"]
+            }
+        ];
+        
+        let currentSort = { column: 'name', direction: 'asc' };
+        let filteredData = [...forumData];
+        
+        function renderTable(data) {
+            const tbody = document.getElementById('forumTableBody');
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                document.getElementById('noResults').style.display = 'block';
+                document.querySelector('table').style.display = 'none';
+            } else {
+                document.getElementById('noResults').style.display = 'none';
+                document.querySelector('table').style.display = 'table';
+                
+                data.forEach(forum => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="forum-name">${forum.name}</td>
+                        <td><a href="${forum.url}" target="_blank" class="forum-link">Visit Forum</a></td>
+                        <td>${forum.description}</td>
+                        <td class="tags">
+                            ${forum.tags.map(tag => `<span class="tag ${tag}">${tag}</span>`).join('')}
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            updateForumCount(data.length);
+        }
+        
+        function updateForumCount(count) {
+            document.getElementById('forumCount').textContent = count;
+        }
+        
+        function sortData(column) {
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+            
+            filteredData.sort((a, b) => {
+                let aVal = a[column];
+                let bVal = b[column];
+                
+                if (column === 'tags') {
+                    aVal = aVal.join(', ');
+                    bVal = bVal.join(', ');
+                }
+                
+                if (column === 'link') {
+                    aVal = a.url;
+                    bVal = b.url;
+                }
+                
+                if (currentSort.direction === 'asc') {
+                    return aVal.localeCompare(bVal);
+                } else {
+                    return bVal.localeCompare(aVal);
+                }
+            });
+            
+            updateSortIndicators();
+            renderTable(filteredData);
+        }
+        
+        function updateSortIndicators() {
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+                if (th.dataset.column === currentSort.column) {
+                    th.classList.add(`sorted-${currentSort.direction}`);
+                }
+            });
+        }
+        
+        function filterData() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            
+            filteredData = forumData.filter(forum => {
+                const matchesSearch = !searchTerm || 
+                    forum.name.toLowerCase().includes(searchTerm) ||
+                    forum.description.toLowerCase().includes(searchTerm);
+                
+                const matchesCategory = !categoryFilter || 
+                    forum.tags.includes(categoryFilter);
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            sortData(currentSort.column);
+        }
+        
+        // Event Listeners
+        document.getElementById('search').addEventListener('input', filterData);
+        document.getElementById('categoryFilter').addEventListener('change', filterData);
+        
+        document.querySelectorAll('th').forEach(th => {
+            th.addEventListener('click', () => {
+                sortData(th.dataset.column);
+            });
+        });
+        
+        // Initial render
+        renderTable(forumData);
+        updateSortIndicators();
+    </script>
+</body>
+</html>

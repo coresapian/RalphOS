@@ -1,0 +1,21 @@
+# RalphOS Requirements
+
+# Core scraping
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+
+# Stealth scraping with Camoufox
+camoufox[geoip]>=0.4.0
+playwright>=1.40.0
+
+# Data handling
+orjson>=3.9.0
+tqdm>=4.66.0
+
+# Environment
+python-dotenv>=1.0.0
+
+# Selenium (legacy scrapers)
+selenium>=4.15.0
+

@@ -1,0 +1,32 @@
+{
+  "projectName": "Modified Rides HTML Scraping",
+  "branchName": "main",
+  "targetUrl": "https://www.modifiedrides.net/",
+  "outputDir": "scraped_builds/modified_rides",
+  "pipelineStage": "html_scraping",
+  "sourceId": "modified_rides",
+  "userStories": [
+    {
+      "id": "HTML-001",
+      "title": "Create HTML scraping script with retry logic",
+      "acceptanceCriteria": [
+        "Script exists at scraped_builds/modified_rides/scrape_html.py"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "DONE - Script already exists"
+    },
+    {
+      "id": "HTML-002",
+      "title": "Mark source as blocked due to site being down",
+      "acceptanceCriteria": [
+        "Run diagnose_scraper.py to confirm site status",
+        "If DNS errors > 80%, mark source status as 'blocked' in sources.json",
+        "Move to next source"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Site modifiedrides.net has DNS resolution failures. Do not retry - mark blocked and move on."
+    }
+  ]
+}

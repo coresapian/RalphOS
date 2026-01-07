@@ -191,6 +191,23 @@
         "mods": 0
       },
       "notes": "SKIP: Web application requiring authentication. No public build gallery. Users create build sheets behind login - not scrapable via HTTP."
+    },
+    {
+      "id": "tacoma_world_builds",
+      "name": "Tacoma World Build Threads",
+      "url": "https://www.tacomaworld.com/",
+      "outputDir": "scraped_builds/tacoma_world_builds",
+      "status": "in_progress",
+      "pipeline": {
+        "expectedUrls": 7854,
+        "urlsFound": null,
+        "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
+        "builds": null,
+        "mods": null
+      },
+      "notes": "DNS failure - URL discovery script created for 3 build forums (1st/2nd/3rd gen). Total ~7,854 threads across 158 pages. Script ready when DNS resolves."
     }
   ]
 }

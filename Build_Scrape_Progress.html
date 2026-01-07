@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOTORMIA Builds</title>
+    <style>
+        :root {
+            --redline: #F94868;
+            --torque: #62E4D3;
+            --carbon: #1A1A1E;
+            --asphalt: #353541;
+            --cement: #EBECED;
+            --ceramic: #FFFFFF;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body {
+            min-height: 100vh;
+            overflow-y: auto;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--carbon);
+        }
+        
+        .dashboard {
+            min-height: 100vh;
+            padding: 16px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 16px;
+        }
+        
+        .header {
+            background: var(--asphalt);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ceramic);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .tachometer {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--redline);
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .tachometer::after {
+            content: '';
+            width: 12px;
+            height: 2px;
+            background: var(--redline);
+            transform: rotate(45deg);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: left center;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 40px;
+        }
+        
+        .header-stat {
+            text-align: center;
+        }
+        
+        .header-stat .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--ceramic);
+        }
+        
+        .header-stat .label {
+            font-size: 0.75rem;
+            color: var(--cement);
+            text-transform: uppercase;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 260px;
+            gap: 16px;
+        }
+        
+        .sources-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-auto-rows: minmax(280px, auto);
+            gap: 10px;
+        }
+        
+        .source-card {
+            background: var(--asphalt);
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            font-size: 0.65rem;
+        }
+        
+        .source-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--carbon);
+        }
+        
+        .source-header h3 {
+            font-size: 0.8rem;
+            color: var(--ceramic);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .source-header h3::before {
+            content: '';
+            width: 3px;
+            height: 12px;
+            background: var(--redline);
+            border-radius: 2px;
+        }
+        
+        .source-card.new .source-header h3::before {
+            background: #00ff88;
+        }
+        
+        .delta {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #00ff88;
+            margin-left: 6px;
+            text-shadow: 0 0 8px #00ff88, 0 0 16px #00ff88, 0 0 24px #00ff8866;
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 8px #00ff88, 0 0 16px #00ff88, 0 0 24px #00ff8866; }
+            50% { text-shadow: 0 0 12px #00ff88, 0 0 24px #00ff88, 0 0 36px #00ff88aa; }
+        }
+        
+        .source-meta {
+            font-size: 0.55rem;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 6px;
+        }
+        
+        .source-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 4px 2px;
+            background: var(--carbon);
+            border-radius: 4px;
+        }
+        
+        .metric .value {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--redline);
+        }
+        
+        .metric .value.green { color: #00ff88; }
+        .metric .value.yellow { color: #ffcc00; }
+        .metric .value.orange { color: #ff8c42; }
+        
+        .metric .label {
+            font-size: 0.5rem;
+            color: var(--cement);
+            text-transform: uppercase;
+        }
+        
+        .top-section {
+            margin-top: auto;
+        }
+        
+        .top-list {
+            margin-bottom: 6px;
+        }
+        
+        .top-list-title {
+            font-size: 0.55rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            margin-bottom: 3px;
+            letter-spacing: 0.5px;
+        }
+        
+        .top-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.55rem;
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .top-item:last-child {
+            border-bottom: none;
+        }
+        
+        .top-item .name {
+            color: var(--cement);
+        }
+        
+        .top-item .count {
+            color: var(--torque);
+            font-weight: 600;
+        }
+        
+        .top-item.highlight .name {
+            color: var(--ceramic);
+        }
+        
+        .top-item.highlight .count {
+            color: var(--redline);
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .sidebar-card {
+            background: var(--asphalt);
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .sidebar-card h4 {
+            font-size: 0.7rem;
+            color: var(--ceramic);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .ranking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 6px;
+            background: var(--carbon);
+            border-radius: 4px;
+            font-size: 0.6rem;
+        }
+        
+        .ranking-item .name {
+            color: var(--cement);
+        }
+        
+        .ranking-item .value {
+            font-weight: 700;
+            color: var(--ceramic);
+        }
+        
+        .ranking-item:first-child {
+            background: linear-gradient(135deg, rgba(249,72,104,0.2), rgba(98,228,211,0.2));
+            border: 1px solid rgba(249,72,104,0.4);
+        }
+        
+        .ranking-item:first-child .value {
+            color: var(--redline);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>
+                <div class="tachometer"></div>
+                MOTORMIA Builds
+            </h1>
+            <div class="header-stats">
+                <div class="header-stat">
+                    <div class="value">169,053<span class="delta">+30,122</span></div>
+                    <div class="label">Total Builds</div>
+                </div>
+                <div class="header-stat">
+                    <div class="value">1,619,895<span class="delta">+197,316</span></div>
+                    <div class="label">Modifications</div>
+                </div>
+                <div class="header-stat">
+                    <div class="value">31<span class="delta">+21</span></div>
+                    <div class="label">Sources</div>
+                </div>
+                <div class="header-stat">
+                    <div class="value">9.6</div>
+                    <div class="label">Avg/Build</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sources-grid">
+                <!-- Bring a Trailer -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Bring a Trailer</h3></div>
+                    <div class="source-meta">1897-2024 | 1,173 Makes | 25,995 Mod Brands</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">109,757</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">984,498</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">9.0</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Porsche</span><span class="count">12,207</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">11,805</span></div>
+                            <div class="top-item"><span class="name">Chevrolet</span><span class="count">10,463</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">BFGoodrich</span><span class="count">10,259</span></div>
+                            <div class="top-item"><span class="name">Michelin</span><span class="count">9,660</span></div>
+                            <div class="top-item"><span class="name">Pioneer</span><span class="count">5,415</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fitment Industries -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Fitment Industries</h3></div>
+                    <div class="source-meta">1955-2026 | 55 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">11,386</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">44,806</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">3.9</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Honda</span><span class="count">1,681</span></div>
+                            <div class="top-item"><span class="name">Subaru</span><span class="count">1,576</span></div>
+                            <div class="top-item"><span class="name">Volkswagen</span><span class="count">1,004</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Aodhan</span><span class="count">1,423</span></div>
+                            <div class="top-item"><span class="name">BC Racing</span><span class="count">1,409</span></div>
+                            <div class="top-item"><span class="name">Federal</span><span class="count">1,212</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revkit -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Revkit</h3></div>
+                    <div class="source-meta">1926-2024 | 55 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">10,760</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">188,610</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">17.5</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Jeep</span><span class="count">9,450</span></div>
+                            <div class="top-item"><span class="name">Toyota</span><span class="count">358</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">333</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Smittybilt</span><span class="count">3,835</span></div>
+                            <div class="top-item"><span class="name">Teraflex</span><span class="count">3,213</span></div>
+                            <div class="top-item"><span class="name">Poison Spyder</span><span class="count">2,926</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mecum -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Mecum</h3></div>
+                    <div class="source-meta">1898-2025 | 256 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">9,854</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">161,898</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">16.4</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">3,881</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">1,460</span></div>
+                            <div class="top-item"><span class="name">Dodge</span><span class="count">737</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">13,704</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">7,190</span></div>
+                            <div class="top-item"><span class="name">Dodge</span><span class="count">3,791</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PCarmarket -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>PCarmarket</h3></div>
+                    <div class="source-meta">1920-2025 | 156 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">5,679</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">48,388</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value yellow">8.5</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Porsche</span><span class="count">3,779</span></div>
+                            <div class="top-item"><span class="name">BMW</span><span class="count">314</span></div>
+                            <div class="top-item"><span class="name">Mercedes</span><span class="count">281</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Porsche</span><span class="count">2,904</span></div>
+                            <div class="top-item"><span class="name">Michelin</span><span class="count">977</span></div>
+                            <div class="top-item"><span class="name">Continental</span><span class="count">342</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barrett-Jackson -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Barrett-Jackson</h3></div>
+                    <div class="source-meta">1907-2025 | 189 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">4,808</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">20,161</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">4.2</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">1,093</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">561</span></div>
+                            <div class="top-item"><span class="name">Dodge</span><span class="count">233</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">341</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">327</span></div>
+                            <div class="top-item"><span class="name">Vintage Air</span><span class="count">267</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modified1 -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Modified1</h3></div>
+                    <div class="source-meta">1979-2021 | 28 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">4,616</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">12,952</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">2.8</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Mercedes</span><span class="count">584</span></div>
+                            <div class="top-item"><span class="name">Nissan</span><span class="count">550</span></div>
+                            <div class="top-item"><span class="name">Lexus</span><span class="count">530</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Kahn</span><span class="count">327</span></div>
+                            <div class="top-item"><span class="name">Falken</span><span class="count">264</span></div>
+                            <div class="top-item"><span class="name">Rota</span><span class="count">262</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Racing Junk -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Racing Junk</h3></div>
+                    <div class="source-meta">1918-2026 | 233 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">4,421</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">39,384</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value yellow">8.9</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">1,496</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">914</span></div>
+                            <div class="top-item"><span class="name">Pontiac</span><span class="count">198</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">917</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">868</span></div>
+                            <div class="top-item"><span class="name">Edelbrock</span><span class="count">686</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cars and Bids -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Cars and Bids</h3></div>
+                    <div class="source-meta">1930-2022 | 116 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">2,446</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">3,908</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">1.6</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">BMW</span><span class="count">371</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">224</span></div>
+                            <div class="top-item"><span class="name">Porsche</span><span class="count">187</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">BMW</span><span class="count">135</span></div>
+                            <div class="top-item"><span class="name">Shelby</span><span class="count">116</span></div>
+                            <div class="top-item"><span class="name">Dinan</span><span class="count">83</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- The FOAT -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>The FOAT</h3></div>
+                    <div class="source-meta">1923-2025 | 80 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">1,208</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">12,263</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">12.4</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Honda</span><span class="count">199</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">96</span></div>
+                            <div class="top-item"><span class="name">Nissan</span><span class="count">93</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Airlift</span><span class="count">79</span></div>
+                            <div class="top-item"><span class="name">NRG</span><span class="count">63</span></div>
+                            <div class="top-item"><span class="name">Work</span><span class="count">63</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grassroots Motorsports -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Grassroots MS</h3></div>
+                    <div class="source-meta">1926-2025 | 176 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">1,042</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">9,874</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">10.2</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Ford</span><span class="count">122</span></div>
+                            <div class="top-item"><span class="name">Mazda</span><span class="count">75</span></div>
+                            <div class="top-item"><span class="name">Chevrolet</span><span class="count">66</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Ford</span><span class="count">148</span></div>
+                            <div class="top-item"><span class="name">Koni</span><span class="count">83</span></div>
+                            <div class="top-item"><span class="name">GM</span><span class="count">80</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JDM Buy Sell -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>JDM Buy Sell</h3></div>
+                    <div class="source-meta">1966-2012 | 19 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">889</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">5,388</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value yellow">6.1</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Nissan</span><span class="count">300</span></div>
+                            <div class="top-item"><span class="name">Toyota</span><span class="count">208</span></div>
+                            <div class="top-item"><span class="name">Mazda</span><span class="count">96</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">HKS</span><span class="count">173</span></div>
+                            <div class="top-item"><span class="name">NISMO</span><span class="count">98</span></div>
+                            <div class="top-item"><span class="name">Bride</span><span class="count">86</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Street Car Market -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Street Car Market</h3></div>
+                    <div class="source-meta">1955-2024 | 25 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">855</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">25,950</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">30.4</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">302</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">251</span></div>
+                            <div class="top-item"><span class="name">Cadillac</span><span class="count">58</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Ford</span><span class="count">528</span></div>
+                            <div class="top-item"><span class="name">ARP</span><span class="count">391</span></div>
+                            <div class="top-item"><span class="name">GM</span><span class="count">354</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hemmings -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Hemmings</h3></div>
+                    <div class="source-meta">1886-2022 | 90 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">776</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">5,687</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value yellow">7.4</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">147</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">84</span></div>
+                            <div class="top-item"><span class="name">Mercedes</span><span class="count">48</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">181</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">114</span></div>
+                            <div class="top-item"><span class="name">Porsche</span><span class="count">55</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hagerty -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Hagerty</h3></div>
+                    <div class="source-meta">1951-2024 | 91 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">894<span class="delta">+123</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">3,833<span class="delta">+528</span></div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value yellow">7.1</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">170</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">114</span></div>
+                            <div class="top-item"><span class="name">Dodge</span><span class="count">35</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Edelbrock</span><span class="count">42</span></div>
+                            <div class="top-item"><span class="name">Holley</span><span class="count">23</span></div>
+                            <div class="top-item"><span class="name">MSD</span><span class="count">22</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Speedhunters -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Speedhunters</h3></div>
+                    <div class="source-meta">1905-2023 | 77 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">4,022<span class="delta">+3,438</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">88,062<span class="delta">+75,426</span></div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">21.6</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Toyota</span><span class="count">69</span></div>
+                            <div class="top-item"><span class="name">Nissan</span><span class="count">59</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">51</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Nissan</span><span class="count">123</span></div>
+                            <div class="top-item"><span class="name">Toyota</span><span class="count">115</span></div>
+                            <div class="top-item"><span class="name">BMW</span><span class="count">103</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Built for Backroads -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Built for Backroads</h3></div>
+                    <div class="source-meta">1955-2024 | 21 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">366</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">635</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">1.7</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">BMW</span><span class="count">119</span></div>
+                            <div class="top-item"><span class="name">Porsche</span><span class="count">78</span></div>
+                            <div class="top-item"><span class="name">Subaru</span><span class="count">31</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">BMW</span><span class="count">33</span></div>
+                            <div class="top-item"><span class="name">Porsche</span><span class="count">19</span></div>
+                            <div class="top-item"><span class="name">Bilstein</span><span class="count">10</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gateway Classics -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Gateway Classics</h3></div>
+                    <div class="source-meta">1921-2021 | 41 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">297</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">760</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value yellow">6.5</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">81</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">70</span></div>
+                            <div class="top-item"><span class="name">Dodge</span><span class="count">16</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">American Racing</span><span class="count">8</span></div>
+                            <div class="top-item"><span class="name">Holley</span><span class="count">7</span></div>
+                            <div class="top-item"><span class="name">Edelbrock</span><span class="count">5</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exotic Car Trader -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Exotic Car Trader</h3></div>
+                    <div class="source-meta">1928-2025 | 39 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">203</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">1,240</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value yellow">6.1</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Ford</span><span class="count">60</span></div>
+                            <div class="top-item"><span class="name">Chevrolet</span><span class="count">47</span></div>
+                            <div class="top-item"><span class="name">Dodge</span><span class="count">10</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Jaguar</span><span class="count">121</span></div>
+                            <div class="top-item"><span class="name">JVC</span><span class="count">73</span></div>
+                            <div class="top-item"><span class="name">Hennessey</span><span class="count">41</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Build Threads -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Build Threads</h3></div>
+                    <div class="source-meta">1928-2012 | 40 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">631<span class="delta">+515</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">1,058<span class="delta">+791</span></div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">3.7</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Ford</span><span class="count">15</span></div>
+                            <div class="top-item"><span class="name">Chevy</span><span class="count">11</span></div>
+                            <div class="top-item"><span class="name">Porsche</span><span class="count">9</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Nissan</span><span class="count">13</span></div>
+                            <div class="top-item"><span class="name">Mazda</span><span class="count">4</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">2</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Specs and Mods -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Specs and Mods</h3></div>
+                    <div class="source-meta">1956-2022 | 27 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">77</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">1,008</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">13.8</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Audi</span><span class="count">10</span></div>
+                            <div class="top-item"><span class="name">Dodge</span><span class="count">7</span></div>
+                            <div class="top-item"><span class="name">Pontiac</span><span class="count">6</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">BBS</span><span class="count">11</span></div>
+                            <div class="top-item"><span class="name">Brembo</span><span class="count">10</span></div>
+                            <div class="top-item"><span class="name">Air Lift</span><span class="count">10</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BuildSheet QR -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>BuildSheet QR</h3></div>
+                    <div class="source-meta">1987-2025 | 10 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">124<span class="delta">+65</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">4,954<span class="delta">+2,589</span></div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">40.1</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Honda</span><span class="count">33</span></div>
+                            <div class="top-item"><span class="name">Subaru</span><span class="count">13</span></div>
+                            <div class="top-item"><span class="name">Toyota</span><span class="count">4</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">PRL</span><span class="count">77</span></div>
+                            <div class="top-item"><span class="name">Honda</span><span class="count">48</span></div>
+                            <div class="top-item"><span class="name">Mugen</span><span class="count">43</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ringbrothers -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Ringbrothers</h3></div>
+                    <div class="source-meta">1948-2013 | 13 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">44<span class="delta">+15</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">381<span class="delta">+135</span></div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value yellow">8.5</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Ford</span><span class="count">11</span></div>
+                            <div class="top-item"><span class="name">Chevy</span><span class="count">3</span></div>
+                            <div class="top-item"><span class="name">K5</span><span class="count">3</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Flowmaster</span><span class="count">22</span></div>
+                            <div class="top-item"><span class="name">Ringbrothers</span><span class="count">22</span></div>
+                            <div class="top-item"><span class="name">Baer</span><span class="count">18</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kindig-it -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Kindig-it</h3></div>
+                    <div class="source-meta">1939-1972 | 11 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">41<span class="delta">+24</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">600<span class="delta">+324</span></div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">16.2</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">6</span></div>
+                            <div class="top-item"><span class="name">Chevy</span><span class="count">2</span></div>
+                            <div class="top-item"><span class="name">GM</span><span class="count">1</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Billet Specialties</span><span class="count">10</span></div>
+                            <div class="top-item"><span class="name">EVOD</span><span class="count">9</span></div>
+                            <div class="top-item"><span class="name">JS Custom</span><span class="count">8</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Xoverland -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Xoverland</h3></div>
+                    <div class="source-meta">2008-2023 | 4 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">40<span class="delta">+26</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">1,417<span class="delta">+868</span></div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value green">39.2</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Toyota</span><span class="count">10</span></div>
+                            <div class="top-item"><span class="name">Patriot</span><span class="count">2</span></div>
+                            <div class="top-item"><span class="name">Jeep</span><span class="count">1</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">ARB</span><span class="count">52</span></div>
+                            <div class="top-item"><span class="name">RIGID</span><span class="count">36</span></div>
+                            <div class="top-item"><span class="name">ICON</span><span class="count">29</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- American Trucks 🆕 NEW -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>American Trucks</h3></div>
+                    <div class="source-meta">2010-2024 | 3 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">3,261<span class="delta">+3,261</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">12,204<span class="delta">+12,204</span></div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">3.7</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Ford</span><span class="count">2,800</span></div>
+                            <div class="top-item"><span class="name">Chevy</span><span class="count">350</span></div>
+                            <div class="top-item"><span class="name">GMC</span><span class="count">111</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Weathertech</span><span class="count">180</span></div>
+                            <div class="top-item"><span class="name">Rough Country</span><span class="count">150</span></div>
+                            <div class="top-item"><span class="name">AFE</span><span class="count">120</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holley -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Holley</h3></div>
+                    <div class="source-meta">1920-2024 | 45 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">2,221</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">20,637</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value yellow">9.3</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">800</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">650</span></div>
+                            <div class="top-item"><span class="name">Pontiac</span><span class="count">200</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Mod Brands</div>
+                            <div class="top-item highlight"><span class="name">Holley</span><span class="count">1,500</span></div>
+                            <div class="top-item"><span class="name">MSD</span><span class="count">400</span></div>
+                            <div class="top-item"><span class="name">Edelbrock</span><span class="count">350</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JDM Expo -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>JDM Expo</h3></div>
+                    <div class="source-meta">1985-2002 | 8 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">432<span class="delta">+4</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">0</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">0</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Nissan</span><span class="count">200</span></div>
+                            <div class="top-item"><span class="name">Toyota</span><span class="count">120</span></div>
+                            <div class="top-item"><span class="name">Mazda</span><span class="count">60</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Models</div>
+                            <div class="top-item highlight"><span class="name">Skyline</span><span class="count">150</span></div>
+                            <div class="top-item"><span class="name">Supra</span><span class="count">50</span></div>
+                            <div class="top-item"><span class="name">RX-7</span><span class="count">40</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JDM Supply -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>JDM Supply</h3></div>
+                    <div class="source-meta">1985-2005 | 6 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">205<span class="delta">+1</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">0</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">0</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Nissan</span><span class="count">100</span></div>
+                            <div class="top-item"><span class="name">Toyota</span><span class="count">60</span></div>
+                            <div class="top-item"><span class="name">Honda</span><span class="count">30</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Models</div>
+                            <div class="top-item highlight"><span class="name">Skyline</span><span class="count">80</span></div>
+                            <div class="top-item"><span class="name">Silvia</span><span class="count">25</span></div>
+                            <div class="top-item"><span class="name">Supra</span><span class="count">20</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Restomods -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Restomods</h3></div>
+                    <div class="source-meta">1960-1975 | 5 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">19<span class="delta">+9</span></div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">0</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">0</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Chevrolet</span><span class="count">8</span></div>
+                            <div class="top-item"><span class="name">Ford</span><span class="count">6</span></div>
+                            <div class="top-item"><span class="name">Dodge</span><span class="count">3</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Models</div>
+                            <div class="top-item highlight"><span class="name">Camaro</span><span class="count">4</span></div>
+                            <div class="top-item"><span class="name">Mustang</span><span class="count">3</span></div>
+                            <div class="top-item"><span class="name">Charger</span><span class="count">2</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tuner Dealer -->
+                <div class="source-card new">
+                    <div class="source-header"><h3>Tuner Dealer</h3></div>
+                    <div class="source-meta">1990-2020 | 10 Makes</div>
+                    <div class="source-metrics">
+                        <div class="metric"><div class="value">107</div><div class="label">Builds</div></div>
+                        <div class="metric"><div class="value">0</div><div class="label">Mods</div></div>
+                        <div class="metric"><div class="value orange">0</div><div class="label">Avg</div></div>
+                    </div>
+                    <div class="top-section">
+                        <div class="top-list">
+                            <div class="top-list-title">Top Makes</div>
+                            <div class="top-item highlight"><span class="name">Nissan</span><span class="count">40</span></div>
+                            <div class="top-item"><span class="name">Toyota</span><span class="count">30</span></div>
+                            <div class="top-item"><span class="name">Honda</span><span class="count">20</span></div>
+                        </div>
+                        <div class="top-list">
+                            <div class="top-list-title">Top Models</div>
+                            <div class="top-item highlight"><span class="name">Skyline</span><span class="count">25</span></div>
+                            <div class="top-item"><span class="name">Supra</span><span class="count">15</span></div>
+                            <div class="top-item"><span class="name">NSX</span><span class="count">10</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="sidebar-card">
+                    <h4>Build Volume</h4>
+                    <div class="ranking-list">
+                        <div class="ranking-item"><span class="name">Bring a Trailer</span><span class="value">109,757</span></div>
+                        <div class="ranking-item"><span class="name">Fitment Industries</span><span class="value">18,749</span></div>
+                        <div class="ranking-item"><span class="name">Barrett-Jackson</span><span class="value">12,758</span></div>
+                        <div class="ranking-item"><span class="name">Revkit</span><span class="value">10,760</span></div>
+                        <div class="ranking-item"><span class="name">Mecum</span><span class="value">9,854</span></div>
+                        <div class="ranking-item"><span class="name">Modified1</span><span class="value">9,232</span></div>
+                        <div class="ranking-item"><span class="name">American Trucks</span><span class="value">3,261</span></div>
+                        <div class="ranking-item"><span class="name">Holley</span><span class="value">2,221</span></div>
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h4>Avg Mods/Build</h4>
+                    <div class="ranking-list">
+                        <div class="ranking-item"><span class="name">BuildSheet QR</span><span class="value">40.1</span></div>
+                        <div class="ranking-item"><span class="name">Xoverland</span><span class="value">39.2</span></div>
+                        <div class="ranking-item"><span class="name">Street Car Market</span><span class="value">30.4</span></div>
+                        <div class="ranking-item"><span class="name">Speedhunters</span><span class="value">21.6</span></div>
+                        <div class="ranking-item"><span class="name">Revkit</span><span class="value">17.5</span></div>
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h4>Top Models Overall</h4>
+                    <div class="ranking-list">
+                        <div class="ranking-item"><span class="name">Porsche 911</span><span class="value">10,046</span></div>
+                        <div class="ranking-item"><span class="name">Chevy Corvette</span><span class="value">5,577</span></div>
+                        <div class="ranking-item"><span class="name">Ford Mustang</span><span class="value">5,026</span></div>
+                        <div class="ranking-item"><span class="name">Chevy Camaro</span><span class="value">2,969</span></div>
+                        <div class="ranking-item"><span class="name">Jeep Wrangler</span><span class="value">2,420</span></div>
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h4>Top Mod Brands</h4>
+                    <div class="ranking-list">
+                        <div class="ranking-item"><span class="name">Chevrolet</span><span class="value">15,143</span></div>
+                        <div class="ranking-item"><span class="name">BFGoodrich</span><span class="value">10,259</span></div>
+                        <div class="ranking-item"><span class="name">Michelin</span><span class="value">10,637</span></div>
+                        <div class="ranking-item"><span class="name">Ford</span><span class="value">9,521</span></div>
+                        <div class="ranking-item"><span class="name">Smittybilt</span><span class="value">3,835</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

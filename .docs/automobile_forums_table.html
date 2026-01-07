@@ -1,0 +1,590 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Enthusiast Forums Database</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .subtitle {
+            margin-top: 10px;
+            color: #cbd5e0;
+            font-size: 1.1em;
+        }
+        .controls {
+            padding: 20px 30px;
+            background: #f7fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .stats {
+            padding: 15px 30px;
+            background: #f0f4f8;
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .stat strong {
+            color: #2d3748;
+            font-weight: 600;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background: #f7fafc;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        th:hover {
+            background: #edf2f7;
+        }
+        th.sortable::after {
+            content: ' ↕';
+            color: #cbd5e0;
+            font-size: 11px;
+        }
+        th.sorted-asc::after {
+            content: ' ↑';
+            color: #667eea;
+        }
+        th.sorted-desc::after {
+            content: ' ↓';
+            color: #667eea;
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+            color: #4a5568;
+        }
+        tr:hover {
+            background: #f7fafc;
+        }
+        .brand-cell {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .forum-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .forum-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #edf2f7;
+            color: #4a5568;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 2px;
+        }
+        .tag.high-activity {
+            background: #48bb78;
+            color: white;
+        }
+        .tag.verified {
+            background: #4299e1;
+            color: white;
+        }
+        .member-count {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .member-count.large {
+            color: #48bb78;
+        }
+        .member-count.medium {
+            color: #4299e1;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: calc(100vh - 300px);
+        }
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+            .header {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            .controls {
+                padding: 15px;
+            }
+            th, td {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏁 Auto Enthusiast Forums Database</h1>
+            <div class="subtitle">Comprehensive Directory of Build Documentation & Parts Communities</div>
+        </div>
+        
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by brand, forum name, or URL...">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="filterByType('all')">All Forums</button>
+                <button class="filter-btn" onclick="filterByType('high-activity')">High Activity</button>
+                <button class="filter-btn" onclick="filterByType('german')">German</button>
+                <button class="filter-btn" onclick="filterByType('japanese')">Japanese</button>
+                <button class="filter-btn" onclick="filterByType('american')">American</button>
+                <button class="filter-btn" onclick="filterByType('european')">European</button>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <strong id="totalForums">0</strong> Total Forums
+            </div>
+            <div class="stat">
+                <strong id="totalBrands">0</strong> Brands Covered
+            </div>
+            <div class="stat">
+                <strong id="visibleRows">0</strong> Results Shown
+            </div>
+        </div>
+        
+        <div class="table-wrapper">
+            <table id="forumsTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" onclick="sortTable(0)">Brand</th>
+                        <th class="sortable" onclick="sortTable(1)">Forum Name</th>
+                        <th class="sortable" onclick="sortTable(2)">URL</th>
+                        <th class="sortable" onclick="sortTable(3)">Focus/Models</th>
+                        <th class="sortable" onclick="sortTable(4)">Member Count</th>
+                        <th class="sortable" onclick="sortTable(5)">Key Features</th>
+                        <th>Tags</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const forumsData = [
+            // BMW Forums
+            {brand: "BMW", name: "Bimmerpost", url: "bimmerpost.com", focus: "All BMW models", members: "500,000+", features: "Model-specific forums, build threads, photo hosting", tags: ["high-activity", "german"]},
+            {brand: "BMW", name: "Bimmerfest", url: "bimmerfest.com", focus: "Classic & modern BMW", members: "400,000+", features: "DIY guides, technical archives", tags: ["german"]},
+            {brand: "BMW", name: "E46 Fanatics", url: "e46fanatics.com", focus: "BMW E46 3-Series", members: "250,000+", features: "Engine swaps, turbo builds", tags: ["german"]},
+            {brand: "BMW", name: "M5Board", url: "m5board.com", focus: "BMW M cars", members: "30,500+", features: "High-performance mods, supercharger builds", tags: ["german"]},
+            {brand: "BMW", name: "Bimmerforums", url: "bimmerforums.com", focus: "All BMW models", members: "200,000+", features: "Regional sections, marketplace", tags: ["german"]},
+
+            // Porsche Forums
+            {brand: "Porsche", name: "Rennlist", url: "rennlist.com", focus: "All Porsche models", members: "500,000+", features: "Generation-specific forums, track builds", tags: ["high-activity", "german"]},
+            {brand: "Porsche", name: "6SpeedOnline", url: "6speedonline.com", focus: "Porsche & exotics", members: "200,000+", features: "High-end builds, photography", tags: ["german", "verified"]},
+            {brand: "Porsche", name: "718 Forum", url: "718forum.com", focus: "Boxster/Cayman", members: "50,000+", features: "Current gen focused", tags: ["german"]},
+            {brand: "Porsche", name: "Planet-9", url: "planet-9.com", focus: "Porsche 911 & Cayman", members: "100,000+", features: "Technical discussions", tags: ["german"]},
+
+            // Mercedes-Benz Forums
+            {brand: "Mercedes-Benz", name: "MBWorld", url: "mbworld.org", focus: "All Mercedes & AMG", members: "400,000+", features: "AMG builds, technical forums", tags: ["german", "high-activity"]},
+            {brand: "Mercedes-Benz", name: "BenzWorld", url: "benzworld.org", focus: "All Mercedes models", members: "300,000+", features: "Classic & modern, DIY", tags: ["german"]},
+            {brand: "Mercedes-Benz", name: "MBClub UK", url: "forums.mbclub.co.uk", focus: "UK Mercedes community", members: "100,000+", features: "UK-specific, tuning", tags: ["german", "european"]},
+            {brand: "Mercedes-Benz", name: "BenzForum", url: "benzforum.com", focus: "Mercedes enthusiasts", members: "150,000+", features: "Performance mods", tags: ["german"]},
+
+            // Audi Forums
+            {brand: "Audi", name: "Audizine", url: "audizine.com", focus: "All Audi models", members: "300,000+", features: "Build threads, DIY guides", tags: ["german", "high-activity"]},
+            {brand: "Audi", name: "AudiWorld", url: "audiworld.com", focus: "All Audi models", members: "250,000+", features: "News, technical forums", tags: ["german"]},
+            {brand: "Audi", name: "QuattroWorld", url: "quattroworld.com", focus: "Quattro AWD systems", members: "150,000+", features: "AWD tech, performance", tags: ["german"]},
+            {brand: "Audi", name: "Audi-Forums", url: "audi-forums.com", focus: "All Audi models", members: "100,000+", features: "Marketplace, builds", tags: ["german"]},
+            {brand: "Audi", name: "R8Talk", url: "r8talk.com", focus: "Audi R8", members: "25,000+", features: "Supercar builds", tags: ["german"]},
+
+            // Volkswagen Forums
+            {brand: "Volkswagen", name: "VWVortex", url: "vwvortex.com", focus: "All VW models", members: "1,300,000+", features: "Largest VW forum, classifieds", tags: ["german", "high-activity", "verified"]},
+            {brand: "Volkswagen", name: "Golfmk6", url: "golfmk6.com", focus: "Golf MK6", members: "150,000+", features: "Generation specific", tags: ["german"]},
+            {brand: "Volkswagen", name: "Golfmk7", url: "golfmk7.com", focus: "Golf MK7", members: "200,000+", features: "Current gen Golf/GTI/R", tags: ["german"]},
+            {brand: "Volkswagen", name: "Golfmk8", url: "golfmk8.com", focus: "Golf MK8", members: "50,000+", features: "Latest generation", tags: ["german"]},
+            {brand: "Volkswagen", name: "VWForum", url: "vwforum.com", focus: "All VW models", members: "100,000+", features: "TDI specialists", tags: ["german"]},
+
+            // Ford Forums
+            {brand: "Ford", name: "Mustang6G", url: "mustang6g.com", focus: "S550 Mustang", members: "200,000+", features: "Current gen, vendor support", tags: ["american", "high-activity"]},
+            {brand: "Ford", name: "Corral.net", url: "corral.net", focus: "All Mustangs", members: "300,000+", features: "Classic builds, databases", tags: ["american"]},
+            {brand: "Ford", name: "SVTPerformance", url: "svtperformance.com", focus: "Ford SVT vehicles", members: "150,000+", features: "Raptor, Focus RS, GT500", tags: ["american"]},
+            {brand: "Ford", name: "F150Forum", url: "f150forum.com", focus: "Ford F-150", members: "430,000+", features: "3,000+ build threads", tags: ["american", "high-activity"]},
+            {brand: "Ford", name: "F150Gen14", url: "f150gen14.com", focus: "2021+ F-150", members: "50,000+", features: "Latest gen trucks", tags: ["american"]},
+            {brand: "Ford", name: "FocusFanatics", url: "focusfanatics.com", focus: "Ford Focus", members: "250,000+", features: "ST/RS builds", tags: ["american"]},
+
+            // Chevrolet Forums
+            {brand: "Chevrolet", name: "Camaro5", url: "camaro5.com", focus: "5th gen Camaro", members: "300,000+", features: "Build journals, tech", tags: ["american", "high-activity"]},
+            {brand: "Chevrolet", name: "Camaro6", url: "camaro6.com", focus: "6th gen Camaro", members: "200,000+", features: "Current gen builds", tags: ["american"]},
+            {brand: "Chevrolet", name: "CamaroZ28", url: "camaroz28.com", focus: "All Camaros", members: "150,000+", features: "Classic & modern", tags: ["american"]},
+            {brand: "Chevrolet", name: "Team Camaro Tech", url: "camaros.net", focus: "1st gen Camaro", members: "100,000+", features: "Restoration builds", tags: ["american"]},
+            {brand: "Chevrolet", name: "Corvette Forum", url: "corvetteforum.com", focus: "All Corvettes", members: "400,000+", features: "C1-C8 coverage", tags: ["american", "high-activity"]},
+            {brand: "Chevrolet", name: "CorvetteForum", url: "corvetteforums.com", focus: "Corvette enthusiasts", members: "100,000+", features: "Tech discussions", tags: ["american"]},
+            {brand: "Chevrolet", name: "Stingray Forums", url: "stingrayforums.com", focus: "C7/C8 Corvette", members: "75,000+", features: "Modern Corvettes", tags: ["american"]},
+
+            // Dodge/Chrysler Forums
+            {brand: "Dodge", name: "ChallengerTalk", url: "challengertalk.com", focus: "Dodge Challenger", members: "150,000+", features: "Hellcat builds", tags: ["american"]},
+            {brand: "Dodge", name: "Hellcat.org", url: "hellcat.org", focus: "SRT Hellcat", members: "50,000+", features: "Supercharged builds", tags: ["american"]},
+            {brand: "Dodge", name: "ChargerForumZ", url: "chargerforumz.com", focus: "Dodge Charger", members: "100,000+", features: "Modern muscle", tags: ["american"]},
+            {brand: "Dodge", name: "RamForum", url: "ramforum.com", focus: "RAM trucks", members: "200,000+", features: "Truck builds", tags: ["american"]},
+            {brand: "Dodge", name: "ViperAlley", url: "viperalley.com", focus: "Dodge Viper", members: "25,000+", features: "Supercar builds", tags: ["american"]},
+
+            // Jeep Forums
+            {brand: "Jeep", name: "JK-Forum", url: "jk-forum.com", focus: "JK/JL Wrangler", members: "300,000+", features: "Off-road builds", tags: ["american", "high-activity"]},
+            {brand: "Jeep", name: "JLWranglerForums", url: "jlwranglerforums.com", focus: "JL Wrangler", members: "150,000+", features: "Current gen, 4xe", tags: ["american"]},
+            {brand: "Jeep", name: "WranglerForum", url: "wranglerforum.com", focus: "All Wranglers", members: "200,000+", features: "Lift kits, armor", tags: ["american"]},
+            {brand: "Jeep", name: "JeepForum", url: "jeepforum.com", focus: "All Jeep models", members: "400,000+", features: "Technical forums", tags: ["american", "high-activity"]},
+
+            // Honda Forums
+            {brand: "Honda", name: "S2ki", url: "s2ki.com", focus: "Honda S2000", members: "200,000+", features: "Turbo builds, track", tags: ["japanese", "high-activity"]},
+            {brand: "Honda", name: "Honda-Tech", url: "honda-tech.com", focus: "All Honda/Acura", members: "500,000+", features: "Technical depth", tags: ["japanese", "high-activity"]},
+            {brand: "Honda", name: "8thcivic", url: "8thcivic.com", focus: "8th gen Civic", members: "150,000+", features: "Si builds", tags: ["japanese"]},
+            {brand: "Honda", name: "9thcivic", url: "9thcivic.com", focus: "9th gen Civic", members: "100,000+", features: "Generation specific", tags: ["japanese"]},
+            {brand: "Honda", name: "CivicX", url: "civicx.com", focus: "10th/11th gen Civic", members: "200,000+", features: "Type R builds", tags: ["japanese"]},
+            {brand: "Honda", name: "NSXPrime", url: "nsxprime.com", focus: "Honda NSX", members: "50,000+", features: "Supercar tech", tags: ["japanese"]},
+
+            // Acura Forums
+            {brand: "Acura", name: "AcuraZine", url: "acurazine.com", focus: "All Acura models", members: "150,000+", features: "Build threads", tags: ["japanese"]},
+            {brand: "Acura", name: "TSX Club", url: "tsxclub.com", focus: "Acura TSX", members: "100,000+", features: "Euro Accord tech", tags: ["japanese"]},
+            {brand: "Acura", name: "TLX Forums", url: "tlxforums.com", focus: "Acura TLX", members: "50,000+", features: "Type S builds", tags: ["japanese"]},
+            {brand: "Acura", name: "Acura World", url: "acuraworld.com", focus: "All Acura models", members: "75,000+", features: "NSX, Integra", tags: ["japanese"]},
+
+            // Toyota Forums
+            {brand: "Toyota", name: "TacomaWorld", url: "tacomaworld.com", focus: "Toyota Tacoma", members: "500,000+", features: "Overland builds", tags: ["japanese", "high-activity", "verified"]},
+            {brand: "Toyota", name: "Toyota-4Runner.org", url: "toyota-4runner.org", focus: "Toyota 4Runner", members: "200,000+", features: "Off-road mods", tags: ["japanese"]},
+            {brand: "Toyota", name: "SupraMKV", url: "supramkv.com", focus: "A90 Supra", members: "50,000+", features: "B58 tuning", tags: ["japanese"]},
+            {brand: "Toyota", name: "SupraForums", url: "supraforums.com", focus: "All Supra gens", members: "150,000+", features: "MKIV builds", tags: ["japanese"]},
+            {brand: "Toyota", name: "FT86Club", url: "ft86club.com", focus: "86/BRZ/FR-S", members: "200,000+", features: "Forced induction", tags: ["japanese"]},
+            {brand: "Toyota", name: "Tundras", url: "tundras.com", focus: "Toyota Tundra", members: "150,000+", features: "Full-size builds", tags: ["japanese"]},
+
+            // Subaru Forums
+            {brand: "Subaru", name: "NASIOC", url: "forums.nasioc.com", focus: "Impreza/WRX/STI", members: "374,906+", features: "40+ million posts", tags: ["japanese", "high-activity", "verified"]},
+            {brand: "Subaru", name: "IWSTI", url: "iwsti.com", focus: "WRX STI", members: "200,000+", features: "Technical builds", tags: ["japanese"]},
+            {brand: "Subaru", name: "SubaruBRZForum", url: "subarubrzforum.com", focus: "Subaru BRZ", members: "100,000+", features: "86 platform", tags: ["japanese"]},
+            {brand: "Subaru", name: "SubaruOutback", url: "subaruoutback.org", focus: "Outback/Legacy", members: "150,000+", features: "Lifted builds", tags: ["japanese"]},
+
+            // Nissan Forums
+            {brand: "Nissan", name: "NICO Club", url: "forums.nicoclub.com", focus: "All Nissan models", members: "300,000+", features: "240SX/Z builds", tags: ["japanese", "high-activity"]},
+            {brand: "Nissan", name: "MY350Z", url: "my350z.com", focus: "350Z/370Z", members: "200,000+", features: "VQ builds", tags: ["japanese"]},
+            {brand: "Nissan", name: "The370Z", url: "the370z.com", focus: "370Z/Z", members: "150,000+", features: "Current Z cars", tags: ["japanese"]},
+            {brand: "Nissan", name: "Zilvia", url: "zilvia.net", focus: "240SX/Silvia", members: "150,000+", features: "Drift builds, SR20", tags: ["japanese"]},
+            {brand: "Nissan", name: "GTRLife", url: "gtrlife.com", focus: "Nissan GT-R", members: "50,000+", features: "R35 tuning", tags: ["japanese"]},
+
+            // Infiniti Forums
+            {brand: "Infiniti", name: "MyG37", url: "myg37.com", focus: "G37/Q60", members: "150,000+", features: "VQ37 builds", tags: ["japanese"]},
+            {brand: "Infiniti", name: "InfinitiQ50", url: "infinitiq50.org", focus: "Q50/Q60", members: "75,000+", features: "Red Sport builds", tags: ["japanese"]},
+            {brand: "Infiniti", name: "G35Driver", url: "g35driver.com", focus: "G35/G37", members: "200,000+", features: "VQ35 tuning", tags: ["japanese"]},
+            {brand: "Infiniti", name: "6MT.net", url: "6mt.net", focus: "G35/G37", members: "100,000+", features: "Manual trans focus", tags: ["japanese"]},
+
+            // Mazda Forums
+            {brand: "Mazda", name: "Miata.net", url: "forum.miata.net", focus: "Mazda MX-5 Miata", members: "200,000+", features: "All generations", tags: ["japanese"]},
+            {brand: "Mazda", name: "MiataTurbo", url: "miataturbo.net", focus: "Turbo Miatas", members: "49,452+", features: "Forced induction", tags: ["japanese"]},
+            {brand: "Mazda", name: "MX5Nutz", url: "mx5nutz.com", focus: "MX-5 Miata", members: "100,000+", features: "UK-based builds", tags: ["japanese", "european"]},
+            {brand: "Mazda", name: "Mazda3Forums", url: "mazda3forums.com", focus: "Mazda3", members: "150,000+", features: "Turbo builds", tags: ["japanese"]},
+            {brand: "Mazda", name: "RX7Club", url: "rx7club.com", focus: "Mazda RX-7", members: "150,000+", features: "Rotary builds", tags: ["japanese"]},
+            {brand: "Mazda", name: "RX8Club", url: "rx8club.com", focus: "Mazda RX-8", members: "100,000+", features: "Renesis tuning", tags: ["japanese"]},
+
+            // Mitsubishi Forums
+            {brand: "Mitsubishi", name: "EvolutionM", url: "evolutionm.net", focus: "Lancer Evolution", members: "200,000+", features: "4G63 builds", tags: ["japanese"]},
+            {brand: "Mitsubishi", name: "EvoXForums", url: "evoxforums.com", focus: "Evo X", members: "100,000+", features: "4B11T tuning", tags: ["japanese"]},
+            {brand: "Mitsubishi", name: "3SI", url: "3si.org", focus: "3000GT/Stealth", members: "50,000+", features: "Twin turbo builds", tags: ["japanese"]},
+
+            // Lexus Forums
+            {brand: "Lexus", name: "ClubLexus", url: "clublexus.com", focus: "All Lexus models", members: "400,000+", features: "Largest Lexus forum", tags: ["japanese", "high-activity"]},
+            {brand: "Lexus", name: "Lexus Enthusiast", url: "lexusenthusiast.com/forums", focus: "Lexus news & builds", members: "50,000+", features: "News focused", tags: ["japanese"]},
+            {brand: "Lexus", name: "Lexus Owners Club", url: "lexusownersclub.co.uk", focus: "UK Lexus community", members: "75,000+", features: "European focus", tags: ["japanese", "european"]},
+
+            // Tesla Forums
+            {brand: "Tesla", name: "Tesla Motors Club", url: "teslamotorsclub.com", focus: "All Tesla models", members: "500,000+", features: "Software, mods, FSD", tags: ["american", "high-activity", "verified"]},
+            {brand: "Tesla", name: "Tesla Owners Online", url: "teslaownersonline.com", focus: "Tesla ownership", members: "100,000+", features: "Owner experiences", tags: ["american"]},
+            {brand: "Tesla", name: "TeslaFi", url: "teslafi.com/forum", focus: "Data logging", members: "50,000+", features: "Analytics focus", tags: ["american"]},
+
+            // Ferrari Forums
+            {brand: "Ferrari", name: "FerrariChat", url: "ferrarichat.com", focus: "All Ferrari models", members: "200,000+", features: "1500+ posts daily", tags: ["european", "high-activity"]},
+            {brand: "Ferrari", name: "FerrariLife", url: "ferrarilife.com", focus: "Ferrari ownership", members: "50,000+", features: "Owner forums", tags: ["european"]},
+            {brand: "Ferrari", name: "Ferrari-Talk", url: "ferrari-talk.com", focus: "Ferrari discussion", members: "25,000+", features: "Technical focus", tags: ["european"]},
+
+            // Lamborghini Forums
+            {brand: "Lamborghini", name: "LamborghiniChat", url: "lamborghinichat.com", focus: "All Lamborghini", members: "50,000+", features: "Supercar builds", tags: ["european"]},
+            {brand: "Lamborghini", name: "Lamborghini-Talk", url: "lamborghini-talk.com", focus: "Lambo discussion", members: "25,000+", features: "Owner community", tags: ["european"]},
+            {brand: "Lamborghini", name: "Lambo Power", url: "lambopower.com", focus: "Performance builds", members: "75,000+", features: "Twin turbo builds", tags: ["european"]},
+
+            // Lotus Forums
+            {brand: "Lotus", name: "LotusTalk", url: "lotustalk.com", focus: "All Lotus models", members: "50,000+", features: "Track builds", tags: ["european"]},
+            {brand: "Lotus", name: "Lotus Forums", url: "lotusforums.com", focus: "Elise/Exige/Evora", members: "40,000+", features: "Lightweight mods", tags: ["european"]},
+
+            // McLaren Forums
+            {brand: "McLaren", name: "McLaren Life", url: "mclarenlife.com", focus: "McLaren supercars", members: "25,000+", features: "Hypercar builds", tags: ["european"]},
+            {brand: "McLaren", name: "McLaren Talk", url: "mclarentalk.com", focus: "McLaren discussion", members: "15,000+", features: "Technical forums", tags: ["european"]},
+
+            // Multi-Brand Forums
+            {brand: "Multi-Brand", name: "StanceWorks", url: "stanceworks.com", focus: "Style & fitment", members: "148,000+", features: "Photography focus", tags: ["high-activity", "verified"]},
+            {brand: "Multi-Brand", name: "Grassroots Motorsports", url: "grassrootsmotorsports.com/forum", focus: "Budget builds", members: "100,000+", features: "$2000 Challenge", tags: ["verified"]},
+            {brand: "Multi-Brand", name: "AutomotiveForums", url: "automotiveforums.com", focus: "All makes", members: "795,000+", features: "General discussion", tags: ["high-activity"]},
+            {brand: "Multi-Brand", name: "Car Throttle", url: "carthrottle.com/forums", focus: "Car culture", members: "500,000+", features: "Social focus", tags: ["high-activity"]},
+            {brand: "Multi-Brand", name: "Reddit r/cars", url: "reddit.com/r/cars", focus: "General automotive", members: "3,000,000+", features: "News & discussion", tags: ["high-activity", "verified"]},
+
+            // Additional European Brands
+            {brand: "Volvo", name: "SwedeSpeed", url: "swedespeed.com", focus: "Volvo/Polestar", members: "150,000+", features: "Swedish performance", tags: ["european"]},
+            {brand: "Volvo", name: "Volvo Forums", url: "volvoforums.com", focus: "All Volvo models", members: "100,000+", features: "Maintenance focus", tags: ["european"]},
+            {brand: "MINI", name: "North American Motoring", url: "northamericanmotoring.com", focus: "MINI Cooper", members: "200,000+", features: "JCW builds", tags: ["european"]},
+            {brand: "MINI", name: "MINI2", url: "mini2.com", focus: "MINI community", members: "100,000+", features: "UK-based", tags: ["european"]},
+            {brand: "Fiat", name: "Fiat 500 USA", url: "fiat500usa.com", focus: "Fiat 500/Abarth", members: "50,000+", features: "Abarth tuning", tags: ["european"]},
+            {brand: "Alfa Romeo", name: "AlfaBB", url: "alfabb.com", focus: "Alfa Romeo", members: "75,000+", features: "Classic & modern", tags: ["european"]},
+            {brand: "Maserati", name: "Maserati Life", url: "maseratilife.com", focus: "Maserati models", members: "25,000+", features: "Grand touring", tags: ["european"]},
+            {brand: "Jaguar", name: "Jaguar Forums", url: "jaguarforums.com", focus: "All Jaguar models", members: "100,000+", features: "British luxury", tags: ["european"]},
+            {brand: "Land Rover", name: "Land Rover Forums", url: "landroverforums.com", focus: "Range Rover/LR", members: "150,000+", features: "Off-road builds", tags: ["european"]},
+            {brand: "Aston Martin", name: "Aston Martin Life", url: "astonmartinlife.com", focus: "Aston Martin", members: "25,000+", features: "British GT cars", tags: ["european"]},
+
+            // Additional American Brands
+            {brand: "Cadillac", name: "Cadillac Forums", url: "cadillacforums.com", focus: "All Cadillac", members: "100,000+", features: "V-Series builds", tags: ["american"]},
+            {brand: "Cadillac", name: "Cadillac Owners Forum", url: "cadillacowners.com", focus: "Cadillac ownership", members: "75,000+", features: "Blackwing focus", tags: ["american"]},
+            {brand: "Lincoln", name: "Lincoln vs Cadillac", url: "lincolnvscadillac.com", focus: "Lincoln luxury", members: "25,000+", features: "Classic & modern", tags: ["american"]},
+            {brand: "Buick", name: "Buick Forums", url: "buickforums.com", focus: "All Buick models", members: "50,000+", features: "Grand National", tags: ["american"]},
+            {brand: "GMC", name: "GMC Truck Forum", url: "gmctruckforum.com", focus: "GMC trucks/SUVs", members: "150,000+", features: "Sierra/Yukon", tags: ["american"]},
+            {brand: "Pontiac", name: "Pontiac Forums", url: "pontiacforums.com", focus: "Pontiac legacy", members: "75,000+", features: "GTO/Trans Am", tags: ["american"]},
+
+            // Additional Japanese Brands
+            {brand: "Hyundai", name: "Hyundai Forums", url: "hyundai-forums.com", focus: "All Hyundai", members: "100,000+", features: "N Performance", tags: ["japanese"]},
+            {brand: "Hyundai", name: "VeloStorm", url: "velostorm.com", focus: "Veloster N", members: "50,000+", features: "Performance builds", tags: ["japanese"]},
+            {brand: "Genesis", name: "Genesis Owners", url: "genesisowners.com", focus: "Genesis models", members: "50,000+", features: "Luxury builds", tags: ["japanese"]},
+            {brand: "Kia", name: "Kia Forums", url: "kia-forums.com", focus: "All Kia models", members: "75,000+", features: "Stinger GT", tags: ["japanese"]},
+            {brand: "Suzuki", name: "Suzuki Forums", url: "suzukiforums.com", focus: "Suzuki vehicles", members: "50,000+", features: "Swift Sport", tags: ["japanese"]},
+            {brand: "Daihatsu", name: "Daihatsu Forum", url: "daihatsu-drivers.uk", focus: "Daihatsu models", members: "25,000+", features: "UK community", tags: ["japanese", "european"]}
+        ];
+
+        // Initialize table
+        function initTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            forumsData.forEach(forum => {
+                const row = document.createElement('tr');
+                
+                // Format member count
+                let memberClass = '';
+                const memberNum = parseInt(forum.members.replace(/[^0-9]/g, ''));
+                if (memberNum >= 300000) memberClass = 'large';
+                else if (memberNum >= 100000) memberClass = 'medium';
+                
+                // Create tags HTML
+                const tagsHtml = forum.tags.map(tag => {
+                    const tagClass = tag === 'high-activity' || tag === 'verified' ? tag : '';
+                    return `<span class="tag ${tagClass}">${tag}</span>`;
+                }).join('');
+                
+                row.innerHTML = `
+                    <td class="brand-cell">${forum.brand}</td>
+                    <td>${forum.name}</td>
+                    <td><a href="https://${forum.url}" target="_blank" class="forum-link">${forum.url}</a></td>
+                    <td>${forum.focus}</td>
+                    <td class="member-count ${memberClass}">${forum.members}</td>
+                    <td>${forum.features}</td>
+                    <td>${tagsHtml}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            updateStats();
+        }
+
+        // Update statistics
+        function updateStats() {
+            const visibleRows = Array.from(document.querySelectorAll('#tableBody tr')).filter(row => row.style.display !== 'none');
+            const uniqueBrands = [...new Set(forumsData.map(f => f.brand))];
+            
+            document.getElementById('totalForums').textContent = forumsData.length;
+            document.getElementById('totalBrands').textContent = uniqueBrands.length;
+            document.getElementById('visibleRows').textContent = visibleRows.length;
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#tableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+            
+            updateStats();
+        });
+
+        // Filter functionality
+        function filterByType(type) {
+            const rows = document.querySelectorAll('#tableBody tr');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Update button states
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(type.toLowerCase()) || 
+                    (type === 'all' && btn.textContent === 'All Forums')) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Filter rows
+            rows.forEach(row => {
+                if (type === 'all') {
+                    row.style.display = '';
+                } else {
+                    const tags = row.querySelector('td:last-child').textContent.toLowerCase();
+                    row.style.display = tags.includes(type) ? '' : 'none';
+                }
+            });
+            
+            updateStats();
+        }
+
+        // Sort functionality
+        let sortOrder = {};
+        function sortTable(columnIndex) {
+            const table = document.getElementById('forumsTable');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const headers = table.querySelectorAll('th');
+            
+            // Toggle sort order
+            if (!sortOrder[columnIndex]) sortOrder[columnIndex] = 'asc';
+            else if (sortOrder[columnIndex] === 'asc') sortOrder[columnIndex] = 'desc';
+            else sortOrder[columnIndex] = 'asc';
+            
+            // Update header classes
+            headers.forEach((header, index) => {
+                header.classList.remove('sorted-asc', 'sorted-desc');
+                if (index === columnIndex) {
+                    header.classList.add(`sorted-${sortOrder[columnIndex]}`);
+                }
+            });
+            
+            // Sort rows
+            rows.sort((a, b) => {
+                let aValue = a.cells[columnIndex].textContent.trim();
+                let bValue = b.cells[columnIndex].textContent.trim();
+                
+                // Handle member count column specially
+                if (columnIndex === 4) {
+                    aValue = parseInt(aValue.replace(/[^0-9]/g, '')) || 0;
+                    bValue = parseInt(bValue.replace(/[^0-9]/g, '')) || 0;
+                }
+                
+                if (sortOrder[columnIndex] === 'asc') {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+            
+            // Reappend sorted rows
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Initialize on load
+        initTable();
+    </script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vehicle Build Extraction Schema",
+  "description": "Schema for extracting vehicle build and modification data from scraped sources. Ralph reads this before Stage 3 (Build Extraction) and Stage 4 (Mod Extraction).",
+  "type": "object",
+  "required": ["build_id", "source_type", "build_type", "build_source", "source_url", "year", "make", "model"],
+  "properties": {
+    "build_id": {
+      "type": "integer",
+      "description": "Generate using: python scripts/ralph/build_id_generator.py {source_url}"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": ["listing", "auction", "build_thread", "project", "gallery", "article"],
+      "description": "Type of source page. 'listing'/'auction' = include sale_data. Others = set sale_data to null."
+    },
+    "build_type": {
+      "type": "string",
+      "enum": [
+        "OEM+",
+        "Street",
+        "Track",
+        "Drift",
+        "Rally",
+        "Time Attack",
+        "Drag",
+        "Show",
+        "Restomod",
+        "Restoration",
+        "Pro Touring",
+        "Overland",
+        "Off-Road",
+        "Rock Crawler",
+        "Prerunner",
+        "Trophy Truck",
+        "Lowrider",
+        "Stance",
+        "VIP",
+        "Bosozoku",
+        "Rat Rod",
+        "Hot Rod",
+        "Muscle",
+        "JDM",
+        "Euro",
+        "USDM",
+        "Daily Driver",
+        "Weekend Warrior",
+        "Work Truck",
+        "Tow Rig"
+      ],
+      "description": "Style/purpose of the build. REQUIRED - infer from modifications and context. Choose best fit."
+    },
+    "build_source": {
+      "type": "string",
+      "description": "Domain name of the source (e.g., 'hemmings.com', 'bringatrailer.com')"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Original URL where this build was scraped from"
+    },
+    "build_title": {
+      "type": ["string", "null"],
+      "description": "Title of the listing/thread/article"
+    },
+    "year": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9]{4}$",
+      "description": "Model year (4-digit string)"
+    },
+    "make": {
+      "type": ["string", "null"],
+      "description": "Vehicle manufacturer (e.g., 'Ford', 'Toyota', 'Porsche')"
+    },
+    "model": {
+      "type": ["string", "null"],
+      "description": "Vehicle model (e.g., 'Mustang', 'Supra', '911')"
+    },
+    "trim": {
+      "type": ["string", "null"],
+      "description": "Trim level or variant (e.g., 'GT', 'TRD Pro', 'Turbo S')"
+    },
+    "generation": {
+      "type": ["string", "null"],
+      "description": "Generation code or name (e.g., 'S550', 'A90', '992')"
+    },
+    "engine": {
+      "type": ["string", "null"],
+      "description": "Engine specification (e.g., '5.0L Coyote V8', '2JZ-GTE', 'LS3')"
+    },
+    "transmission": {
+      "type": ["string", "null"],
+      "enum": ["Manual", "Automatic", "DCT", "CVT", "Sequential", null],
+      "description": "Transmission type"
+    },
+    "drivetrain": {
+      "type": ["string", "null"],
+      "enum": ["RWD", "FWD", "AWD", "4WD", null],
+      "description": "Drivetrain configuration"
+    },
+    "exterior_color": {
+      "type": ["string", "null"],
+      "description": "Exterior paint color"
+    },
+    "interior_color": {
+      "type": ["string", "null"],
+      "description": "Interior color/material"
+    },
+    "build_story": {
+      "type": ["string", "null"],
+      "description": "Full text content describing the build (for mod extraction)"
+    },
+    "owner_username": {
+      "type": ["string", "null"],
+      "description": "Username or name of the build owner"
+    },
+    "gallery_images": {
+      "type": "array",
+      "items": { "type": "string", "format": "uri" },
+      "description": "Array of image URLs from the build"
+    },
+    "main_image": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Primary/hero image URL"
+    },
+    "modifications": {
+      "type": "array",
+      "description": "Extracted modifications (Stage 4 output)",
+      "items": {
+        "type": "object",
+        "required": ["name", "category"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Modification name (e.g., 'BC Racing BR Coilovers')"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category from Vehicle_Componets.json (use category_detector.py)"
+          },
+          "brand": {
+            "type": ["string", "null"],
+            "description": "Brand/manufacturer if identifiable"
+          },
+          "part_number": {
+            "type": ["string", "null"],
+            "description": "Part number if mentioned"
+          },
+          "details": {
+            "type": ["string", "null"],
+            "description": "Additional details (size, specs, etc.)"
+          }
+        }
+      }
+    },
+    "modification_level": {
+      "type": "string",
+      "enum": ["Stock", "Lightly Modified", "Moderately Modified", "Heavily Modified"],
+      "description": "Overall modification level based on mod count: Stock (0-1), Light (2-5), Moderate (6-15), Heavy (16+)"
+    },
+    "vehicle_summary_extracted": {
+      "type": ["string", "null"],
+      "description": "AI-generated summary of the vehicle and its modifications"
+    },
+    "extraction_confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence score for the extraction (0.0-1.0)"
+    },
+    "sale_data": {
+      "type": ["object", "null"],
+      "description": "ONLY for build_type: 'listing' or 'auction'. Set to null for build_thread, project, gallery, article.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["active", "sold", "ended", "pending", "withdrawn"]
+        },
+        "is_auction": { "type": "boolean" },
+        "price": {
+          "type": ["string", "null"],
+          "description": "Final sale price (formatted)"
+        },
+        "price_numeric": {
+          "type": ["number", "null"],
+          "description": "Final sale price (numeric)"
+        },
+        "listing_price": {
+          "type": ["string", "null"],
+          "description": "Asking/listing price (formatted)"
+        },
+        "listing_price_numeric": {
+          "type": ["number", "null"],
+          "description": "Asking/listing price (numeric)"
+        },
+        "currency": {
+          "type": "string",
+          "default": "USD"
+        },
+        "no_reserve": { "type": ["boolean", "null"] },
+        "bid_count": { "type": ["integer", "null"] },
+        "auction_type": {
+          "type": ["string", "null"],
+          "enum": ["online", "live", "hybrid", null]
+        },
+        "end_date": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "vin": { "type": ["string", "null"] },
+        "mileage": { "type": ["string", "null"] },
+        "mileage_numeric": { "type": ["integer", "null"] },
+        "title_status": {
+          "type": ["string", "null"],
+          "enum": ["clean", "salvage", "rebuilt", "export", null]
+        },
+        "body_style": { "type": ["string", "null"] },
+        "location": { "type": ["string", "null"] },
+        "lot_number": { "type": ["string", "null"] }
+      }
+    },
+    "wheel_and_tire_fitment_specs": {
+      "type": ["object", "null"],
+      "description": "ONLY for wheel/fitment sources (customwheeloffset, fitmentindustries). Set to null otherwise.",
+      "properties": {
+        "front_wheel": {
+          "type": "object",
+          "properties": {
+            "diameter": { "type": ["string", "null"] },
+            "width": { "type": ["string", "null"] },
+            "offset": { "type": ["string", "null"] },
+            "bolt_pattern": { "type": ["string", "null"] }
+          }
+        },
+        "rear_wheel": {
+          "type": "object",
+          "properties": {
+            "diameter": { "type": ["string", "null"] },
+            "width": { "type": ["string", "null"] },
+            "offset": { "type": ["string", "null"] },
+            "bolt_pattern": { "type": ["string", "null"] }
+          }
+        },
+        "front_tire": { "type": ["string", "null"] },
+        "rear_tire": { "type": ["string", "null"] },
+        "suspension_type": { "type": ["string", "null"] },
+        "ride_height": { "type": ["string", "null"] }
+      }
+    },
+    "build_stats": {
+      "type": ["object", "null"],
+      "description": "Performance stats if explicitly mentioned (hp, torque, times). Set to null if not available.",
+      "properties": {
+        "horsepower": { "type": ["number", "null"] },
+        "torque": { "type": ["number", "null"] },
+        "weight": { "type": ["number", "null"] },
+        "quarter_mile": { "type": ["string", "null"] },
+        "top_speed": { "type": ["number", "null"] }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the build",
+      "properties": {
+        "era": {
+          "type": ["string", "null"],
+          "enum": ["Pre-War", "Post-War", "Classic", "Vintage", "Modern Classic", "Modern", null]
+        },
+        "category": {
+          "type": ["string", "null"],
+          "description": "Source-specific category (e.g., 'Classifieds', 'Auction', 'Project')"
+        },
+        "highlights": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Key highlights or features"
+        },
+        "equipment": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Standard/optional equipment listed"
+        },
+        "published_date": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "scraped_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "scraper_metadata": {
+          "type": "object",
+          "properties": {
+            "extractor": { "type": "string" },
+            "auction_id": { "type": ["string", "null"] },
+            "page_type": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "processing": {
+      "type": "object",
+      "description": "Processing/extraction metadata",
+      "properties": {
+        "extracted_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "extractor_version": {
+          "type": "string",
+          "default": "1.0.0"
+        },
+        "model_used": {
+          "type": ["string", "null"],
+          "description": "LLM model used for extraction (if any)"
+        },
+        "source_scraped_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "vin": {
+      "type": ["string", "null"],
+      "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+      "description": "Vehicle Identification Number (17 characters)"
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "url": { "type": ["string", "null"], "format": "uri" },
+          "price": { "type": ["string", "null"] },
+          "brand": { "type": ["string", "null"] }
+        }
+      },
+      "description": "Linked products from affiliate/shop links"
+    },
+    "build_nickname": {
+      "type": ["string", "null"],
+      "description": "Custom name for the build (e.g., 'Project Blackout')"
+    }
+  }
+}

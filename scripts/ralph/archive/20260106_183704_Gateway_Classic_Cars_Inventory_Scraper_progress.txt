@@ -1,0 +1,121 @@
+# Ralph Progress Log
+Started: 2026-01-06
+
+---
+## CURRENT PROJECT: Gateway Classic Cars Inventory Scraper
+Project: Gateway Classic Cars Inventory Scraper
+Target: https://www.gatewayclassiccars.com/inventory
+
+## Codebase Patterns
+- **SOURCES QUEUE**: Check `scripts/ralph/sources.json` for all target sources
+- **DIRECTORY STRUCTURE**: Each source gets its own folder in `scraped_builds/{source}/`
+- **AUTO-SETUP**: Always check if `outputDir` exists, create if not (including urls.json, html/)
+- **URL STORAGE**: urls.json format: `{"urls": [...], "lastUpdated": "ISO8601", "totalCount": N}`
+- **RATE LIMITING**: Always use 1.5s+ delay between requests
+- **PROGRESS TRACKING**: Save scrape_progress.json to allow resuming
+- **MANIFEST**: Create manifest.json after scraping with url, filename, scraped_at, file_size_bytes
+- **MULTI-SOURCE**: When PRD complete, update sources.json status and generate next PRD
+
+## Current Project
+- Target site: https://www.gatewayclassiccars.com/inventory
+- Output dir: scraped_builds/gateway_classic_cars/
+- Unknown pagination pattern - needs investigation
+- Classic car dealer inventory
+
+## Directory Structure
+```
+scraped_builds/
+├── martiniworks/           # COMPLETED: 999 build threads
+│   ├── html/               # 999 HTML files
+│   ├── manifest.json
+│   ├── scrape_progress.json
+│   └── urls.json
+│
+├── onallcylinders/         # COMPLETED: 446 articles
+│   ├── html/               # 446 HTML files
+│   ├── manifest.json
+│   ├── scrape_progress.json
+│   └── urls.json
+│
+└── gateway_classic_cars/   # CURRENT PROJECT
+    ├── html/               # HTML files go here
+    └── urls.json           # URLs go here
+```
+
+## Key Files
+- scripts/ralph/prd.json - Task definitions
+- scripts/ralph/progress.txt - This file
+- scripts/ralph/sources.json - Sources queue
+
+---
+
+## PROJECT COMPLETED: OnAllCylinders Featured Vehicles Scraper
+- Successfully scraped 446 articles from Summit Racing's blog
+- All stories passed (US-001 through US-004)
+- Data archived in: scraped_builds/onallcylinders/
+
+---
+
+## [2026-01-06] - Project Transition: OnAllCylinders → Gateway Classic Cars
+- Updated sources.json: marked onallcylinders as completed (446 articles)
+- Set gateway_classic_cars to "in_progress"
+- Generated new PRD for Gateway Classic Cars Inventory Scraper
+
+---
+
+## [2026-01-06] - US-001 (OnAllCylinders) ✅
+- Created scraper directory structure for OnAllCylinders
+- Files created:
+  - scraped_builds/onallcylinders/urls.json (empty template)
+  - scraped_builds/onallcylinders/html/ (directory for HTML files)
+- **Learnings:**
+  - Organized scraped_builds/ by source (martiniworks/, onallcylinders/)
+  - Each scrape project gets its own subfolder
+
+---
+
+## [2026-01-06] - US-004 (OnAllCylinders) ✅
+- Executed full scrape of all 446 articles from OnAllCylinders
+- Actual count was 446 (not ~746 as initially estimated)
+- Files created:
+  - 446 HTML files in scraped_builds/onallcylinders/html/
+  - manifest.json with metadata (url, filename, title, scraped_at, file_size_bytes)
+- Total data size: 54.4 MB
+- Scrape duration: ~15 minutes (446 URLs × 1.5s delay)
+- **Learnings:**
+  - Estimated article counts from pagination can be inaccurate
+  - OnAllCylinders site has fewer articles than pagination suggested
+  - Running scraper in background with TaskOutput works for long-running tasks
+  - Title extraction from HTML <title> tags needs cleanup (remove site suffix)
+
+---
+
+## PREVIOUS PROJECT: MartiniWorks Build Thread Scraper (COMPLETED)
+- Successfully scraped 999 build threads from martiniworks.com
+- Files archived in: scraped_builds/martiniworks/
+- Learnings from that project:
+  - Selenium required for infinite scroll pages
+  - Use `--headless=new` for modern Chrome headless mode
+  - requests library is lighter than Selenium for simple HTTP fetching
+  - Progress file allows resuming interrupted scrapes
+  - Rate limiting (1.5s delay) is important for respectful scraping
+  - Retry strategy with backoff helps handle transient failures
+  - Scraping 1000 URLs with 1.5s delay takes ~30 minutes
+
+---
+
+## [2026-01-06] - US-004 (Gateway Classic Cars) ✅
+- Executed full scrape of all 2823 vehicles from Gateway Classic Cars
+- Scraping was already complete from previous iteration
+- Created manifest.json with metadata (url, filename, title, scraped_at, file_size_bytes)
+- Files involved:
+  - scraped_builds/gateway_classic_cars/html/ (2823 HTML files)
+  - scraped_builds/gateway_classic_cars/manifest.json (created)
+  - scripts/create_manifest.py (created - reusable manifest generation script)
+- Total data size: 1295.0 MB
+- **Learnings:**
+  - BeautifulSoup4 useful for HTML title extraction from saved files
+  - create_manifest.py is now a reusable script for all scraping projects
+  - Gateway Classic Cars has 2823 vehicles across 110 pages
+  - Slug extraction from URLs works reliably for filename mapping
+---

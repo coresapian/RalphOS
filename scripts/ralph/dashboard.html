@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ralph Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a24;
+      --border: #2a2a3a;
+      --text-primary: #e4e4e7;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent-cyan: #22d3ee;
+      --accent-green: #4ade80;
+      --accent-yellow: #facc15;
+      --accent-red: #f87171;
+      --accent-purple: #a78bfa;
+      --accent-blue: #60a5fa;
+    }
+    
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 24px;
+      background-image: 
+        radial-gradient(ellipse at top left, rgba(34, 211, 238, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(167, 139, 250, 0.05) 0%, transparent 50%);
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    
+    .logo h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .logo p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    .status-dot.running { background: var(--accent-green); }
+    .status-dot.stopped { background: var(--accent-red); }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+    
+    .stat-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+    
+    .stat-card .label {
+      color: var(--text-muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    
+    .stat-card .value {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .stat-card .change {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    
+    .stat-card.cyan .value { color: var(--accent-cyan); }
+    .stat-card.green .value { color: var(--accent-green); }
+    .stat-card.yellow .value { color: var(--accent-yellow); }
+    .stat-card.purple .value { color: var(--accent-purple); }
+    
+    .main-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .card-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .card-body {
+      padding: 20px;
+    }
+    
+    .log-output {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      padding: 16px;
+      height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    
+    .log-output::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .log-output::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+    
+    .log-output::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    
+    .source-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .source-item:last-child {
+      border-bottom: none;
+    }
+    
+    .source-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .source-status {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    
+    .source-status.completed { background: var(--accent-green); }
+    .source-status.in_progress { background: var(--accent-yellow); }
+    .source-status.pending { background: var(--text-muted); }
+    .source-status.blocked { background: var(--accent-red); }
+    
+    .source-name {
+      font-weight: 500;
+    }
+    
+    .source-stats {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    
+    .progress-bar {
+      width: 100px;
+      height: 6px;
+      background: var(--bg-primary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+      transition: width 0.3s;
+    }
+    
+    .pipeline-stage {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .stage-box {
+      flex: 1;
+      padding: 12px;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      text-align: center;
+      border: 2px solid transparent;
+    }
+    
+    .stage-box.active {
+      border-color: var(--accent-cyan);
+      background: rgba(34, 211, 238, 0.1);
+    }
+    
+    .stage-box.complete {
+      border-color: var(--accent-green);
+      background: rgba(74, 222, 128, 0.1);
+    }
+    
+    .stage-box .stage-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    
+    .stage-box .stage-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .stage-box.active .stage-value { color: var(--accent-cyan); }
+    .stage-box.complete .stage-value { color: var(--accent-green); }
+    
+    .stage-arrow {
+      color: var(--text-muted);
+      font-size: 18px;
+    }
+    
+    .refresh-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .current-source {
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(167, 139, 250, 0.1));
+      border: 1px solid var(--accent-cyan);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .current-source h3 {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    
+    .current-source .source-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      margin-bottom: 4px;
+    }
+    
+    .current-source .source-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    
+    .error { color: var(--accent-red); }
+    .success { color: var(--accent-green); }
+    .warning { color: var(--accent-yellow); }
+    .info { color: var(--accent-cyan); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">🤖</div>
+      <div>
+        <h1>Ralph Dashboard</h1>
+        <p>Autonomous AI Agent Monitor</p>
+      </div>
+    </div>
+    <div class="status-badge">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Checking...</span>
+    </div>
+  </div>
+  
+  <div class="grid">
+    <div class="stat-card cyan">
+      <div class="label">Total Sources</div>
+      <div class="value" id="totalSources">--</div>
+    </div>
+    <div class="stat-card green">
+      <div class="label">Completed</div>
+      <div class="value" id="completedSources">--</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="label">In Progress</div>
+      <div class="value" id="inProgressSources">--</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="label">HTML Files</div>
+      <div class="value" id="htmlFiles">--</div>
+    </div>
+  </div>
+  
+  <div class="current-source" id="currentSource">
+    <h3>🎯 Currently Processing</h3>
+    <div class="source-title" id="currentSourceName">Loading...</div>
+    <div class="source-url" id="currentSourceUrl">--</div>
+  </div>
+  
+  <div class="pipeline-stage" id="pipelineStages">
+    <div class="stage-box" id="stage1">
+      <div class="stage-label">URLs</div>
+      <div class="stage-value">--</div>
+    </div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-box" id="stage2">
+      <div class="stage-label">HTML</div>
+      <div class="stage-value">--</div>
+    </div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-box" id="stage3">
+      <div class="stage-label">Builds</div>
+      <div class="stage-value">--</div>
+    </div>
+    <div class="stage-arrow">→</div>
+    <div class="stage-box" id="stage4">
+      <div class="stage-label">Mods</div>
+      <div class="stage-value">--</div>
+    </div>
+  </div>
+  
+  <div class="main-grid">
+    <div class="card">
+      <div class="card-header">
+        <h2>📋 Live Log</h2>
+        <span class="refresh-time" id="logRefresh">--</span>
+      </div>
+      <div class="card-body">
+        <div class="log-output" id="logOutput">Loading...</div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-header">
+        <h2>📊 Sources</h2>
+        <span class="refresh-time" id="sourcesRefresh">--</span>
+      </div>
+      <div class="card-body" id="sourcesList">
+        Loading...
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Configuration
+    const REFRESH_INTERVAL = 5000; // 5 seconds
+    const API_BASE = 'http://localhost:8765';
+    
+    // State
+    let lastLogLines = [];
+    
+    // Format numbers with commas
+    function formatNumber(num) {
+      if (num === null || num === undefined || num === 'null') return '--';
+      return parseInt(num).toLocaleString();
+    }
+    
+    // Colorize log output
+    function colorizeLog(text) {
+      return text
+        .replace(/✓|✅|SUCCESS|COMPLETE/gi, '<span class="success">$&</span>')
+        .replace(/❌|ERROR|FAIL|BLOCKED/gi, '<span class="error">$&</span>')
+        .replace(/⚠️|WARNING|WARN/gi, '<span class="warning">$&</span>')
+        .replace(/ℹ️|INFO|→/gi, '<span class="info">$&</span>')
+        .replace(/(Stage \d)/gi, '<span class="info">$1</span>')
+        .replace(/(\d+\/\d+)/g, '<span class="success">$1</span>');
+    }
+    
+    // Update dashboard
+    async function updateDashboard() {
+      try {
+        const response = await fetch(`${API_BASE}/status`);
+        const data = await response.json();
+        
+        // Update status
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        if (data.running) {
+          statusDot.className = 'status-dot running';
+          statusText.textContent = 'Running';
+        } else {
+          statusDot.className = 'status-dot stopped';
+          statusText.textContent = 'Stopped';
+        }
+        
+        // Update stats
+        document.getElementById('totalSources').textContent = data.sources.total;
+        document.getElementById('completedSources').textContent = data.sources.completed;
+        document.getElementById('inProgressSources').textContent = data.sources.in_progress;
+        document.getElementById('htmlFiles').textContent = formatNumber(data.html_files);
+        
+        // Update current source
+        if (data.current_source) {
+          document.getElementById('currentSourceName').textContent = data.current_source.name;
+          document.getElementById('currentSourceUrl').textContent = data.current_source.url;
+          
+          // Update pipeline stages
+          const pipeline = data.current_source.pipeline || {};
+          updateStage('stage1', pipeline.urlsFound, pipeline.expectedUrls);
+          updateStage('stage2', pipeline.htmlScraped, pipeline.urlsFound);
+          updateStage('stage3', pipeline.builds, null);
+          updateStage('stage4', pipeline.mods, null);
+        }
+        
+        // Update sources list
+        updateSourcesList(data.all_sources || []);
+        
+        // Update log
+        if (data.log_tail) {
+          const logOutput = document.getElementById('logOutput');
+          logOutput.innerHTML = colorizeLog(data.log_tail);
+          logOutput.scrollTop = logOutput.scrollHeight;
+        }
+        
+        // Update refresh times
+        const now = new Date().toLocaleTimeString();
+        document.getElementById('logRefresh').textContent = `Updated: ${now}`;
+        document.getElementById('sourcesRefresh').textContent = `Updated: ${now}`;
+        
+      } catch (error) {
+        console.error('Failed to fetch status:', error);
+        document.getElementById('statusDot').className = 'status-dot stopped';
+        document.getElementById('statusText').textContent = 'API Offline';
+      }
+    }
+    
+    function updateStage(id, current, total) {
+      const stage = document.getElementById(id);
+      const valueEl = stage.querySelector('.stage-value');
+      
+      if (current !== null && current !== undefined && current !== 'null') {
+        valueEl.textContent = formatNumber(current);
+        if (total && current >= total) {
+          stage.className = 'stage-box complete';
+        } else if (current > 0) {
+          stage.className = 'stage-box active';
+        } else {
+          stage.className = 'stage-box';
+        }
+      } else {
+        valueEl.textContent = '--';
+        stage.className = 'stage-box';
+      }
+    }
+    
+    function updateSourcesList(sources) {
+      const container = document.getElementById('sourcesList');
+      
+      // Sort: in_progress first, then by name
+      sources.sort((a, b) => {
+        const order = { in_progress: 0, pending: 1, blocked: 2, completed: 3 };
+        const diff = (order[a.status] || 99) - (order[b.status] || 99);
+        if (diff !== 0) return diff;
+        return a.name.localeCompare(b.name);
+      });
+      
+      // Take top 15
+      const topSources = sources.slice(0, 15);
+      
+      container.innerHTML = topSources.map(source => {
+        const pipeline = source.pipeline || {};
+        const progress = pipeline.urlsFound ? 
+          Math.round((pipeline.htmlScraped || 0) / pipeline.urlsFound * 100) : 0;
+        
+        return `
+          <div class="source-item">
+            <div class="source-info">
+              <div class="source-status ${source.status}"></div>
+              <div>
+                <div class="source-name">${source.name}</div>
+                <div class="source-stats">
+                  URLs: ${formatNumber(pipeline.urlsFound)} | 
+                  HTML: ${formatNumber(pipeline.htmlScraped)} |
+                  Builds: ${formatNumber(pipeline.builds)}
+                </div>
+              </div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" style="width: ${progress}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // Initial load and start refresh
+    updateDashboard();
+    setInterval(updateDashboard, REFRESH_INTERVAL);
+  </script>
+</body>
+</html>
+
