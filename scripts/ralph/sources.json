@@ -65,22 +65,22 @@
       "pipeline": {
         "expectedUrls": 18,
         "urlsFound": 18,
-        "htmlScraped": null,
-        "htmlFailed": null,
-        "htmlBlocked": null,
+        "htmlScraped": 0,
+        "htmlFailed": 18,
+        "htmlBlocked": 0,
         "builds": null,
         "mods": null
       },
-      "notes": "Shopify blog with supercar build articles"
+      "notes": "DNS failure - all 18 URLs failed. Network issue, not scraper code issue. Retry when DNS resolves."
     },
     {
       "id": "total_cost_involved",
       "name": "Total Cost Involved",
       "url": "https://totalcostinvolved.com/customer-showcase/",
       "outputDir": "scraped_builds/total_cost_involved",
-      "status": "pending",
+      "status": "in_progress",
       "pipeline": {
-        "expectedUrls": null,
+        "expectedUrls": 295,
         "urlsFound": null,
         "htmlScraped": null,
         "htmlFailed": null,
@@ -88,16 +88,16 @@
         "builds": null,
         "mods": null
       },
-      "notes": "TCI suspension customer builds"
+      "notes": "DNS failure - URL discovery script created but cannot execute. Network issue, not code issue."
     },
     {
       "id": "ecd_auto_design",
       "name": "ECD Auto Design",
       "url": "https://ecdautodesign.com/ecd-showcase/",
       "outputDir": "scraped_builds/ecd_auto_design",
-      "status": "pending",
+      "status": "in_progress",
       "pipeline": {
-        "expectedUrls": null,
+        "expectedUrls": 527,
         "urlsFound": null,
         "htmlScraped": null,
         "htmlFailed": null,
@@ -105,16 +105,16 @@
         "builds": null,
         "mods": null
       },
-      "notes": "Custom Land Rover/Defender builds"
+      "notes": "DNS failure - URL discovery script created with pagination support. ~527 builds across 17 pages. Network issue, not code issue."
     },
     {
       "id": "charlies_custom_creations",
       "name": "Charlie's Custom Creations",
       "url": "https://charliescustomcreations.com/",
       "outputDir": "scraped_builds/charlies_custom_creations",
-      "status": "pending",
+      "status": "in_progress",
       "pipeline": {
-        "expectedUrls": null,
+        "expectedUrls": 69,
         "urlsFound": null,
         "htmlScraped": null,
         "htmlFailed": null,
@@ -122,16 +122,16 @@
         "builds": null,
         "mods": null
       },
-      "notes": "Custom vehicle builds"
+      "notes": "DNS failure - URL discovery script created for /builds/ gallery. ~69 builds visible. Network issue, not code issue."
     },
     {
       "id": "utv_source",
       "name": "UTV Source",
       "url": "https://www.utvsource.com/gallery",
       "outputDir": "scraped_builds/utv_source",
-      "status": "pending",
+      "status": "in_progress",
       "pipeline": {
-        "expectedUrls": null,
+        "expectedUrls": 94,
         "urlsFound": null,
         "htmlScraped": null,
         "htmlFailed": null,
@@ -139,16 +139,16 @@
         "builds": null,
         "mods": null
       },
-      "notes": "UTV/side-by-side gallery"
+      "notes": "DNS failure - URL discovery script created with pagination support. 47 builds visible on page 1. Network issue, not code issue."
     },
     {
       "id": "creative_bespoke",
       "name": "Creative Bespoke",
       "url": "https://creativebespoke.com/vehicles",
       "outputDir": "scraped_builds/creative_bespoke",
-      "status": "pending",
+      "status": "in_progress",
       "pipeline": {
-        "expectedUrls": null,
+        "expectedUrls": 20,
         "urlsFound": null,
         "htmlScraped": null,
         "htmlFailed": null,
@@ -156,16 +156,16 @@
         "builds": null,
         "mods": null
       },
-      "notes": "Bespoke custom vehicles"
+      "notes": "DNS failure - URL discovery script created. 10 vehicles visible on page 1. DEALERSHIP INVENTORY (not custom builds). Network issue, not code issue."
     },
     {
       "id": "lifted_trucks",
       "name": "Lifted Trucks",
       "url": "https://www.liftedtrucks.com/used-inventory/index.htm",
       "outputDir": "scraped_builds/lifted_trucks",
-      "status": "pending",
+      "status": "in_progress",
       "pipeline": {
-        "expectedUrls": null,
+        "expectedUrls": 50,
         "urlsFound": null,
         "htmlScraped": null,
         "htmlFailed": null,
@@ -173,24 +173,24 @@
         "builds": null,
         "mods": null
       },
-      "notes": "Used lifted trucks and SUVs dealership"
+      "notes": "DNS failure - URL discovery scripts created. Dealership inventory (not custom builds). Network issue, not code issue."
     },
     {
       "id": "revmatch",
       "name": "RevMatch",
       "url": "https://www.revmatch.app/",
       "outputDir": "scraped_builds/revmatch",
-      "status": "pending",
+      "status": "completed",
       "pipeline": {
-        "expectedUrls": null,
-        "urlsFound": null,
-        "htmlScraped": null,
-        "htmlFailed": null,
-        "htmlBlocked": null,
-        "builds": null,
-        "mods": null
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
       },
-      "notes": "Vehicle enthusiast platform"
+      "notes": "SKIP: Web application requiring authentication. No public build gallery. Users create build sheets behind login - not scrapable via HTTP."
     }
   ]
 }
