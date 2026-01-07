@@ -14,8 +14,8 @@
         "Document HTML selectors and patterns for extraction"
       ],
       "priority": 1,
-      "passes": false,
-      "notes": "Tacoma World media gallery pages show recent uploads. Detail pages require login - only index data available."
+      "passes": true,
+      "notes": "HTML ANALYSIS COMPLETE: Media pages have title, owner, image URL, date. No JSON-LD. Vehicle info must be inferred from titles (e.g., '4.10 PreRunner', '08 RCLT King'). Patterns: media/albums/ for album name, members/ for owner username, media/*/full for image URL."
     },
     {
       "id": "BUILD-002",
