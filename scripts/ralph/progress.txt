@@ -103,3 +103,19 @@ scraped_builds/
   - Scraping 1000 URLs with 1.5s delay takes ~30 minutes
 
 ---
+
+## [2026-01-06] - US-004 (Gateway Classic Cars) ✅
+- Executed full scrape of all 2823 vehicles from Gateway Classic Cars
+- Scraping was already complete from previous iteration
+- Created manifest.json with metadata (url, filename, title, scraped_at, file_size_bytes)
+- Files involved:
+  - scraped_builds/gateway_classic_cars/html/ (2823 HTML files)
+  - scraped_builds/gateway_classic_cars/manifest.json (created)
+  - scripts/create_manifest.py (created - reusable manifest generation script)
+- Total data size: 1295.0 MB
+- **Learnings:**
+  - BeautifulSoup4 useful for HTML title extraction from saved files
+  - create_manifest.py is now a reusable script for all scraping projects
+  - Gateway Classic Cars has 2823 vehicles across 110 pages
+  - Slug extraction from URLs works reliably for filename mapping
+---

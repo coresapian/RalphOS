@@ -54,7 +54,7 @@
         "Log completion summary with counts"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "This may take a while depending on inventory size. Manifest should include: url, filename, title, scraped_at, file_size_bytes"
     }
   ]
