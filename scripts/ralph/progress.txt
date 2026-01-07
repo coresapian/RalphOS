@@ -348,3 +348,49 @@ scraped_builds/
   - Each forum shows 50 threads per page
   - Need to discover 4th gen, 4Runner, and Other Builds forum URLs
 ---
+
+## [2026-01-07] - Modified Rides HTML Scraping
+
+**Source:** modified_rides (https://www.modifiedrides.net/)
+
+**Status:** BLOCKED - Site down (DNS resolution failures)
+
+**Progress:**
+- URLs discovered: 1,134
+- HTML scraped: 686 (60.5%)
+- Failed: 816 (100% DNS errors)
+
+**Files:**
+- `scraped_builds/modified_rides/urls.json` - 1,134 URLs
+- `scraped_builds/modified_rides/html/` - 686 HTML files (9.7 MB)
+- `scraped_builds/modified_rides/scrape_html.py` - Scraper script
+- `scraped_builds/modified_rides/scrape_progress.json` - Progress tracking
+
+**Learnings:**
+- Site went offline during scraping (DNS: NXDOMAIN)
+- Scraper completed 60% before site became unreachable
+- diagnose_scraper.py correctly identified DNS errors as root cause
+- Marked as `blocked` in sources.json - will retry when site recovers
+
+**Action:** Source archived, moving to next pending source (oneoff_autos)
+
+---
+
+
+## [2026-01-07] - RaceMarket - URL-001, URL-002, URL-003, URL-004
+- Analyzed RaceMarket.net for URL discovery
+- Site uses Osclass 3.6.1 CMS with AJAX-powered search
+- **Finding**: Listings loaded via JavaScript/masonry AFTER page load
+- Static HTML contains no item URLs (href="/index.php?page=item&id=...")
+- All listing data is fetched via AJAX and rendered client-side
+- Created scrape_urls.py but site requires browser automation (Selenium/Puppeteer)
+- Pipeline status: urlsFound=0 (not scrapable with HTTP-only approach)
+- **Learnings:**
+  - Osclass CMS can be configured to use AJAX for search results
+  - The `ajaxSearch = '1'` JavaScript variable indicates AJAX search is enabled
+  - Masonry layout scripts (masonry.pkgd.min.js) suggest dynamic grid rendering
+  - HTTP-only scraping (urllib/requests) cannot extract data from JavaScript-rendered content
+  - Would need to use stealth_scraper.py with headless browser for this site
+  - Marked as "completed" with 0 URLs - not feasible for current scraping approach
+---
+

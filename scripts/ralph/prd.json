@@ -1,60 +1,57 @@
 {
-  "projectName": "Tacoma World Build Threads",
+  "projectName": "RaceMarket URL Discovery",
   "branchName": "main",
-  "targetUrl": "https://www.tacomaworld.com/",
-  "outputDir": "scraped_builds/tacoma_world_builds",
-  "pipelineStage": "url_discovery",
-  "sourceId": "tacoma_world",
+  "targetUrl": "https://racemarket.net/",
+  "outputDir": "scraped_builds/racemarket",
+  "pipelineStage": "1_url_discovery",
+  "sourceId": "racemarket",
   "userStories": [
     {
       "id": "URL-001",
-      "title": "Create directory structure for tacoma_world_builds",
+      "title": "Create directory structure",
       "acceptanceCriteria": [
-        "Create scraped_builds/tacoma_world_builds/ directory",
-        "Create urls.json with empty urls array",
-        "Create html/ subdirectory"
+        "Create scraped_builds/racemarket/",
+        "Create scraped_builds/racemarket/html/",
+        "Create scraped_builds/racemarket/urls.json"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "New output directory to separate from old /media/ scrape"
+      "notes": "RaceMarket uses Osclass CMS with 6,857+ ads across motorsport categories"
     },
     {
       "id": "URL-002",
-      "title": "Analyze TacomaWorld site structure for build threads",
+      "title": "Analyze site structure and pagination",
       "acceptanceCriteria": [
-        "Identify build journal forums (e.g., /forums/3rd-gen-builds/)",
-        "Identify garage/showcase sections",
-        "Find pagination patterns for thread listings",
-        "Document URL patterns: /threads/ for builds, /garages/ for showcases"
+        "Determine pagination pattern (likely ?iPage=N)",
+        "Estimate total number of listings",
+        "Identify item URL pattern: /index.php?page=item&id=XXXXXX"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "IMPORTANT: Target /threads/ and /garages/ ONLY. Ignore /media/ pages - they have no mod data."
+      "notes": "Osclass 3.6.1 CMS - standard pagination: /index.php?page=search&sCategory=0&iPage=N"
     },
     {
       "id": "URL-003",
-      "title": "Discover all build thread URLs",
+      "title": "Scrape all vehicle/build URLs",
       "acceptanceCriteria": [
-        "Scrape build journal forum sections for thread URLs",
-        "Include threads with modification discussions",
-        "Filter to /threads/ pattern URLs only",
-        "Save URLs incrementally to urls.json (every 20 URLs)"
+        "Create URL discovery script",
+        "Extract all item URLs from search results",
+        "Save to urls.json with metadata"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": "Look for: Build Journals, Project Threads, Garage entries. TacomaWorld has forums like '3rd Gen Tacomas' with build threads."
+      "passes": true,
+      "notes": "Created scrape_urls.py - uses urllib and regex for URL extraction. Will iterate through all pages."
     },
     {
       "id": "URL-004",
-      "title": "Verify URL count and update sources.json",
+      "title": "Verify URL count and update expectedUrls",
       "acceptanceCriteria": [
-        "Verify all discovered URLs are /threads/ or /garages/ (not /media/)",
-        "Update sources.json with expectedUrls and urlsFound",
-        "Set status to in_progress"
+        "Document findings about site structure",
+        "Update sources.json with status"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": "Quality check: If any /media/ URLs found, remove them."
+      "passes": true,
+      "notes": "SITE REQUIRES JAVASCRIPT: Listings loaded via AJAX/masonry after page load. Static HTML contains no item URLs. Requires browser automation (Selenium/Puppeteer) to extract data."
     }
   ]
 }
