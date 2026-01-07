@@ -541,7 +541,8 @@
       "name": "Tacoma World",
       "url": "https://www.tacomaworld.com/",
       "outputDir": "scraped_builds/tacoma_world",
-      "status": "in_progress",
+      "status": "completed",
+      "completedAt": "2026-01-06",
       "pipeline": {
         "expectedUrls": 618,
         "urlsFound": 618,
@@ -549,7 +550,7 @@
         "builds": null,
         "mods": null
       },
-      "notes": "Toyota Tacoma forum/builds - US-003 complete: 618 HTML files scraped. Detail pages require login, only gallery index available."
+      "notes": "Toyota Tacoma forum/media gallery. 618 media items from gallery index. Detail pages require login, only index data available. 22.5 MB HTML data. Needs build/mod extraction."
     },
     {
       "id": "extremeterrain",

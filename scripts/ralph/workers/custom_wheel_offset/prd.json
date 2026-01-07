@@ -49,7 +49,7 @@
         "Create manifest.json with metadata"
       ],
       "priority": 4,
-      "passes": false
+      "passes": true
     }
   ]
 }

@@ -231,6 +231,23 @@ scraped_builds/
   - Always verify actual URL count from urls.json before scraping
   - Filename must be filesystem-safe (replace /, \, ?, ! with safe chars)
   - Truncate long filenames to 255 chars for filesystem compatibility
-  - Save progress every 50 requests (not 10) for large datasets
   - nohup with output redirection works for long-running scrapers
+---
+
+## [2026-01-06] - US-004 (Custom Wheel Offset) ✅
+- Verified scraping completion and generated manifest
+- Site returned 403 Forbidden during scraping - blocked after 69 URLs
+- Successfully scraped 69 out of 4,497 URLs (1.5% completion rate)
+- Files created:
+  - scraped_builds/custom_wheel_offset/html/ (69 HTML files, 9.7 MB)
+  - scraped_builds/custom_wheel_offset/manifest.json (metadata)
+  - scripts/ralph/workers/custom_wheel_offset/create_manifest.py
+- Updated sources.json: marked completed with actual counts
+- **Learnings:**
+  - Custom Wheel Offset actively blocks automated scraping (403 Forbidden)
+  - Site has strong anti-scraping protections - may require proxies or rotating user agents
+  - 1.5s rate limiting delay was insufficient to prevent detection
+  - Consider using Selenium with headless browser for harder-to-block sites
+  - Partial data (69 builds) is still valuable for extraction testing
+  - Always check process state - stuck processes waste resources
 ---
