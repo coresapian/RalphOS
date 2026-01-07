@@ -135,4 +135,40 @@ scraped_builds/
   - **ENVIRONMENTAL CONSTRAINT**: DNS blocked at Python level but not MCP level
   - **BLOCKER**: Cannot execute Python scraping scripts until sandbox DNS is resolved
 
+## [2026-01-07] - Tacoma World URL Discovery - PAGINATION BLOCKED (Final Status)
+- **Work Completed:**
+  - Analyzed all 3 Tacoma World build forums (1st/2nd/3rd gen)
+  - Attempted URL discovery via MCP webReader (bypasses Python DNS block)
+  - Verified page 1 of each forum is accessible via MCP
+  - Tested pagination URLs - all return 404 beyond page 1
+- **Blocker Details:**
+  - URLs like `/forums/1st-gen-builds-1995-2004.102/page-2/` return 404 "The requested page could not be found"
+  - Only first page of each forum accessible without authentication/session cookies
+  - Pagination links exist in HTML but return errors when accessed directly
+  - This is an anti-scraping protection requiring authentication/session
+- **Results:**
+  - Expected: 7,854 threads across 158 pages (35 + 91 + 32)
+  - Accessible: 148 threads from 3 first pages (~50 per page)
+  - Coverage: 1.9% of total content
+  - Blocked: 7,706 threads (98.1%)
+- **Files Created:**
+  - `scraped_builds/tacoma_world_builds/discover_urls_mcp.py` - MCP-based URL generator
+  - `scraped_builds/tacoma_world_builds/extract_all_first_pages.py` - Extract accessible URLs
+  - `scraped_builds/tacoma_world_builds/urls.json` - 148 accessible thread URLs saved
+- **Source Status:** BLOCKED
+  - Updated sources.json with status="blocked"
+  - Record block event: type="pagination_blocked" (new category, not 403/429/Cloudflare)
+  - htmlBlocked count: 7,706 (all threads beyond page 1)
+  - Note: Requires browser automation (Selenium/Puppeteer) with valid session or API access
+- **Learnings:**
+  - **New Block Type**: "pagination_blocked" - site shows pagination links but they return 404
+  - Forums that require authentication/session cookies are not scrapable with HTTP-only tools
+  - MCP webReader bypasses Python DNS but cannot bypass site-level authentication requirements
+  - When pagination links exist in HTML but return 404, indicates session/authentication requirement
+  - Tacoma World uses XenForo forum software with anti-scraping protections
+  - **Decision**: Mark as blocked, do not auto-retry - requires human decision on stealth_scraper.py approach
+- **Next Steps:**
+  - Move to next pending source
+  - Consider Tacoma World as candidate for stealth_scraper.py with browser automation if needed
+
 ---

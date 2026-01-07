@@ -197,17 +197,25 @@
       "name": "Tacoma World Build Threads",
       "url": "https://www.tacomaworld.com/",
       "outputDir": "scraped_builds/tacoma_world_builds",
-      "status": "in_progress",
+      "status": "blocked",
       "pipeline": {
         "expectedUrls": 7854,
-        "urlsFound": null,
+        "urlsFound": 148,
         "htmlScraped": null,
         "htmlFailed": null,
-        "htmlBlocked": null,
+        "htmlBlocked": 7706,
         "builds": null,
         "mods": null
       },
-      "notes": "DNS failure - URL discovery script created for 3 build forums (1st/2nd/3rd gen). Total ~7,854 threads across 158 pages. Script ready when DNS resolves."
+      "blockEvents": [
+        {
+          "timestamp": "2026-01-07T12:10:00Z",
+          "type": "pagination_blocked",
+          "afterUrls": 148,
+          "details": "Tacoma World blocks all paginated URLs beyond page 1 (returns 404 'The requested page could not be found'). Only first page of each forum accessible without authentication/session cookies. Total accessible: 148 threads from 3 first pages. Missing: 7,706 threads (98.1%)."
+        }
+      ],
+      "notes": "BLOCKED: Tacoma World pagination requires authentication/session cookies. Verified via MCP webReader that page-2/ and beyond return 404 errors. Only 148/7,854 threads accessible (1.9%). Site uses anti-scraping protection - pagination links exist but return errors when accessed directly. Consider browser automation (Selenium/Puppeteer) with valid session or API access if available. URLs saved to urls.json represent accessible content only."
     }
   ]
 }
