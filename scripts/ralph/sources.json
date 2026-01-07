@@ -525,15 +525,16 @@
       "name": "Custom Wheel Offset",
       "url": "https://www.customwheeloffset.com/wheel-offset-gallery",
       "outputDir": "scraped_builds/custom_wheel_offset",
-      "status": "in_progress",
+      "status": "completed",
+      "completedAt": "2026-01-06",
       "pipeline": {
-        "expectedUrls": 3299,
-        "urlsFound": 3299,
-        "htmlScraped": 0,
+        "expectedUrls": 4497,
+        "urlsFound": 4497,
+        "htmlScraped": 69,
         "builds": null,
         "mods": null
       },
-      "notes": "Wheel fitment gallery with specs. HTML scraper running in background. ~1.4 hours to complete 3,299 URLs."
+      "notes": "Wheel fitment gallery. Site returned 403 Forbidden during scraping. Successfully scraped 69 out of 4,497 URLs before being blocked. Needs build/mod extraction from available HTML."
     },
     {
       "id": "tacoma_world",
@@ -544,11 +545,11 @@
       "pipeline": {
         "expectedUrls": 618,
         "urlsFound": 618,
-        "htmlScraped": null,
+        "htmlScraped": 618,
         "builds": null,
         "mods": null
       },
-      "notes": "Toyota Tacoma forum/builds - US-002 complete: 618 media URLs discovered from gallery index pages. Detail pages require login."
+      "notes": "Toyota Tacoma forum/builds - US-003 complete: 618 HTML files scraped. Detail pages require login, only gallery index available."
     },
     {
       "id": "extremeterrain",

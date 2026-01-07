@@ -202,6 +202,22 @@ scraped_builds/
   - URLs follow pattern: /media/title.ID/
 ---
 
+## [2026-01-06] - US-003 (Tacoma World) ✅
+- Successfully scraped all 618 media HTML pages from Tacoma World
+- Files created:
+  - scripts/ralph/workers/tacoma_world/scrape_html.py (HTML scraper with retry logic)
+  - scraped_builds/tacoma_world/html/ (618 HTML files, ~38KB average)
+  - scraped_builds/tacoma_world/scrape_progress.json (progress tracking)
+- Scrape duration: ~16 minutes (618 URLs × 1.5s delay)
+- 100% success rate - zero failures
+- **Learnings:**
+  - Filename extraction from Tacoma World URLs requires special handling for ID-only URLs
+  - Requests library with retry adapter handles transient failures reliably
+  - Progress checkpoints every 10 URLs allows resume capability
+  - Rate limiting with 1.5s delay is respectful and prevents blocking
+  - All HTML pages successfully downloaded despite login requirement on detail pages
+---
+
 ## [2026-01-06] - US-003 (Custom Wheel Offset) ✅
 - Created HTML scraping script for Custom Wheel Offset gallery
 - URL pattern: /wheel-offset-gallery/{id}/{description}

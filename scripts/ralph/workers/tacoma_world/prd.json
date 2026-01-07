@@ -39,7 +39,8 @@
         "Handle rate limiting (1-2s delays)"
       ],
       "priority": 3,
-      "passes": false
+      "passes": true,
+      "notes": "Scraped 618 HTML files (100% success rate, ~16 minutes duration)"
     },
     {
       "id": "US-004",
