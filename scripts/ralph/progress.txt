@@ -119,3 +119,14 @@ scraped_builds/
   - Gateway Classic Cars has 2823 vehicles across 110 pages
   - Slug extraction from URLs works reliably for filename mapping
 ---
+
+## [2026-01-06] - US-001 (Modified Rides) ✅
+- Created scraper directory structure for Modified Rides
+- Files created:
+  - scraped_builds/modified_rides/urls.json (empty template)
+  - scraped_builds/modified_rides/html/ (directory for HTML files)
+- **Learnings:**
+  - scraped_builds/ is gitignored - data files are not committed
+  - Only the PRD file is committed to track progress
+  - Each worker has its own PRD in scripts/ralph/workers/{source_id}/prd.json
+---
