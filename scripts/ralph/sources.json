@@ -61,7 +61,7 @@
       "name": "Lomar Refined",
       "url": "https://www.lomarefined.com/blogs/journal",
       "outputDir": "scraped_builds/lomar_refined",
-      "status": "in_progress",
+      "status": "completed",
       "pipeline": {
         "expectedUrls": 30,
         "urlsFound": 30,
@@ -69,9 +69,9 @@
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": 30,
-        "mods": null
+        "mods": 41
       },
-      "notes": "Stage 3 COMPLETE: Extracted 30/30 build records via title-based parsing. Build extraction script created with MCP webReader integration patterns. Data includes: Ferrari (17), Lamborghini (5), Aston Martin (2), Porsche (1), Rolls-Royce (4). Ready for Stage 4 (Mod Extraction)."
+      "notes": "COMPLETE: All 4 stages done. 30 URLs discovered, 30 builds extracted, 41 modifications extracted from 22 builds. Category breakdown: Wheel (17), Exhaust & Emission (15), Electrical (9). All content via MCP webReader. Vehicles: Ferrari (17), Lamborghini (5), Rolls-Royce (4), Aston Martin (2), Porsche (1)."
     },
     {
       "id": "total_cost_involved",

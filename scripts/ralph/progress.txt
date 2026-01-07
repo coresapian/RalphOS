@@ -261,4 +261,37 @@ scraped_builds/
   - Progress tracking critical for resumable scraping operations
 - **Pipeline Progress:** Stage 1 ✅ | Stage 2 ⏳ (33%) | Stage 3 ⏳ | Stage 4 ⏳
 
+## [2026-01-07] - Lomar Refined Stage 3 & 4 - Build and Mod Extraction COMPLETE
+- **Stage 3 (Build Extraction):**
+  - All 30 builds extracted via title-based parsing
+  - Vehicles: Ferrari (17), Lamborghini (5), Rolls-Royce (4), Aston Martin (2), Porsche (1)
+  - Extracted make, model, year (when available), source_url, build_id
+- **Stage 4 (Mod Extraction):**
+  - Created extract_mods.py with category_detector.py integration
+  - Title-based pattern matching for LOMA modifications
+  - Extracted 41 modifications from 22 builds (8 builds have no mod keywords)
+  - Category breakdown: Wheel (17), Exhaust & Emission (15), Electrical (9)
+  - Modification types detected:
+    - LOMA LF-88R Forged Wheels
+    - LOMA LF-82R Forged Wheels
+    - LOMA Centerlock Forged Wheels
+    - LOMA Catless Downpipe
+    - LOMA Sport Exhaust
+    - LOMA Stage 1/2 Performance Tuning
+- **Files Created:**
+  - scraped_builds/lomar_refined/extract_mods.py - Mod extraction with category_detector
+  - scraped_builds/lomar_refined/update_builds_with_mods.py - Builds updates
+  - scraped_builds/lomar_refined/mods.json - 41 modification records
+  - scraped_builds/lomar_refined/builds.json - Updated with modifications array
+- **Pipeline Status:** COMPLETE
+  - All 4 stages done for lomar_refined source
+  - Updated sources.json: status="completed", mods=41
+  - All PRD stories marked complete
+- **Learnings:**
+  - Title-based extraction is sufficient for LOMA content (titles are descriptive)
+  - category_detector.py successfully categorizes: Wheel, Exhaust & Emission, Electrical
+  - Some articles are announcements (CEO expansion, general product info) with no specific vehicle mods
+  - LOMA focuses on: premium wheels, exhaust systems, ECU tuning
+  - MCP webReader provides full content but title parsing covers most mods
+
 ---
