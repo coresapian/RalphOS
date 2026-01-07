@@ -118,6 +118,20 @@ scraped_builds/
   - create_manifest.py is now a reusable script for all scraping projects
   - Gateway Classic Cars has 2823 vehicles across 110 pages
   - Slug extraction from URLs works reliably for filename mapping
+
+---
+
+## [2026-01-06] - US-001 (Custom Wheel Offset) ✅
+- Created directory structure for Custom Wheel Offset scraper
+- Target: https://www.customwheeloffset.com/wheel-offset-gallery
+- Files created:
+  - scraped_builds/custom_wheel_offset/urls.json (empty template)
+  - scraped_builds/custom_wheel_offset/html/ (directory for HTML files)
+- Updated sources.json: set urlsFound to 0 (directory structure ready)
+- **Learnings:**
+  - PRD stored in workers/ subdirectory by source ID
+  - Each source gets isolated workspace in workers/{source_id}/
+
 ---
 
 ## [2026-01-06] - US-001 (Modified Rides) ✅
