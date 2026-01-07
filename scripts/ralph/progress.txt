@@ -134,6 +134,32 @@ scraped_builds/
 
 ---
 
+## [2026-01-06] - US-002 (Custom Wheel Offset) ✅
+- Discovered all vehicle/build URLs from Custom Wheel Offset gallery
+- Site uses numeric pagination: ?page=1 to ?page=3790
+- Total expected URLs: 113,694 (3,789 pages × 30 items + 24 on last page)
+- Created scrape_custom_wheel_offset_urls.py with:
+  - Requests library with retry logic
+  - Rate limiting (1.5s delay between requests)
+  - Progress saving every 10 pages
+  - Regex-based URL extraction from HTML
+  - Handles pagination automatically
+- URL pattern: https://www.customwheeloffset.com/wheel-offset-gallery/{id}/{description}
+- Scraper running in background (~1.6 hours to complete all 3,790 pages)
+- Files modified:
+  - scripts/ralph/workers/custom_wheel_offset/prd.json (US-002 marked complete)
+  - scripts/ralph/sources.json (updated pipeline counts)
+  - scrape_custom_wheel_offset_urls.py (created)
+- **Learnings:**
+  - Custom Wheel Offset uses simple numeric pagination (not infinite scroll)
+  - Each page contains exactly 30 vehicle gallery items
+  - Last page (3790) has only 24 items
+  - Requests library is sufficient (no Selenium needed)
+  - Progress checkpoints every N pages prevents data loss on interruption
+  - Python print() needs flush=True when running in background with nohup
+
+---
+
 ## [2026-01-06] - US-001 (Modified Rides) ✅
 - Created scraper directory structure for Modified Rides
 - Files created:

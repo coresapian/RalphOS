@@ -527,13 +527,13 @@
       "outputDir": "scraped_builds/custom_wheel_offset",
       "status": "in_progress",
       "pipeline": {
-        "expectedUrls": null,
-        "urlsFound": 0,
+        "expectedUrls": 113694,
+        "urlsFound": 113694,
         "htmlScraped": null,
         "builds": null,
         "mods": null
       },
-      "notes": "Wheel fitment gallery with specs"
+      "notes": "Wheel fitment gallery with specs. 3,790 pages, ~30 items per page. Scraper running in background."
     },
     {
       "id": "tacoma_world",
