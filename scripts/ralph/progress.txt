@@ -201,3 +201,20 @@ scraped_builds/
   - HTML structure uses `class="mediaContainer media-ID"` pattern for items
   - URLs follow pattern: /media/title.ID/
 ---
+
+## [2026-01-06] - US-003 (Custom Wheel Offset) ✅
+- Created HTML scraping script for Custom Wheel Offset gallery
+- URL pattern: /wheel-offset-gallery/{id}/{description}
+- Filename extraction: {id}_{description}.html (with filesystem-safe chars)
+- Actual URL count: 3,299 (not 113,694 as initially estimated from pagination)
+- Scraper running in background (~1.4 hours to complete at 1.5s delay)
+- Files created:
+  - scripts/ralph/workers/custom_wheel_offset/scrape_html.py
+- **Learnings:**
+  - Estimated counts from pagination can be highly inaccurate
+  - Always verify actual URL count from urls.json before scraping
+  - Filename must be filesystem-safe (replace /, \, ?, ! with safe chars)
+  - Truncate long filenames to 255 chars for filesystem compatibility
+  - Save progress every 50 requests (not 10) for large datasets
+  - nohup with output redirection works for long-running scrapers
+---
