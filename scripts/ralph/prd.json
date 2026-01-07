@@ -1,119 +1,63 @@
 {
-  "projectName": "Lomar Refined Build Extraction",
+  "projectName": "ECD Auto Design HTML Scraping",
   "branchName": "main",
-  "targetUrl": "https://www.lomarefined.com/blogs/journal",
-  "outputDir": "scraped_builds/lomar_refined",
-  "pipelineStage": "4_mod_extraction",
-  "sourceId": "lomar_refined",
+  "targetUrl": "https://ecdautodesign.com/ecd-showcase/",
+  "outputDir": "scraped_builds/ecd_auto_design",
+  "pipelineStage": "2_html_scraping",
+  "sourceId": "ecd_auto_design",
   "userStories": [
     {
-      "id": "BUILD-001",
-      "title": "Read build extraction schema for output format",
+      "id": "HTML-001",
+      "title": "Verify urls.json exists with 338 project URLs",
       "acceptanceCriteria": [
-        "Read schema/build_extraction_schema.json to understand output format",
-        "Identify required fields: id, url, title, make, model, year, modifications_raw",
-        "Understand modifications array structure: name, category, confidence"
+        "Check that scraped_builds/ecd_auto_design/urls.json exists",
+        "Verify it contains 338 unique project URLs",
+        "Confirm all URLs are from ecdautodesign.com domain"
       ],
       "priority": 1,
-      "passes": true,
-      "notes": "Schema defines build record structure. Must match exactly for compatibility."
+      "passes": false,
+      "notes": "URL discovery completed via MCP webReader. Stage 1 complete."
     },
     {
-      "id": "BUILD-002",
-      "title": "Analyze HTML structure for build data patterns",
+      "id": "HTML-002",
+      "title": "Create HTML scraping script using MCP webReader",
       "acceptanceCriteria": [
-        "Examine scraped HTML files to identify data patterns",
-        "Map vehicle identification: make (Ferrari, Lamborghini, etc.), model (SF90, Urus, etc.)",
-        "Map horsepower figures (stock and tuned)",
-        "Map wheel specifications (brand, size, finish)",
-        "Map performance upgrades (downpipe, exhaust, tuning stages)"
+        "Create scrape_html.py script",
+        "Use MCP webReader to fetch HTML content for each URL",
+        "Implement retry logic for failed requests",
+        "Save content to html/ directory with sanitized filenames",
+        "Track progress in scrape_progress.json"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": "LOMA content follows consistent pattern: Vehicle + Wheels + Performance Tuning"
+      "passes": false,
+      "notes": "Python DNS still blocked - must use MCP webReader for all requests."
     },
     {
-      "id": "BUILD-003",
-      "title": "Create build extraction script",
+      "id": "HTML-003",
+      "title": "Execute HTML scrape for all 338 URLs",
       "acceptanceCriteria": [
-        "Create extract_builds.py script",
-        "Parse HTML from scraped files (or MCP JSON data)",
-        "Extract vehicle: make, model, year (if available)",
-        "Extract horsepower: stock_hp, tuned_hp",
-        "Extract modifications: wheels, downpipe, exhaust, tuning, suspension",
-        "Use build_id_generator.py to generate build_id from URL",
-        "Output to builds.json matching schema format"
+        "Run scrape_html.py to completion",
+        "Verify all 338 URLs are attempted",
+        "Handle failures gracefully (retry, log, continue)",
+        "Save successful HTML files to html/ directory"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": "MCP webReader returns structured JSON with title/content. Parse this instead of raw HTML."
+      "passes": false,
+      "notes": "Large batch - use rate limiting and progress checkpoints."
     },
     {
-      "id": "BUILD-004",
-      "title": "Extract all builds and update pipeline counts",
+      "id": "HTML-004",
+      "title": "Verify scrape results and update pipeline",
       "acceptanceCriteria": [
-        "Run extract_builds.py to completion",
-        "Verify builds.json has 30 build records (one per URL)",
-        "Update sources.json: builds=30",
-        "Verify each build has required schema fields"
+        "Count successful HTML files in html/ directory",
+        "Update sources.json: htmlScraped=<success_count>",
+        "Update sources.json: htmlFailed=<failure_count> if any",
+        "Run diagnostic script if errors detected",
+        "Mark Stage 2 complete when htmlScraped >= 320 (95% threshold)"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": "Expected 30 builds from 30 scraped URLs"
-    },
-    {
-      "id": "MOD-001",
-      "title": "Read schema and category_detector for mod extraction",
-      "acceptanceCriteria": [
-        "Re-read schema/build_extraction_schema.json modifications array format",
-        "Review category_detector.py usage: detect_category(mod_name, return_confidence=True)",
-        "Understand mod output: {name, category, confidence, brand, details}"
-      ],
-      "priority": 5,
-      "passes": true,
-      "notes": "Category detector auto-assigns categories from Vehicle_Components.json schema"
-    },
-    {
-      "id": "MOD-002",
-      "title": "Fetch article content via MCP webReader",
-      "acceptanceCriteria": [
-        "Use MCP webReader to fetch full article content for all 30 URLs",
-        "Store content for mod extraction (wheels, downpipe, exhaust, tuning specs)",
-        "Extract modification names from article titles and content",
-        "Target: LOMA wheels (LF-88R, LF-82R, centerlock), downpipes, exhaust, software tuning"
-      ],
-      "priority": 6,
-      "passes": true,
-      "notes": "Fetched sample content via MCP webReader. Used title-based extraction for all 30 builds."
-    },
-    {
-      "id": "MOD-003",
-      "title": "Create mod extraction script with category_detector",
-      "acceptanceCriteria": [
-        "Create extract_mods.py script",
-        "Parse article content for modification names",
-        "Use category_detector.py for automatic category assignment",
-        "Extract brand info (LOMA for wheels)",
-        "Extract specs (wheel sizes, horsepower gains, stage levels)",
-        "Output to mods.json matching schema format"
-      ],
-      "priority": 7,
-      "passes": true,
-      "notes": "Created extract_mods.py with title-based pattern matching. Detects: LOMA wheels (LF-88R, LF-82R, centerlock), downpipes, exhaust, stage tuning."
-    },
-    {
-      "id": "MOD-004",
-      "title": "Extract all mods and update pipeline",
-      "acceptanceCriteria": [
-        "Run extract_mods.py to completion",
-        "Verify mods.json has ~100-150 modification records (30 builds × 3-5 mods each)",
-        "Update sources.json: mods=<total_count>",
-        "Update builds.json with modifications array populated",
-        "Mark source as completed in sources.json"
-      ],
-      "priority": 8,
-      "passes": true,
-      "notes": "Extracted 41 modifications from 22 builds (some builds have no mod keywords). Category breakdown: Wheel (17), Exhaust & Emission (15), Electrical (9)."
+      "passes": false,
+      "notes": "Target: 95%+ success rate. If blocked (403/429), mark as blocked status."
     }
   ]
 }
