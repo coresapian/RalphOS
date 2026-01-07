@@ -512,13 +512,13 @@
       "outputDir": "scraped_builds/modified_rides",
       "status": "in_progress",
       "pipeline": {
-        "expectedUrls": null,
-        "urlsFound": 0,
+        "expectedUrls": 1134,
+        "urlsFound": 1134,
         "htmlScraped": null,
         "builds": null,
         "mods": null
       },
-      "notes": "Modified cars news/features. US-001 complete: directory structure created."
+      "notes": "Modified cars news/features. US-002 complete: discovered 1,134 URLs from sitemap."
     },
     {
       "id": "custom_wheel_offset",

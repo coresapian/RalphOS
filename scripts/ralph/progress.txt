@@ -144,3 +144,18 @@ scraped_builds/
   - Only the PRD file is committed to track progress
   - Each worker has its own PRD in scripts/ralph/workers/{source_id}/prd.json
 ---
+
+## [2026-01-06] - US-002 (Modified Rides) ✅
+- Discovered 1,134 article URLs from Modified Rides sitemap
+- Site structure: https://www.modifiedrides.net/news/modified-cars/
+- URL pattern: https://www.modifiedrides.net/news/{category}/{article-slug}.html
+- Discovery method: Sitemap.xml (https://www.modifiedrides.net/sitemap.xml)
+- Files created:
+  - scraped_builds/modified_rides/urls.json (1,134 URLs)
+- **Learnings:**
+  - Modified Rides uses a comprehensive sitemap.xml containing all article URLs
+  - No traditional pagination - site appears to use infinite scroll on main page
+  - All articles follow consistent URL pattern with category and slug
+  - Sitemap is the most reliable way to discover all content
+  - Articles span multiple categories: modified-cars, muscle-cars, super-cars, classic-cars, etc.
+---
