@@ -57,10 +57,18 @@ scraped_builds/
 - **CRITICAL**: Python urllib and socket DNS resolution completely blocked
 - Tested domains: tacomaworld.com, lomarefined.com, ecdautodesign.com, google.com
 - All fail with: `[Errno 8] nodename nor servname provided, or not known`
-- **Impact**: All in_progress sources blocked (lomar_refined, total_cost_involved, ecd_auto_design, charlies_custom_creations, utv_source, creative_bespoke, lifted_trucks, tacoma_world_builds)
+- **Impact**: All in_progress sources blocked (lomar_refined, ecd_auto_design, charlies_custom_creations, utv_source, creative_bespoke, lifted_trucks, tacoma_world_builds)
 - **Root Cause**: Sandbox environment DNS restriction, not scraper code issues
 - **Action Required**: Resolve DNS in sandbox environment to proceed with scraping
 - **Status**: Scripts ready, awaiting network access
+
+## [2026-01-07] - Total Cost Involved Analysis - Static Gallery (SKIP)
+- **Discovery Method**: Used MCP webReader to bypass Python DNS block
+- **Finding**: Single static gallery page with ~295 car builds displayed as image thumbnails
+- **Each Build Format**: Image thumbnail + caption (e.g., "1969 Camaro, Pro IFS, Born Vintage Hot Rods")
+- **No Individual Detail Pages**: Builds are embedded in the page, not separate URLs
+- **Decision**: SKIP - This is not the target content type (we need individual build pages with detailed specs, photos, modification lists)
+- **Status**: Marked as completed with 0 URLs - not scrapable as individual build pages
 
 ## [2026-01-07] - Tacoma World URL Discovery - Environmental Blocker
 - **Work Completed**:
