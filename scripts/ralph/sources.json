@@ -528,7 +528,7 @@
       "status": "in_progress",
       "pipeline": {
         "expectedUrls": null,
-        "urlsFound": null,
+        "urlsFound": 0,
         "htmlScraped": null,
         "builds": null,
         "mods": null

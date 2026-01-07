@@ -1,0 +1,55 @@
+{
+  "projectName": "Custom Wheel Offset Scraper",
+  "branchName": "main",
+  "targetUrl": "https://www.customwheeloffset.com/wheel-offset-gallery",
+  "outputDir": "scraped_builds/custom_wheel_offset",
+  "sourceId": "custom_wheel_offset",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Create directory structure",
+      "acceptanceCriteria": [
+        "Create scraped_builds/custom_wheel_offset directory",
+        "Create scraped_builds/custom_wheel_offset/urls.json with empty structure",
+        "Create scraped_builds/custom_wheel_offset/html subdirectory"
+      ],
+      "priority": 1,
+      "passes": true
+    },
+    {
+      "id": "US-002",
+      "title": "Discover all vehicle/build URLs",
+      "acceptanceCriteria": [
+        "Analyze site structure and pagination",
+        "Find total expected URLs if possible",
+        "Scrape all vehicle/build page URLs",
+        "Save to urls.json with totalCount"
+      ],
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "US-003",
+      "title": "Scrape HTML for all URLs",
+      "acceptanceCriteria": [
+        "Create scraping script with retry logic",
+        "Download HTML for each URL",
+        "Track progress in scrape_progress.json",
+        "Handle rate limiting (1-2s delays)"
+      ],
+      "priority": 3,
+      "passes": false
+    },
+    {
+      "id": "US-004",
+      "title": "Verify completion and update sources",
+      "acceptanceCriteria": [
+        "Verify all URLs have been scraped",
+        "Update sources.json pipeline counts",
+        "Create manifest.json with metadata"
+      ],
+      "priority": 4,
+      "passes": false
+    }
+  ]
+}
