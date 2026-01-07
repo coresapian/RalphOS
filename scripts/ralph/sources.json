@@ -563,10 +563,10 @@
         "htmlScraped": 446,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": null,
+        "builds": 446,
         "mods": null
       },
-      "notes": "Summit Racing blog. 446 articles. Needs build/mod extraction."
+      "notes": "Summit Racing blog. 446 builds extracted. Field coverage: Year 93.9%, Make 58.5%, Model 2.2%, Images 99.8%, Build Story 100%. Needs mod extraction (Stage 4)."
     },
     {
       "id": "martiniworks",

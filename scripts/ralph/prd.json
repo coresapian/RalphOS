@@ -1,65 +1,60 @@
 {
+  "projectName": "Tacoma World Build Threads",
   "branchName": "main",
-  "projectName": "Tacoma World Build Extraction",
   "targetUrl": "https://www.tacomaworld.com/",
-  "outputDir": "scraped_builds/tacoma_world",
+  "outputDir": "scraped_builds/tacoma_world_builds",
+  "pipelineStage": "url_discovery",
+  "sourceId": "tacoma_world",
   "userStories": [
     {
-      "id": "BUILD-001",
-      "title": "Read build extraction schema and analyze Tacoma World HTML structure",
+      "id": "URL-001",
+      "title": "Create directory structure for tacoma_world_builds",
       "acceptanceCriteria": [
-        "Read schema/build_extraction_schema.json to understand required output format",
-        "Analyze sample HTML files from scraped_builds/tacoma_world/html/",
-        "Identify HTML patterns for: year, make, model, title, images, owner",
-        "Document HTML selectors and patterns for extraction"
+        "Create scraped_builds/tacoma_world_builds/ directory",
+        "Create urls.json with empty urls array",
+        "Create html/ subdirectory"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "HTML ANALYSIS COMPLETE: Media pages have title, owner, image URL, date. No JSON-LD. Vehicle info must be inferred from titles (e.g., '4.10 PreRunner', '08 RCLT King'). Patterns: media/albums/ for album name, members/ for owner username, media/*/full for image URL."
+      "notes": "New output directory to separate from old /media/ scrape"
     },
     {
-      "id": "BUILD-002",
-      "title": "Create build extraction script for Tacoma World",
+      "id": "URL-002",
+      "title": "Analyze TacomaWorld site structure for build threads",
       "acceptanceCriteria": [
-        "Create Python script that reads all HTML files from scraped_builds/tacoma_world/html/",
-        "Extract build data from HTML (no JSON-LD expected - need HTML parsing)",
-        "Generate build_id using scripts/ralph/build_id_generator.py",
-        "Set source_type to 'gallery' (media gallery index)",
-        "Infer build_type from context (Off-Road, Prerunner, Work Truck for Tacoma builds)",
-        "Extract what data is available: title, images, owner_username",
-        "Output to scraped_builds/tacoma_world/builds.json",
-        "Include all required fields: build_id, source_type, build_type, build_source, source_url, year, make, model"
+        "Identify build journal forums (e.g., /forums/3rd-gen-builds/)",
+        "Identify garage/showcase sections",
+        "Find pagination patterns for thread listings",
+        "Document URL patterns: /threads/ for builds, /garages/ for showcases"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "Created extract_tacoma_world_builds.py using BeautifulSoup4. Parses title, owner, image URL, album. Infers year/make/model from title patterns (e.g., '08 RCLT' -> 2008 Toyota Tacoma). Data is limited - detail pages require login."
+      "notes": "IMPORTANT: Target /threads/ and /garages/ ONLY. Ignore /media/ pages - they have no mod data."
     },
     {
-      "id": "BUILD-003",
-      "title": "Execute build extraction for all Tacoma World media items",
+      "id": "URL-003",
+      "title": "Discover all build thread URLs",
       "acceptanceCriteria": [
-        "Run the extraction script against all 618 HTML files",
-        "Generate builds.json with all extracted build records",
-        "Log extraction summary with counts",
-        "Validate output matches schema requirements"
+        "Scrape build journal forum sections for thread URLs",
+        "Include threads with modification discussions",
+        "Filter to /threads/ pattern URLs only",
+        "Save URLs incrementally to urls.json (every 20 URLs)"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": "Successfully extracted 618 builds with 100% success rate. All files processed. builds.json created with all required fields."
+      "passes": false,
+      "notes": "Look for: Build Journals, Project Threads, Garage entries. TacomaWorld has forums like '3rd Gen Tacomas' with build threads."
     },
     {
-      "id": "BUILD-004",
-      "title": "Verify build extraction and update pipeline",
+      "id": "URL-004",
+      "title": "Verify URL count and update sources.json",
       "acceptanceCriteria": [
-        "Verify builds.json contains 618 build records",
-        "Validate required fields are present for all builds",
-        "Update sources.json: set pipeline.builds = 618",
-        "Append learnings to progress.txt",
-        "Commit changes: feat: BUILD-004 - Extract all builds from Tacoma World"
+        "Verify all discovered URLs are /threads/ or /garages/ (not /media/)",
+        "Update sources.json with expectedUrls and urlsFound",
+        "Set status to in_progress"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": "All 618 builds extracted successfully. sources.json updated with builds=618, status=completed. No mod extraction needed (limited data)."
+      "passes": false,
+      "notes": "Quality check: If any /media/ URLs found, remove them."
     }
   ]
 }

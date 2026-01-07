@@ -303,3 +303,48 @@ scraped_builds/
   - Lower extraction_confidence (0.6) due to limited data availability
   - No mod extraction possible - media pages don't contain modification lists
 ---
+
+## [2026-01-07] - BUILD-001, BUILD-002, BUILD-003, BUILD-004 (OnAllCylinders) ✅
+- Successfully extracted 446 builds from OnAllCylinders blog articles
+- Files created:
+  - extract_onallcylinders_builds.py (BeautifulSoup4-based parser for WordPress articles)
+  - scraped_builds/onallcylinders/builds.json (446 build records)
+- Pipeline status: urlsFound=446, htmlScraped=446, builds=446, mods=null
+- Field coverage: Year 93.9%, Make 58.5%, Model 2.2%, Images 99.8%, Build Story 100%
+- Build type distribution: Hot Rod 28%, Muscle 22%, Street 13%, Off-Road 12%, Restoration 8%
+- Top makes: Ford (69), Chevy (61), Jeep (22), Pontiac (15), Dodge (12)
+- **Learnings:**
+  - OnAllCylinders is a WordPress blog with no JSON-LD structured data for vehicles
+  - build_story (full article text) is critical for Stage 4 mod extraction
+  - Year inference works well (93.9%) using regex for 4-digit years in 1900-2026 range
+  - Make inference has moderate success (58.5%) - blog titles don't always contain explicit vehicle info
+  - Model inference is poor (2.2%) - requires more sophisticated NLP or manual categorization
+  - Build type inference using keywords works reliably for Summit Racing's content audience
+  - BeautifulSoup4 is effective for parsing article content from <article> tags
+  - Image extraction from OG meta tags + article <img> tags yields 99.8% coverage
+  - extraction_confidence set to 0.5 due to inference limitations
+  - Lower confidence is acceptable since build_story provides raw text for AI mod extraction
+---
+
+## [2026-01-07] - Tacoma World - URL-001, URL-002 ✅
+- Created directory structure for tacoma_world_builds
+- Analyzed TacomaWorld forum structure for build threads
+- **Build Forums Discovered:**
+  - 4th Gen. Builds (2024+): URL TBD (need to search for forum ID)
+  - 3rd Gen. Builds (2016-2023): forums/3rd-gen-builds-2016-2023.196/ (1,582 threads, 32 pages)
+  - 2nd Gen. Builds (2005-2015): forums/2nd-gen-builds-2005-2015.103/ (4,526 threads, 91 pages)
+  - 1st Gen. Builds (1995-2004): forums/1st-gen-builds-1995-2004.102/ (1,744 threads, 35 pages)
+  - 4Runner Builds: URL TBD
+  - Other Builds: URL TBD
+- **Pagination Pattern:** /page-{N} (e.g., page-2, page-3)
+- **Thread URL Pattern:** /threads/{slug}.{id}/ (e.g., /threads/oem-stormtrooper-personal-build-thread.870830/)
+- **Estimated Total:** ~8,000+ build threads across all generation forums
+- **Learnings:**
+  - Tacoma World uses XenForo forum software with numeric pagination
+  - Build threads are in dedicated sub-forums under "Tacoma Garage > Builds"
+  - Previous /media/ scrape was NOT build threads - media gallery has no mod data
+  - Must target /threads/ URLs only - each thread is a member's build journal with full mod discussions
+  - Forum IDs: 3rd gen = .196/, 2nd gen = .103/, 1st gen = .102/
+  - Each forum shows 50 threads per page
+  - Need to discover 4th gen, 4Runner, and Other Builds forum URLs
+---
