@@ -31,8 +31,8 @@
         "Include all required fields: build_id, source_type, build_type, build_source, source_url, year, make, model"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": "Use BeautifulSoup4 for HTML parsing. Data will be limited since detail pages require login."
+      "passes": true,
+      "notes": "Created extract_tacoma_world_builds.py using BeautifulSoup4. Parses title, owner, image URL, album. Infers year/make/model from title patterns (e.g., '08 RCLT' -> 2008 Toyota Tacoma). Data is limited - detail pages require login."
     },
     {
       "id": "BUILD-003",
