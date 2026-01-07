@@ -159,3 +159,19 @@ scraped_builds/
   - Sitemap is the most reliable way to discover all content
   - Articles span multiple categories: modified-cars, muscle-cars, super-cars, classic-cars, etc.
 ---
+
+## [2026-01-06] - US-002 (Tacoma World) ✅
+- Discovered 618 media URLs from Tacoma World gallery
+- Target: https://www.tacomaworld.com/media/ (media gallery index)
+- Files created:
+  - scripts/ralph/workers/tacoma_world/scrape_urls.py (URL discovery script)
+  - scraped_builds/tacoma_world/urls.json (618 URLs)
+- Scraped 52 pages of gallery index (12 items per page, last page had 6)
+- **Learnings:**
+  - Tacoma World build forums require login - not publicly accessible
+  - Media gallery index is publicly accessible and shows recent uploads
+  - Gallery shows 593,156 total items but only 618 visible in index pagination
+  - Media detail pages also require login - only index data available
+  - HTML structure uses `class="mediaContainer media-ID"` pattern for items
+  - URLs follow pattern: /media/title.ID/
+---

@@ -26,7 +26,8 @@
         "Save to urls.json with totalCount"
       ],
       "priority": 2,
-      "passes": false
+      "passes": true,
+      "notes": "Discovered 618 media URLs from 52 gallery index pages. Note: Detail pages require login, only gallery index is publicly accessible."
     },
     {
       "id": "US-003",
