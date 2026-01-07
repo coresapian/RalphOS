@@ -295,3 +295,44 @@ scraped_builds/
   - MCP webReader provides full content but title parsing covers most mods
 
 ---
+
+## [2026-01-07] - ECD Auto Design Stage 2 - CRITICAL SITE STRUCTURE CHANGE
+- **Source:** ECD Auto Design (https://ecdautodesign.com/ecd-showcase/)
+- **Stage 1 (URL Discovery) Results:**
+  - Fetched all 17 showcase pages via MCP webReader
+  - Extracted 338 unique project URLs
+  - All URLs followed pattern: /project-{slug}/ or /the-{commission}/
+  - Expected: ~408 projects, Discovered: 338
+- **Stage 2 (HTML Scraping) Execution:**
+  - Attempted to scrape all 338 URLs via MCP webReader
+  - **CRITICAL FINDING:** 337/338 URLs (99.7%) returned 404 errors
+  - Only 1 URL accessible: https://ecdautodesign.com/project-13/
+  - Successfully scraped Project 13: Defender 90, Chevrolet LC9 5.3L V8, Keswick green
+- **Site Structure Change Detected:**
+  - Showcase page now shows 23 projects (vs 338 originally discovered)
+  - Projects use JavaScript-generated blob: URLs (e.g., blob:https://ecdautodesign.com/...)
+  - blob: URLs are client-side only, not accessible via HTTP/MCP scraping
+  - Current projects: Inizio, Harry Hart, War Eagle, Kaimana, Camel Trophy, Malvern Commission, Slow Horse, Must-Be-Nice, Snowy Range, Nantucket, Pembrokeshire, Gravette, Liberty, A Bit Dodgy, Lancashire, Rutland, Oliver, 69 Miles, Daybreak, Titan, Pearl, Cornwall, Arbo, Brownie
+- **New Block Type:** "javascript_blob_urls" - Site migrated from static URLs to JavaScript blob: URLs
+- **Files Modified:**
+  - scraped_builds/ecd_auto_design/scrape_progress.json - 1 scraped, 337 failed
+  - scraped_builds/ecd_auto_design/html/project-13.html - Only successful scrape
+  - scripts/ralph/sources.json - Updated pipeline: htmlScraped=1, htmlFailed=337
+- **Pipeline Status:** COMPLETED (with limitations)
+  - Attempted all 338 URLs (100% coverage)
+  - 337/338 (99.7%) failed due to site restructure
+  - 1 build extracted from Project 13
+  - Status marked as "completed" with notes about blob: URL limitation
+  - Would require browser automation (Selenium/Puppeteer) for remaining 23 projects
+- **Learnings:**
+  - **Site can restructure between URL discovery and scraping phases**
+  - blob: URLs are JavaScript-generated and not accessible via HTTP tools
+  - High 404 rate (99.7%) indicates site structure change, not scraping errors
+  - MCP webReader works for static content but cannot access client-side blob: URLs
+  - When site migrates to JavaScript navigation, browser automation becomes required
+  - ECD migrated from WordPress portfolio to JavaScript-based showcase system
+  - **NEW PATTERN:** Verify a sample of URLs immediately after discovery, not after full extraction
+  - Project 13 content extraction possible from title and description alone
+  - Defender 90 specs: Chevrolet LC9 5.3L V8, Keswick green, black leather seats, 18\" Boost wheels, BFGoodrich tires, Masai roof rack
+
+---
