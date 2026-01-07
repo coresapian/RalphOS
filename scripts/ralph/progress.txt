@@ -194,4 +194,40 @@ scraped_builds/
   - MCP-based discovery is viable alternative to Python scraping for DNS-blocked environments
 - **Pipeline Progress:** Stage 1 ✅ | Stage 2 ⏳ | Stage 3 ⏳ | Stage 4 ⏳
 
+## [2026-01-07] - UTV Source Analysis - Static Gallery (SKIP)
+- **Discovery Method:** Used MCP webReader to bypass Python DNS block
+- **Finding:** Static gallery with 47 build cards
+- **Build Format:** Image thumbnails with names (e.g., "2024 Can-Am Maverick R - Janey Lee")
+- **No Individual Detail Pages:** Build cards are display elements only, not clickable links
+- **Pagination Anomaly:** Pagination links exist (?page=2, ?page=3) but return identical content
+- **Platform:** BigCommerce Stencil (e-commerce platform, not custom CMS)
+- **Decision:** SKIP - Marketing showcase page, not browsable catalog of build detail pages
+- **Status:** Marked as completed with 0 URLs - not target content type
+
+## [2026-01-07] - Lomar Refined URL Discovery - COMPLETE via MCP
+- **Source:** Lomar Refined (https://www.lomarefined.com/blogs/journal)
+- **Method:** MCP webReader + web search (bypasses Python DNS block)
+- **Results:**
+  - Fetched all 4 blog pages successfully
+  - Extracted 30 unique blog post URLs
+  - Expected: ~18, Actual: 30 (exceeded expectations)
+  - Coverage: 100% of accessible content
+- **Content Verification:** This IS target content
+  - Vehicle build/tuning posts for: Ferrari, Lamborghini, Porsche, Rolls-Royce, Aston Martin
+  - Specific modifications: wheels (LF-88R, LF-82R, centerlock), exhaust, downpipes, software tuning, horsepower gains
+  - Sample builds: SF90 Stradale (1120 HP), Temerario (1088 HP), Purosangue, 812 Competizione, Urus, Revuelto
+- **URL Pattern:** `https://www.lomarefined.com/blogs/journal/{slug}`
+- **Files Updated:**
+  - `scraped_builds/lomar_refined/urls.json` - 30 build URLs saved
+  - `scripts/ralph/sources.json` - Updated pipeline: urlsFound=30
+- **Status:** Stage 1 (URL Discovery) COMPLETE
+- **Next Stage:** HTML scraping (Stage 2) - fetch content for 30 tuning blog posts
+- **Learnings:**
+  - MCP webReader + web search combination effective for comprehensive discovery
+  - Shopify blog pagination straightforward (?page=1,2,3,4)
+  - Premium tuning shop content (high-end vehicles: Ferrari, Lambo, Porsche, RR)
+  - All posts feature specific performance modifications with horsepower gains
+  - MCP-based discovery successfully bypasses Python DNS restrictions
+- **Pipeline Progress:** Stage 1 ✅ | Stage 2 ⏳ | Stage 3 ⏳ | Stage 4 ⏳
+
 ---

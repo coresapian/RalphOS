@@ -64,14 +64,14 @@
       "status": "in_progress",
       "pipeline": {
         "expectedUrls": 18,
-        "urlsFound": 18,
-        "htmlScraped": 0,
-        "htmlFailed": 18,
-        "htmlBlocked": 0,
+        "urlsFound": 30,
+        "htmlScraped": null,
+        "htmlFailed": null,
+        "htmlBlocked": null,
         "builds": null,
         "mods": null
       },
-      "notes": "DNS failure - all 18 URLs failed. Network issue, not scraper code issue. Retry when DNS resolves."
+      "notes": "URL discovery COMPLETE via MCP webReader: Fetched all 4 blog pages, extracted 30 vehicle build/tuning posts. Content includes Ferrari, Lamborghini, Porsche, Rolls-Royce, Aston Martin tuning projects with specific modifications (wheels, exhaust, software, horsepower gains). Stage 1 COMPLETE. Ready for Stage 2: HTML scraping."
     },
     {
       "id": "total_cost_involved",
@@ -129,17 +129,17 @@
       "name": "UTV Source",
       "url": "https://www.utvsource.com/gallery",
       "outputDir": "scraped_builds/utv_source",
-      "status": "in_progress",
+      "status": "completed",
       "pipeline": {
-        "expectedUrls": 94,
-        "urlsFound": null,
-        "htmlScraped": null,
-        "htmlFailed": null,
-        "htmlBlocked": null,
-        "builds": null,
-        "mods": null
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
       },
-      "notes": "DNS failure - Verified via MCP webReader: Paginated gallery with 47 builds on page 1. Has 'next' pagination to /gallery/?page=2. Each build has name + image with individual detail pages (pattern: '2024 Can-Am Maverick R - Janey Lee'). URL discovery script ready but blocked by Python DNS. Execute scrape_urls.py when DNS resolves."
+      "notes": "SKIP: Static gallery with no individual detail pages. Verified via MCP webReader: Page shows 47 build cards (thumbnails with names like '2024 Can-Am Maverick R - Janey Lee') but these are display elements only, not clickable links to detail pages. Pagination links exist (?page=2, ?page=3) but return identical content. This is a marketing showcase page, not a browsable catalog of build detail pages. Not target content type."
     },
     {
       "id": "creative_bespoke",
