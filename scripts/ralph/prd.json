@@ -1,65 +1,65 @@
 {
   "branchName": "main",
-  "projectName": "Gateway Classic Cars Build Extraction",
-  "targetUrl": "https://www.gatewayclassiccars.com/inventory",
-  "outputDir": "scraped_builds/gateway_classic_cars",
+  "projectName": "Tacoma World Build Extraction",
+  "targetUrl": "https://www.tacomaworld.com/",
+  "outputDir": "scraped_builds/tacoma_world",
   "userStories": [
     {
       "id": "BUILD-001",
-      "title": "Read build extraction schema and analyze HTML structure",
+      "title": "Read build extraction schema and analyze Tacoma World HTML structure",
       "acceptanceCriteria": [
         "Read schema/build_extraction_schema.json to understand required output format",
-        "Analyze sample HTML files from scraped_builds/gateway_classic_cars/html/",
-        "Identify HTML patterns for: year, make, model, price, mileage, VIN, engine, transmission",
+        "Analyze sample HTML files from scraped_builds/tacoma_world/html/",
+        "Identify HTML patterns for: year, make, model, title, images, owner",
         "Document HTML selectors and patterns for extraction"
       ],
       "priority": 1,
       "passes": false,
-      "notes": "Gateway Classic Cars uses JSON-LD structured data in <script type='application/ld+json'> tags. Extract from JSON-LD for best reliability."
+      "notes": "Tacoma World media gallery pages show recent uploads. Detail pages require login - only index data available."
     },
     {
       "id": "BUILD-002",
-      "title": "Create build extraction script for Gateway Classic Cars",
+      "title": "Create build extraction script for Tacoma World",
       "acceptanceCriteria": [
-        "Create Python script that reads all HTML files from scraped_builds/gateway_classic_cars/html/",
-        "Extract build data from JSON-LD structured data",
+        "Create Python script that reads all HTML files from scraped_builds/tacoma_world/html/",
+        "Extract build data from HTML (no JSON-LD expected - need HTML parsing)",
         "Generate build_id using scripts/ralph/build_id_generator.py",
-        "Set source_type to 'listing' (dealer inventory)",
-        "Infer build_type from year/make/model context (Restomod, Classic, Hot Rod, etc.)",
-        "Extract sale_data: price_numeric, listing_price, mileage, vin, status, location",
-        "Output to scraped_builds/gateway_classic_cars/builds.json",
+        "Set source_type to 'gallery' (media gallery index)",
+        "Infer build_type from context (Off-Road, Prerunner, Work Truck for Tacoma builds)",
+        "Extract what data is available: title, images, owner_username",
+        "Output to scraped_builds/tacoma_world/builds.json",
         "Include all required fields: build_id, source_type, build_type, build_source, source_url, year, make, model"
       ],
       "priority": 2,
-      "passes": true,
-      "notes": "Created extract_gateway_builds.py with JSON-LD parsing, build_type inference, and sale_data extraction."
+      "passes": false,
+      "notes": "Use BeautifulSoup4 for HTML parsing. Data will be limited since detail pages require login."
     },
     {
       "id": "BUILD-003",
-      "title": "Execute build extraction for all vehicles",
+      "title": "Execute build extraction for all Tacoma World media items",
       "acceptanceCriteria": [
-        "Run the extraction script against all 2,823 HTML files",
+        "Run the extraction script against all 618 HTML files",
         "Generate builds.json with all extracted build records",
         "Log extraction summary with counts",
         "Validate output matches schema requirements"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": "Extracted 2,822 builds (1 file had no JSON-LD data). Output: scraped_builds/gateway_classic_cars/builds.json"
+      "passes": false,
+      "notes": "This should process all HTML files and create builds.json. Update sources.json pipeline.builds count when complete."
     },
     {
       "id": "BUILD-004",
       "title": "Verify build extraction and update pipeline",
       "acceptanceCriteria": [
-        "Verify builds.json contains 2,823 build records",
+        "Verify builds.json contains 618 build records",
         "Validate required fields are present for all builds",
-        "Update sources.json: set pipeline.builds = 2823",
+        "Update sources.json: set pipeline.builds = 618",
         "Append learnings to progress.txt",
-        "Commit changes: feat: BUILD-004 - Extract all builds from Gateway Classic Cars"
+        "Commit changes: feat: BUILD-004 - Extract all builds from Tacoma World"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": "Verified 2,822 builds extracted. Updated sources.json pipeline.builds = 2822. Ready for Stage 4 (Mod Extraction)."
+      "passes": false,
+      "notes": "After this, Tacoma World will be complete (no mod extraction expected for gallery index data)."
     }
   ]
 }

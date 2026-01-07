@@ -384,7 +384,7 @@
       "name": "Gateway Classic Cars",
       "url": "https://www.gatewayclassiccars.com/inventory",
       "outputDir": "scraped_builds/gateway_classic_cars",
-      "status": "in_progress",
+      "status": "completed",
       "completedAt": "2026-01-06",
       "pipeline": {
         "expectedUrls": 2823,
@@ -393,9 +393,9 @@
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": 2822,
-        "mods": null
+        "mods": 0
       },
-      "notes": "Classic car dealer inventory. 2822 vehicles extracted (1 file had no JSON-LD data). 1890-2024, 110 Makes. Stage 4 (Mod Extraction) needed."
+      "notes": "Classic car dealer inventory. 2822 vehicles extracted (1 file had no JSON-LD data). 1890-2024, 110 Makes. Dealer listings don't have comprehensive mod data - marked mods=0."
     },
     {
       "id": "jdm_supply",
@@ -633,7 +633,6 @@
       "url": "https://www.tacomaworld.com/",
       "outputDir": "scraped_builds/tacoma_world",
       "status": "in_progress",
-      "completedAt": "2026-01-06",
       "pipeline": {
         "expectedUrls": 618,
         "urlsFound": 618,
@@ -643,7 +642,7 @@
         "builds": null,
         "mods": null
       },
-      "notes": "Toyota Tacoma forum/media gallery. 618 media items from gallery index. Detail pages require login, only index data available. 22.5 MB HTML data. Needs build/mod extraction."
+      "notes": "Toyota Tacoma forum/media gallery. 618 media items from gallery index. Detail pages require login, only index data available. Working on build extraction."
     },
     {
       "id": "extremeterrain",
