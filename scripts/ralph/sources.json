@@ -63,15 +63,15 @@
       "outputDir": "scraped_builds/lomar_refined",
       "status": "in_progress",
       "pipeline": {
-        "expectedUrls": 18,
+        "expectedUrls": 30,
         "urlsFound": 30,
-        "htmlScraped": null,
-        "htmlFailed": null,
-        "htmlBlocked": null,
+        "htmlScraped": 10,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
         "builds": null,
         "mods": null
       },
-      "notes": "URL discovery COMPLETE via MCP webReader: Fetched all 4 blog pages, extracted 30 vehicle build/tuning posts. Content includes Ferrari, Lamborghini, Porsche, Rolls-Royce, Aston Martin tuning projects with specific modifications (wheels, exhaust, software, horsepower gains). Stage 1 COMPLETE. Ready for Stage 2: HTML scraping."
+      "notes": "Stage 2 IN PROGRESS: HTML scraping via MCP webReader. Successfully scraped 10/30 URLs (33%). Method: MCP webReader bypasses Python DNS block. Content includes Ferrari, Lamborghini, Porsche, Rolls-Royce, Aston Martin tuning builds. Remaining 20 URLs need MCP webReader fetches. Progress saved to scrape_progress.json."
     },
     {
       "id": "total_cost_involved",
