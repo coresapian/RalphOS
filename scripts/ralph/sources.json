@@ -65,13 +65,13 @@
       "pipeline": {
         "expectedUrls": 30,
         "urlsFound": 30,
-        "htmlScraped": 10,
+        "htmlScraped": 30,
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": null,
         "mods": null
       },
-      "notes": "Stage 2 IN PROGRESS: HTML scraping via MCP webReader. Successfully scraped 10/30 URLs (33%). Method: MCP webReader bypasses Python DNS block. Content includes Ferrari, Lamborghini, Porsche, Rolls-Royce, Aston Martin tuning builds. Remaining 20 URLs need MCP webReader fetches. Progress saved to scrape_progress.json."
+      "notes": "Stage 2 COMPLETE: All 30/30 URLs successfully scraped via MCP webReader. Python DNS blocked but MCP bypasses it. Content includes Ferrari, Lamborghini, Porsche, Rolls-Royce, Aston Martin tuning builds. Ready for Stage 3 (Build Extraction)."
     },
     {
       "id": "total_cost_involved",
