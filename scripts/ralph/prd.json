@@ -1,0 +1,57 @@
+{
+  "projectName": "Luxury4Play HTML Scraping",
+  "branchName": "multi-ralph",
+  "targetUrl": "https://luxury4play.com",
+  "outputDir": "data/luxury4play",
+  "pipelineStage": 2,
+  "userStories": [
+    {
+      "id": "HTML-001",
+      "title": "Create html/ directory and normalize URLs",
+      "acceptanceCriteria": [
+        "Create data/luxury4play/html/ directory",
+        "Parse urls.jsonl to extract unique URLs (remove #comments duplicates)",
+        "Update urls.json with normalized unique URLs list",
+        "Update totalCount in urls.json to match actual unique URLs"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "HTML-002",
+      "title": "Create HTML scraping script with retry logic",
+      "acceptanceCriteria": [
+        "Create scrape_html.py script in data/luxury4play/",
+        "Implement User-Agent header",
+        "Implement retry logic with exponential backoff",
+        "Save HTML to html/ directory with proper filenames",
+        "Track progress in scrape_progress.json"
+      ],
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "HTML-003",
+      "title": "Execute full HTML scrape",
+      "acceptanceCriteria": [
+        "Run scrape_html.py script",
+        "Successfully scrape all unique URLs",
+        "Verify htmlScraped count matches unique URLs"
+      ],
+      "priority": 3,
+      "passes": false
+    },
+    {
+      "id": "HTML-004",
+      "title": "Test and verify scraping completion",
+      "acceptanceCriteria": [
+        "Run test_url_discovery.py to verify URL discovery passed",
+        "Run test_scraper.py to verify HTML scraping passed",
+        "Update sources.json with htmlScraped count",
+        "All tests pass (exit code 0)"
+      ],
+      "priority": 4,
+      "passes": false
+    }
+  ]
+}

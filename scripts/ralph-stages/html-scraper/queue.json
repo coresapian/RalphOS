@@ -8,52 +8,12 @@
   },
   "sources": [
     {
-      "id": "total_cost_involved",
-      "name": "Total Cost Involved",
-      "outputDir": "data/total_cost_involved",
-      "urlsFound": 295,
-      "status": "in_progress",
-      "priority": 1
-    },
-    {
-      "id": "lifted_trucks",
-      "name": "Lifted Trucks",
-      "outputDir": "data/lifted_trucks",
-      "urlsFound": 939,
-      "status": "pending",
-      "priority": 2
-    },
-    {
-      "id": "ecd_auto_design",
-      "name": "ECD Auto Design",
-      "outputDir": "data/ecd_auto_design",
-      "urlsFound": 338,
-      "status": "pending",
-      "priority": 3
-    },
-    {
-      "id": "charlies_custom_creations",
-      "name": "Charlie's Custom Creations",
-      "outputDir": "data/charlies_custom_creations",
-      "urlsFound": 65,
-      "status": "pending",
-      "priority": 4
-    },
-    {
-      "id": "utv_source",
-      "name": "UTV Source",
-      "outputDir": "data/utv_source",
-      "urlsFound": 45,
+      "id": "luxury4play",
+      "name": "Luxury4Play",
+      "outputDir": "data/luxury4play",
+      "urlsFound": 18,
       "status": "pending",
       "priority": 5
-    },
-    {
-      "id": "creative_bespoke",
-      "name": "Creative Bespoke",
-      "outputDir": "data/creative_bespoke",
-      "urlsFound": 8,
-      "status": "pending",
-      "priority": 6
     }
   ]
 }

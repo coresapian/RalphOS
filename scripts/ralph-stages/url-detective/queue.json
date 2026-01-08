@@ -7,52 +7,724 @@
   },
   "sources": [
     {
-      "id": "total_cost_involved",
-      "name": "Total Cost Involved",
-      "url": "https://totalcostinvolved.com/customer-showcase/",
-      "outputDir": "data/total_cost_involved",
-      "status": "completed",
-      "priority": 1
-    },
-    {
-      "id": "ecd_auto_design",
-      "name": "ECD Auto Design",
-      "url": "https://ecdautodesign.com/ecd-showcase/",
-      "outputDir": "data/ecd_auto_design",
-      "status": "completed",
-      "priority": 2
-    },
-    {
-      "id": "charlies_custom_creations",
-      "name": "Charlie's Custom Creations",
-      "url": "https://charliescustomcreations.com/",
-      "outputDir": "data/charlies_custom_creations",
-      "status": "completed",
-      "priority": 3
-    },
-    {
-      "id": "utv_source",
-      "name": "UTV Source",
-      "url": "https://www.utvsource.com/gallery",
-      "outputDir": "data/utv_source",
-      "status": "completed",
-      "priority": 4
-    },
-    {
-      "id": "creative_bespoke",
-      "name": "Creative Bespoke",
-      "url": "https://creativebespoke.com/vehicles",
-      "outputDir": "data/creative_bespoke",
-      "status": "completed",
+      "id": "clublexus",
+      "name": "ClubLexus",
+      "url": "https://clublexus.com",
+      "outputDir": "data/clublexus",
+      "status": "pending",
       "priority": 5
     },
     {
-      "id": "lifted_trucks",
-      "name": "Lifted Trucks",
-      "url": "https://www.liftedtrucks.com/used-inventory/index.htm",
-      "outputDir": "data/lifted_trucks",
-      "status": "completed",
-      "priority": 6
+      "id": "motoringexposure",
+      "name": "Motoring Exposure",
+      "url": "https://motoringexposure.com",
+      "outputDir": "data/motoringexposure",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "nicheroadwheels",
+      "name": "Niche Road Wheels",
+      "url": "https://nicheroadwheels.com",
+      "outputDir": "data/nicheroadwheels",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "vwvortex",
+      "name": "VWVortex",
+      "url": "https://forums.vwvortex.com",
+      "outputDir": "data/vwvortex",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "adv1wheels",
+      "name": "ADV.1 Wheels",
+      "url": "https://adv1wheels.com",
+      "outputDir": "data/adv1wheels",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "nasioc",
+      "name": "NASIOC",
+      "url": "https://forums.nasioc.com",
+      "outputDir": "data/nasioc",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mazdas247",
+      "name": "Mazdas247",
+      "url": "https://mazdas247.com",
+      "outputDir": "data/mazdas247",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "ft86club",
+      "name": "FT86Club",
+      "url": "https://ft86club.com",
+      "outputDir": "data/ft86club",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "gencoupe",
+      "name": "GenCoupe",
+      "url": "https://gencoupe.com",
+      "outputDir": "data/gencoupe",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "priuschat",
+      "name": "PriusChat",
+      "url": "https://priuschat.com",
+      "outputDir": "data/priuschat",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "rav4world",
+      "name": "RAV4World",
+      "url": "https://rav4world.com",
+      "outputDir": "data/rav4world",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "vwgolf",
+      "name": "Vwgolf",
+      "url": "https://vwgolf.net.au",
+      "outputDir": "data/vwgolf",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "wheeldude",
+      "name": "WheelDude",
+      "url": "https://wheeldude.com",
+      "outputDir": "data/wheeldude",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "jukecom",
+      "name": "Jukecom",
+      "url": "https://jukeforums.com",
+      "outputDir": "data/jukecom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "evolutionm",
+      "name": "EvolutionM",
+      "url": "https://evolutionm.net",
+      "outputDir": "data/evolutionm",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "optimacom",
+      "name": "Optimacom",
+      "url": "https://optimaforums.com",
+      "outputDir": "data/optimacom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "scionlife",
+      "name": "ScionLife",
+      "url": "https://scionlife.com",
+      "outputDir": "data/scionlife",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "rx8club",
+      "name": "RX8Club",
+      "url": "https://rx8club.com",
+      "outputDir": "data/rx8club",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "teslamotorsclub",
+      "name": "Tesla Motors Club",
+      "url": "https://teslamotorsclub.com",
+      "outputDir": "data/teslamotorsclub",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "the370z",
+      "name": "The370Z",
+      "url": "https://the370z.com",
+      "outputDir": "data/the370z",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mazda6club",
+      "name": "Mazda6Club",
+      "url": "https://forum.mazda6club.com",
+      "outputDir": "data/mazda6club",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "maxima",
+      "name": "Maxima",
+      "url": "https://maxima.org",
+      "outputDir": "data/maxima",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "tundratalk",
+      "name": "TundraTalk",
+      "url": "https://tundratalk.net",
+      "outputDir": "data/tundratalk",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "ramforumz",
+      "name": "RamForumz",
+      "url": "https://ramforumz.com",
+      "outputDir": "data/ramforumz",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "toyotanation",
+      "name": "ToyotaNation",
+      "url": "https://toyotanation.com",
+      "outputDir": "data/toyotanation",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mbworld",
+      "name": "MBWorld",
+      "url": "https://mbworld.org",
+      "outputDir": "data/mbworld",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "nissanclub",
+      "name": "NissanClub",
+      "url": "https://nissanclub.com",
+      "outputDir": "data/nissanclub",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "toyota_4runner",
+      "name": "Toyota 4Runner",
+      "url": "https://toyota-4runner.org",
+      "outputDir": "data/toyota_4runner",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mazdaspeedorg",
+      "name": "Mazdaspeedorg",
+      "url": "https://mazdaspeedforums.org",
+      "outputDir": "data/mazdaspeedorg",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "northamericanmotoring",
+      "name": "North American Motoring",
+      "url": "https://northamericanmotoring.com",
+      "outputDir": "data/northamericanmotoring",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "hyundai_com",
+      "name": "Hyundai Com",
+      "url": "https://hyundai-forums.com",
+      "outputDir": "data/hyundai_com",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "wheelspecialists",
+      "name": "Wheel Specialists",
+      "url": "https://wheelspecialists.com",
+      "outputDir": "data/wheelspecialists",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "jeepgarage",
+      "name": "Jeep Garage",
+      "url": "https://jeepgarage.org",
+      "outputDir": "data/jeepgarage",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "lotustalk",
+      "name": "LotusTalk",
+      "url": "https://lotustalk.com",
+      "outputDir": "data/lotustalk",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "huracantalk",
+      "name": "HuracanTalk",
+      "url": "https://huracantalk.com",
+      "outputDir": "data/huracantalk",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mazdaroadster",
+      "name": "MazdaRoadster",
+      "url": "https://mazdaroadster.net",
+      "outputDir": "data/mazdaroadster",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "veloster",
+      "name": "Veloster",
+      "url": "https://veloster.org",
+      "outputDir": "data/veloster",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "swedespeed",
+      "name": "SwedeSpeed",
+      "url": "https://forums.swedespeed.com",
+      "outputDir": "data/swedespeed",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "cumminscom",
+      "name": "Cumminscom",
+      "url": "https://cumminsforum.com",
+      "outputDir": "data/cumminscom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mercedesclacom",
+      "name": "Mercedesclacom",
+      "url": "https://mercedesclaforum.com",
+      "outputDir": "data/mercedesclacom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "planet_9",
+      "name": "Planet-9",
+      "url": "https://planet-9.com",
+      "outputDir": "data/planet_9",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mazda3revolution",
+      "name": "Mazda3Revolution",
+      "url": "https://mazda3revolution.com",
+      "outputDir": "data/mazda3revolution",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "rennlist",
+      "name": "Rennlist",
+      "url": "https://rennlist.com",
+      "outputDir": "data/rennlist",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "gtrlife",
+      "name": "GTRLife",
+      "url": "https://gtrlife.com",
+      "outputDir": "data/gtrlife",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mazdacom",
+      "name": "Mazdacom",
+      "url": "https://mazdaforum.com",
+      "outputDir": "data/mazdacom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "fortecom",
+      "name": "Fortecom",
+      "url": "https://forteforums.com",
+      "outputDir": "data/fortecom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "kia_com",
+      "name": "Kia Com",
+      "url": "https://kia-forums.com",
+      "outputDir": "data/kia_com",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "nissancubelife",
+      "name": "Nissan Cube Life",
+      "url": "https://nissancubelife.com",
+      "outputDir": "data/nissancubelife",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "benzworld",
+      "name": "BenzWorld",
+      "url": "https://benzworld.org",
+      "outputDir": "data/benzworld",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "6speedonline",
+      "name": "6SpeedOnline",
+      "url": "https://6speedonline.com",
+      "outputDir": "data/6speedonline",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "macancom",
+      "name": "Macancom",
+      "url": "https://macanforum.com",
+      "outputDir": "data/macancom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "wheelsboutique",
+      "name": "Wheels Boutique",
+      "url": "https://wheelsboutique.com",
+      "outputDir": "data/wheelsboutique",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "audizine",
+      "name": "Audizine",
+      "url": "https://audizine.com",
+      "outputDir": "data/audizine",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "jeepcherokeeclub",
+      "name": "Jeep Cherokee Club",
+      "url": "https://jeepcherokeeclub.com",
+      "outputDir": "data/jeepcherokeeclub",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "nissanmurano",
+      "name": "Nissanmurano",
+      "url": "https://nissanmurano.org",
+      "outputDir": "data/nissanmurano",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "clubtouareg",
+      "name": "Club Touareg",
+      "url": "https://clubtouareg.com",
+      "outputDir": "data/clubtouareg",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "elantraclub",
+      "name": "Elantra Club",
+      "url": "https://elantraclub.com",
+      "outputDir": "data/elantraclub",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "fancytuning",
+      "name": "Fancy Tuning",
+      "url": "https://fancytuning.com",
+      "outputDir": "data/fancytuning",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "ih8mud",
+      "name": "IH8MUD",
+      "url": "https://forum.ih8mud.com",
+      "outputDir": "data/ih8mud",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mercedescla",
+      "name": "Mercedescla",
+      "url": "https://mercedescla.org",
+      "outputDir": "data/mercedescla",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "minif56",
+      "name": "Mini F56",
+      "url": "https://minif56.com",
+      "outputDir": "data/minif56",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "rangerovers",
+      "name": "Rangerovers",
+      "url": "https://rangerovers.net",
+      "outputDir": "data/rangerovers",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "subaruforester",
+      "name": "Subaru Forester",
+      "url": "https://subaruforester.org",
+      "outputDir": "data/subaruforester",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "team_bhp",
+      "name": "Team-BHP",
+      "url": "https://team-bhp.com",
+      "outputDir": "data/team_bhp",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "titantalk",
+      "name": "TitanTalk",
+      "url": "https://titantalk.com",
+      "outputDir": "data/titantalk",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "650scom",
+      "name": "650Scom",
+      "url": "https://650sforum.com",
+      "outputDir": "data/650scom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "autoevolution",
+      "name": "AutoEvolution",
+      "url": "https://autoevolution.com",
+      "outputDir": "data/autoevolution",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "bccwheels",
+      "name": "BCC Wheels",
+      "url": "https://bccwheels.com",
+      "outputDir": "data/bccwheels",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "wtwcorp",
+      "name": "Wtwcorp",
+      "url": "https://blog.wtwcorp.com",
+      "outputDir": "data/wtwcorp",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "cardomain",
+      "name": "CarDomain",
+      "url": "https://cardomain.com",
+      "outputDir": "data/cardomain",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "dfwmiata",
+      "name": "DFW Miata",
+      "url": "https://dfwmiata.com",
+      "outputDir": "data/dfwmiata",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "digitaltrends",
+      "name": "Digital Trends",
+      "url": "https://digitaltrends.com",
+      "outputDir": "data/digitaltrends",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "f150com",
+      "name": "F150Com",
+      "url": "https://f150forum.com",
+      "outputDir": "data/f150com",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "santafe_autoclub",
+      "name": "Santafe Autoclub",
+      "url": "https://forum.santafe-autoclub.ru",
+      "outputDir": "data/santafe_autoclub",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "nwp4life",
+      "name": "NWP4Life",
+      "url": "https://forums.nwp4life.com",
+      "outputDir": "data/nwp4life",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "hyundaicom",
+      "name": "Hyundaicom",
+      "url": "https://hyundaiforum.com",
+      "outputDir": "data/hyundaicom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "m3net",
+      "name": "M3Net",
+      "url": "https://m3forum.net",
+      "outputDir": "data/m3net",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mitsubishicom",
+      "name": "Mitsubishicom",
+      "url": "https://mitsubishiforum.com",
+      "outputDir": "data/mitsubishicom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "motorward",
+      "name": "Motorward",
+      "url": "https://motorward.com",
+      "outputDir": "data/motorward",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mycarcom",
+      "name": "Mycarcom",
+      "url": "https://mycarforum.com",
+      "outputDir": "data/mycarcom",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "mynissanleaf",
+      "name": "MyNissanLeaf",
+      "url": "https://mynissanleaf.com",
+      "outputDir": "data/mynissanleaf",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "stanceworks",
+      "name": "StanceWorks",
+      "url": "https://stanceworks.com/articles/",
+      "outputDir": "data/stanceworks",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "tamparacing",
+      "name": "Tampa Racing",
+      "url": "https://tamparacing.com",
+      "outputDir": "data/tamparacing",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "thegalantcenter",
+      "name": "The Galant Center",
+      "url": "https://thegalantcenter.org",
+      "outputDir": "data/thegalantcenter",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "tundras",
+      "name": "Tundras",
+      "url": "https://tundras.com",
+      "outputDir": "data/tundras",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "volvoforums",
+      "name": "VolvoForums",
+      "url": "https://volvoforums.com",
+      "outputDir": "data/volvoforums",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "miataturbo",
+      "name": "MiataTurbo",
+      "url": "https://www.miataturbo.net/cars-sale-trade-6/",
+      "outputDir": "data/miataturbo",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "clubrsx",
+      "name": "ClubRSX",
+      "url": "https://www.clubrsx.com",
+      "outputDir": "data/clubrsx",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "clubintegra",
+      "name": "ClubIntegra",
+      "url": "https://www.clubintegra.com",
+      "outputDir": "data/clubintegra",
+      "status": "pending",
+      "priority": 5
+    },
+    {
+      "id": "integraforums",
+      "name": "IntegraForums",
+      "url": "https://www.integraforums.com",
+      "outputDir": "data/integraforums",
+      "status": "pending",
+      "priority": 5
     }
   ]
 }
