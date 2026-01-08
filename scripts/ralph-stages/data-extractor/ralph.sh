@@ -107,6 +107,14 @@ mark_source_completed() {
      "$QUEUE_FILE" > "$tmp_file" && mv "$tmp_file" "$QUEUE_FILE"
 }
 
+mark_source_blocked() {
+  local source_id=$1
+  local tmp_file=$(mktemp)
+  jq --arg id "$source_id" \
+     '(.sources[] | select(.id == $id)).status = "blocked"' \
+     "$QUEUE_FILE" > "$tmp_file" && mv "$tmp_file" "$QUEUE_FILE"
+}
+
 count_pending_sources() {
   if [ -f "$QUEUE_FILE" ]; then
     jq '[.sources[] | select(.status == "pending")] | length' "$QUEUE_FILE" 2>/dev/null || echo 0

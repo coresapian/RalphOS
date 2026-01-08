@@ -24,7 +24,7 @@ def extract_slug(url):
 
 def main():
     base_url = "https://totalcostinvolved.com/customer-showcase/"
-    output_file = "../data/total_cost_involved/urls.jsonl"
+    output_file = "../../../data/total_cost_involved/urls.jsonl"
 
     # Headers to avoid blocking
     headers = {

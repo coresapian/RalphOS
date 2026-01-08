@@ -2,7 +2,7 @@
 # Scrape Total Cost Involved vehicle URLs using curl and grep
 
 BASE_URL="https://totalcostinvolved.com/customer-showcase/"
-OUTPUT_DIR="../data/total_cost_involved"
+OUTPUT_DIR="../../../data/total_cost_involved"
 OUTPUT_FILE="$OUTPUT_DIR/urls.jsonl"
 
 echo "Fetching page content..."

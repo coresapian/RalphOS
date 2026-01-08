@@ -22,7 +22,7 @@ class LinkExtractor(HTMLParser):
 
 def main():
     base_url = "https://totalcostinvolved.com/customer-showcase/"
-    output_file = "../../data/total_cost_involved/urls.jsonl"
+    output_file = "../../../data/total_cost_involved/urls.jsonl"
 
     print(f"Fetching {base_url}...")
 
