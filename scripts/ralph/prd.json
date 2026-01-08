@@ -15,7 +15,7 @@
         "Update totalCount in urls.json to match actual unique URLs"
       ],
       "priority": 1,
-      "passes": false
+      "passes": true
     },
     {
       "id": "HTML-002",
@@ -28,7 +28,7 @@
         "Track progress in scrape_progress.json"
       ],
       "priority": 2,
-      "passes": false
+      "passes": true
     },
     {
       "id": "HTML-003",
@@ -39,7 +39,7 @@
         "Verify htmlScraped count matches unique URLs"
       ],
       "priority": 3,
-      "passes": false
+      "passes": true
     },
     {
       "id": "HTML-004",
@@ -51,7 +51,7 @@
         "All tests pass (exit code 0)"
       ],
       "priority": 4,
-      "passes": false
+      "passes": true
     }
   ]
 }
