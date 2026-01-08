@@ -17,10 +17,10 @@ from urllib.parse import urlparse
 PORT = 8765
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
-SOURCES_FILE = SCRIPT_DIR / "sources.json"
-LOG_FILE = PROJECT_ROOT / "ralph_output.log"
-PRD_FILE = SCRIPT_DIR / "prd.json"
-SCRAPED_BUILDS_DIR = PROJECT_ROOT / "scraped_builds"
+SOURCES_FILE = PROJECT_ROOT / "scripts" / "ralph" / "sources.json"
+LOG_FILE = PROJECT_ROOT / "logs" / "ralph_output.log"
+PRD_FILE = PROJECT_ROOT / "scripts" / "ralph" / "prd.json"
+DATA_DIR = PROJECT_ROOT / "data"
 
 class DashboardHandler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
@@ -171,11 +171,11 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         return []
     
     def count_html_files(self):
-        """Count total HTML files across all scraped_builds"""
+        """Count total HTML files across all data sources"""
         total = 0
         try:
-            if SCRAPED_BUILDS_DIR.exists():
-                for source_dir in SCRAPED_BUILDS_DIR.iterdir():
+            if DATA_DIR.exists():
+                for source_dir in DATA_DIR.iterdir():
                     html_dir = source_dir / 'html'
                     if html_dir.exists():
                         total += len(list(html_dir.glob('*.html')))

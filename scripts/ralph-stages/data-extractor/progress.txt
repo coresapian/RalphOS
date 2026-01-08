@@ -1,0 +1,11 @@
+# Data Extractor Progress
+
+## Codebase Patterns
+
+- Always analyze DOM structure FIRST with chrome_evaluate before writing extraction code
+- Use category_detector.py for ALL mod categorization (never hardcode)
+- Extract builds + mods in single pass for efficiency
+- Output to JSONL format (one record per line)
+
+---
+

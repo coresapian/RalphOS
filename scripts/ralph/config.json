@@ -1,0 +1,81 @@
+{
+  "version": "1.0.0",
+  "description": "RalphOS configuration file. Feature flags and settings.",
+  
+  "defaults": {
+    "maxIterations": 25,
+    "parallel": 1,
+    "maxParallel": 10,
+    "verbose": false,
+    "scrapeOnly": false
+  },
+  
+  "scraping": {
+    "defaultDelayMs": 1000,
+    "maxRetries": 3,
+    "retryBackoffMultiplier": 2,
+    "requestTimeoutMs": 30000,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "respectRobotsTxt": true
+  },
+  
+  "checkpoints": {
+    "enabled": true,
+    "intervalSeconds": 30,
+    "maxHistory": 10
+  },
+  
+  "logging": {
+    "logFile": "logs/ralph_output.log",
+    "debugLogFile": "logs/ralph_debug.log",
+    "maxLogSizeMb": 50,
+    "rotateOnStartup": true,
+    "keepRotatedLogs": 5
+  },
+  
+  "pipeline": {
+    "stages": {
+      "1_url_discovery": {
+        "enabled": true,
+        "batchSize": 50,
+        "saveInterval": 50
+      },
+      "2_html_scraping": {
+        "enabled": true,
+        "concurrency": 1,
+        "delayBetweenRequestsMs": 1000
+      },
+      "3_build_extraction": {
+        "enabled": true,
+        "schemaFile": "schema/build_extraction_schema.json"
+      },
+      "4_mod_extraction": {
+        "enabled": true,
+        "componentsFile": "schema/Vehicle_Componets.json"
+      }
+    }
+  },
+  
+  "stealthScraper": {
+    "enabled": true,
+    "useProxy": false,
+    "proxyRotationEnabled": false,
+    "humanDelayMinMs": 2000,
+    "humanDelayMaxMs": 5000,
+    "screenshotOnError": true
+  },
+  
+  "notifications": {
+    "enabled": false,
+    "onCompletion": true,
+    "onError": true,
+    "onBlocked": true
+  },
+
+  "sourceDefaults": {
+    "priority": 5,
+    "maxAttempts": 3,
+    "cooldownMinutes": 30
+  }
+}
+

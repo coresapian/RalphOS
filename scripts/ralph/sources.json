@@ -23,104 +23,53 @@
   },
   "sources": [
     {
-      "id": "oneoff_autos",
-      "name": "OneOff Autos",
-      "url": "https://oneoffautos.com/listings",
-      "outputDir": "data/oneoff_autos",
-      "status": "completed",
-      "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
-        "htmlFailed": 0,
-        "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
-      },
-      "notes": "SKIP: Modern SPA with no public listing URLs. Site requires JavaScript rendering/authentication. Sitemap contains only static pages. No vehicle inventory available without login."
-    },
-    {
-      "id": "racemarket",
-      "name": "RaceMarket",
-      "url": "https://racemarket.net/",
-      "outputDir": "data/racemarket",
-      "status": "completed",
-      "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
-        "htmlFailed": 0,
-        "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
-      },
-      "notes": "SKIP: JavaScript-heavy site using AJAX/masonry to load listings. Static HTML contains no item URLs. Would require browser automation (Selenium/Puppeteer) for scraping. Not feasible with HTTP-only approach."
-    },
-    {
-      "id": "lomar_refined",
-      "name": "Lomar Refined",
-      "url": "https://www.lomarefined.com/blogs/journal",
-      "outputDir": "data/lomar_refined",
-      "status": "completed",
-      "pipeline": {
-        "expectedUrls": 30,
-        "urlsFound": 30,
-        "htmlScraped": 1,
-        "htmlFailed": 0,
-        "htmlBlocked": 0,
-        "builds": 30,
-        "mods": 41
-      },
-      "notes": "COMPLETE: All 4 stages done. 30 URLs discovered, 30 builds extracted, 41 modifications extracted from 22 builds. Category breakdown: Wheel (17), Exhaust & Emission (15), Electrical (9). All content via MCP webReader. Vehicles: Ferrari (17), Lamborghini (5), Rolls-Royce (4), Aston Martin (2), Porsche (1)."
-    },
-    {
       "id": "total_cost_involved",
       "name": "Total Cost Involved",
       "url": "https://totalcostinvolved.com/customer-showcase/",
       "outputDir": "data/total_cost_involved",
-      "status": "completed",
+      "status": "in_progress",
+      "priority": 1,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
         "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
+        "urlsFound": 295,
+        "htmlScraped": 298,
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
       },
-      "notes": "SKIP: Static image gallery with ~295 car builds displayed on a single page. No individual detail page URLs - each build is shown as a thumbnail with caption (e.g., '1969 Camaro, Pro IFS, Born Vintage Hot Rods'). Builds are embedded in the page as HTML content without separate URLs. Would require parsing the single gallery page and extracting build data from the HTML/captions, but this is not the target content type (individual build pages with detailed specs, photos, modifications)."
+      "notes": "Stealth scraped 298 pages. Blocked: 0"
     },
     {
       "id": "ecd_auto_design",
       "name": "ECD Auto Design",
       "url": "https://ecdautodesign.com/ecd-showcase/",
       "outputDir": "data/ecd_auto_design",
-      "status": "completed",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
-        "expectedUrls": 23,
-        "urlsFound": 338,
-        "htmlScraped": 1,
-        "htmlFailed": 337,
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": 1,
-        "mods": null
-      },
-      "blockEvents": [
-        {
-          "timestamp": "2026-01-07T13:30:00Z",
-          "type": "javascript_blob_urls",
-          "afterUrls": 1,
-          "details": "Site migrated from static URLs to JavaScript-generated blob: URLs. Original 338 discovered URLs now return 404. Current showcase shows 23 projects but uses blob: URLs (e.g., blob:https://ecdautodesign.com/...) which are client-side JavaScript generated and not accessible via HTTP scraping."
-        }
-      ],
-      "notes": "SITE STRUCTURE CHANGE - JAVASCRIPT BLOB URLS: During URL discovery (Stage 1), 338 project URLs were extracted from 17 showcase pages. During Stage 2 (HTML scraping), 337/338 URLs (99.7%) returned 404 errors. Only Project 13 (https://ecdautodesign.com/project-13/) remains accessible. Site has migrated to JavaScript-generated blob: URLs for project navigation - current showcase shows 23 projects (Project Inizio, Harry Hart, War Eagle, Kaimana, Camel Trophy, Malvern Commission, Slow Horse, Must-Be-Nice, Snowy Range, Nantucket, Pembrokeshire, Gravette, Liberty, A Bit Dodgy, Lancashire, Rutland, Oliver, 69 Miles, Daybreak, Titan, Pearl, Cornwall, Arbo, Brownie) but these use blob: URLs which require browser automation (Selenium/Puppeteer) to access. The original 338 URLs discovered are legacy/outdated - the site completely restructured its project system between URL discovery and scraping phases. Build extracted from Project 13: Defender 90 with Chevrolet LC9 5.3L V8, Keswick green, 18\" Boost wheels, Masai roof rack."
+        "builds": 0,
+        "mods": 0
+      }
     },
     {
       "id": "charlies_custom_creations",
       "name": "Charlie's Custom Creations",
       "url": "https://charliescustomcreations.com/",
       "outputDir": "data/charlies_custom_creations",
-      "status": "completed",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
         "expectedUrls": 0,
         "urlsFound": 0,
@@ -129,15 +78,17 @@
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
-      },
-      "notes": "SKIP: Static single-page gallery with ~69 car builds. Image thumbnails with captions (e.g., 'Michaels 1956 Ford F100', 'Jameys 1968 Plymouth Road Runner'). No individual detail page URLs - builds embedded as HTML content. Filterable by category (Cars/Trucks/Other) but all on same page. Not target content type."
+      }
     },
     {
       "id": "utv_source",
       "name": "UTV Source",
       "url": "https://www.utvsource.com/gallery",
       "outputDir": "data/utv_source",
-      "status": "completed",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
         "expectedUrls": 0,
         "urlsFound": 0,
@@ -146,15 +97,17 @@
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
-      },
-      "notes": "SKIP: Static gallery with no individual detail pages. Verified via MCP webReader: Page shows 47 build cards (thumbnails with names like '2024 Can-Am Maverick R - Janey Lee') but these are display elements only, not clickable links to detail pages. Pagination links exist (?page=2, ?page=3) but return identical content. This is a marketing showcase page, not a browsable catalog of build detail pages. Not target content type."
+      }
     },
     {
       "id": "creative_bespoke",
       "name": "Creative Bespoke",
       "url": "https://creativebespoke.com/vehicles",
       "outputDir": "data/creative_bespoke",
-      "status": "completed",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
         "expectedUrls": 0,
         "urlsFound": 0,
@@ -163,15 +116,17 @@
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
-      },
-      "notes": "SKIP: DEALERSHIP INVENTORY - Verified via MCP webReader. Shows luxury cars for sale (Bentley Flying Spur, Ferrari 812, Lamborghini Aventador, etc.) with prices and 'Photos (21)' links to dealer inventory detail pages. These are dealer listings, not custom build project pages with modifications. Not target content type."
+      }
     },
     {
       "id": "lifted_trucks",
       "name": "Lifted Trucks",
       "url": "https://www.liftedtrucks.com/used-inventory/index.htm",
       "outputDir": "data/lifted_trucks",
-      "status": "completed",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
         "expectedUrls": 0,
         "urlsFound": 0,
@@ -180,50 +135,7 @@
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
-      },
-      "notes": "SKIP: DEALERSHIP INVENTORY - Verified via MCP webReader. Marketing copy page about 'why buy a lifted truck' with no vehicle listings visible. JavaScript-heavy dealer site showing lifted trucks/SUVs for sale (not custom build projects). Dealer inventory pages, not target content type."
-    },
-    {
-      "id": "revmatch",
-      "name": "RevMatch",
-      "url": "https://www.revmatch.app/",
-      "outputDir": "data/revmatch",
-      "status": "completed",
-      "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
-        "htmlFailed": 0,
-        "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
-      },
-      "notes": "SKIP: Web application requiring authentication. No public build gallery. Users create build sheets behind login - not scrapable via HTTP."
-    },
-    {
-      "id": "tacoma_world_builds",
-      "name": "Tacoma World Build Threads",
-      "url": "https://www.tacomaworld.com/",
-      "outputDir": "data/tacoma_world_builds",
-      "status": "blocked",
-      "pipeline": {
-        "expectedUrls": 7854,
-        "urlsFound": 148,
-        "htmlScraped": null,
-        "htmlFailed": null,
-        "htmlBlocked": 7706,
-        "builds": null,
-        "mods": null
-      },
-      "blockEvents": [
-        {
-          "timestamp": "2026-01-07T12:10:00Z",
-          "type": "pagination_blocked",
-          "afterUrls": 148,
-          "details": "Tacoma World blocks all paginated URLs beyond page 1 (returns 404 'The requested page could not be found'). Only first page of each forum accessible without authentication/session cookies. Total accessible: 148 threads from 3 first pages. Missing: 7,706 threads (98.1%)."
-        }
-      ],
-      "notes": "BLOCKED: Tacoma World pagination requires authentication/session cookies. Verified via MCP webReader that page-2/ and beyond return 404 errors. Only 148/7,854 threads accessible (1.9%). Site uses anti-scraping protection - pagination links exist but return errors when accessed directly. Consider browser automation (Selenium/Puppeteer) with valid session or API access if available. URLs saved to urls.json represent accessible content only."
+      }
     }
   ]
 }

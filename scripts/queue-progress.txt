@@ -1,0 +1,22 @@
+## [2026-01-07] - Total Cost Involved URL Discovery COMPLETE
+
+### Summary
+- Successfully discovered 295 vehicle showcase URLs
+- All URLs loaded on single page (no pagination needed)
+- URLs saved to urls.jsonl in JSONL format
+
+### Site Analysis
+- **Source**: https://totalcostinvolved.com/customer-showcase/
+- **URL Pattern**: https://totalcostinvolved.com/testimonials/{slug}/
+- **Pagination**: None - all 295 items load on single page
+- **Vehicle Types**: Classic cars, hot rods, resto-mods with TCI suspension
+
+### Files Created
+- data/total_cost_involved/urls.jsonl (295 URLs)
+- data/total_cost_involved/urls_meta.json (metadata)
+
+### Learnings
+- Single-page load all content pattern - no pagination required
+- Extract slug directly from URL path for filename generation
+- WordPress-based site with testimonials as custom post type
+

@@ -1,0 +1,9 @@
+{
+  "name": "browser-skill",
+  "version": "1.0.0",
+  "description": "Minimal Chrome DevTools Protocol helpers for Factory Droids",
+  "type": "module",
+  "dependencies": {
+    "puppeteer-core": "^23.0.0"
+  }
+}

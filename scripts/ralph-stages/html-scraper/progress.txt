@@ -1,0 +1,17 @@
+# HTML Scraper Progress Log
+
+Stage 2: HTML Scraping
+
+This file tracks learnings and patterns from HTML scraping work.
+
+## Template for New Entries
+
+## [YYYY-MM-DD] - [Source ID]
+- HTML scraping complete/blocked
+- URLs scraped: N / M
+- **Learnings:**
+  - Rate limiting patterns
+  - Block handling
+  - Gotchas encountered
+
+---

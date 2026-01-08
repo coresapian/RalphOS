@@ -26,17 +26,194 @@ from difflib import SequenceMatcher
 
 # Load the component schema
 SCRIPT_DIR = Path(__file__).parent
-COMPONENTS_FILE = SCRIPT_DIR / "Vehicle_Componets.json"
+PROJECT_ROOT = SCRIPT_DIR.parent.parent
+COMPONENTS_FILE = PROJECT_ROOT / "schema" / "Vehicle_Componets.json"
 
 # Global lookup tables (initialized on first use)
 _component_to_category: Dict[str, str] = {}
 _category_keywords: Dict[str, List[str]] = {}
+_keyword_trie: Optional['CategoryTrie'] = None
 _initialized = False
+
+
+class TrieNode:
+    """Node in the keyword trie."""
+    __slots__ = ['children', 'category', 'keyword', 'is_end']
+    
+    def __init__(self):
+        self.children: Dict[str, 'TrieNode'] = {}
+        self.category: Optional[str] = None  # Category if this is end of keyword
+        self.keyword: Optional[str] = None   # Original keyword
+        self.is_end: bool = False
+
+
+class CategoryTrie:
+    """
+    Trie data structure for fast keyword matching.
+    
+    Provides O(k) lookup where k = length of query, instead of O(n*k) 
+    where n = number of keywords.
+    """
+    
+    def __init__(self):
+        self.root = TrieNode()
+        self._keyword_count = 0
+    
+    def insert(self, keyword: str, category: str):
+        """Insert a keyword-category mapping into the trie."""
+        node = self.root
+        keyword_lower = keyword.lower()
+        
+        for char in keyword_lower:
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        
+        node.is_end = True
+        node.category = category
+        node.keyword = keyword
+        self._keyword_count += 1
+    
+    def search_exact(self, query: str) -> Optional[Tuple[str, str]]:
+        """
+        Search for exact keyword match.
+        
+        Returns:
+            Tuple of (category, matched_keyword) or None
+        """
+        node = self.root
+        query_lower = query.lower()
+        
+        for char in query_lower:
+            if char not in node.children:
+                return None
+            node = node.children[char]
+        
+        if node.is_end:
+            return (node.category, node.keyword)
+        return None
+    
+    def search_prefix(self, query: str) -> List[Tuple[str, str, int]]:
+        """
+        Find all keywords that are prefixes of the query.
+        
+        Returns:
+            List of (category, keyword, end_position) tuples
+        """
+        results = []
+        node = self.root
+        query_lower = query.lower()
+        
+        for i, char in enumerate(query_lower):
+            if char not in node.children:
+                break
+            node = node.children[char]
+            
+            if node.is_end:
+                results.append((node.category, node.keyword, i + 1))
+        
+        return results
+    
+    def search_all_in_text(self, text: str, min_keyword_len: int = 5) -> List[Tuple[str, str, int, int]]:
+        """
+        Find all keywords that appear anywhere in the text.
+        
+        This is the key optimization - instead of checking every keyword against
+        the text O(n*k), we scan the text once and check each position O(m*k)
+        where m = text length, k = average keyword length.
+        
+        Args:
+            text: Text to search in
+            min_keyword_len: Minimum keyword length to match (avoid false positives)
+        
+        Returns:
+            List of (category, keyword, start_pos, end_pos) tuples
+        """
+        results = []
+        text_lower = text.lower()
+        text_len = len(text_lower)
+        
+        # Try starting from each position in the text
+        for start in range(text_len):
+            node = self.root
+            
+            for i in range(start, text_len):
+                char = text_lower[i]
+                
+                if char not in node.children:
+                    break
+                
+                node = node.children[char]
+                
+                if node.is_end:
+                    keyword_len = i - start + 1
+                    if keyword_len >= min_keyword_len:
+                        # Check word boundaries for better accuracy
+                        is_word_start = start == 0 or not text_lower[start - 1].isalnum()
+                        is_word_end = i == text_len - 1 or not text_lower[i + 1].isalnum()
+                        
+                        # Prefer whole word matches but accept substrings for long keywords
+                        if is_word_start and is_word_end:
+                            results.append((node.category, node.keyword, start, i + 1))
+                        elif keyword_len >= 8:  # Accept substring for long keywords
+                            results.append((node.category, node.keyword, start, i + 1))
+        
+        return results
+    
+    def find_best_match(self, text: str, min_keyword_len: int = 5) -> Optional[Tuple[str, str, float]]:
+        """
+        Find the best keyword match in text with confidence score.
+        
+        Returns:
+            Tuple of (category, keyword, confidence) or None
+        """
+        matches = self.search_all_in_text(text, min_keyword_len)
+        
+        if not matches:
+            return None
+        
+        # Score matches by length and position
+        best_match = None
+        best_score = 0.0
+        
+        for category, keyword, start, end in matches:
+            keyword_len = end - start
+            text_len = len(text)
+            
+            # Score based on keyword length relative to text
+            length_score = keyword_len / text_len
+            
+            # Bonus for longer matches
+            length_bonus = min(keyword_len / 10, 0.3)
+            
+            score = length_score + length_bonus + 0.3  # Base score for finding a match
+            score = min(score, 1.0)
+            
+            if score > best_score:
+                best_score = score
+                best_match = (category, keyword, score)
+        
+        return best_match
+    
+    @property
+    def keyword_count(self) -> int:
+        return self._keyword_count
+
+
+def _build_keyword_trie() -> CategoryTrie:
+    """Build trie from category keywords."""
+    trie = CategoryTrie()
+    
+    for category, keywords in _category_keywords.items():
+        for keyword in keywords:
+            trie.insert(keyword, category)
+    
+    return trie
 
 
 def _initialize():
     """Load and index the components file."""
-    global _component_to_category, _category_keywords, _initialized
+    global _component_to_category, _category_keywords, _keyword_trie, _initialized
     
     if _initialized:
         return
@@ -223,6 +400,9 @@ def _initialize():
         ]
     }
     
+    # Build the keyword trie for O(k) lookups
+    _keyword_trie = _build_keyword_trie()
+    
     _initialized = True
 
 
@@ -309,43 +489,22 @@ def detect_category(mod_name: str, return_confidence: bool = False) -> str | Tup
         category = _component_to_category[normalized]
         return (category, 0.95) if return_confidence else category
     
-    # 2. FIRST check keyword matching - this catches aftermarket brands and specific terms
-    # Priority categories that should be checked first (specific > generic)
-    # Note: Order matters - put most specific first
-    priority_categories = [
-        "Forced Induction", "Oil", "Safety", "Lighting", 
-        "Storage", "Recovery", "Armor/Protection",
-        "Suspension", "Brake & Wheel Hub", "Fuel & Air",  # Add these as priority too
-        "Wheel"  # Wheel last to avoid false matches
-    ]
-    
+    # 2. Use TRIE for fast keyword matching - O(k) instead of O(n*k)
+    # This catches aftermarket brands and specific terms efficiently
     best_keyword_category = None
     best_keyword_score = 0.0
     
-    # Check priority categories first
-    for category in priority_categories:
-        if category in _category_keywords:
-            keywords = _category_keywords[category]
-            # Check for substring matches (more reliable for brands/specific terms)
-            # Require minimum keyword length of 5 to avoid false matches
-            for keyword in keywords:
-                if len(keyword) >= 5 and keyword.lower() in original_lower:
-                    score = len(keyword) / len(original_lower) + 0.5  # Boost for substring match
-                    if score > best_keyword_score:
-                        best_keyword_score = min(score, 1.0)
-                        best_keyword_category = category
-            
-            # Also do word matching
-            match, score = _word_match(normalized, keywords)
-            if score > best_keyword_score:
-                best_keyword_score = score
-                best_keyword_category = category
-            match, score = _word_match(original_lower, keywords)
-            if score > best_keyword_score:
-                best_keyword_score = score
-                best_keyword_category = category
+    # Use trie to find all keyword matches in the text
+    trie_match = _keyword_trie.find_best_match(original_lower, min_keyword_len=5)
+    if trie_match:
+        best_keyword_category, matched_keyword, best_keyword_score = trie_match
     
-    # If we found a high-confidence priority category match, use it
+    # Also check normalized text
+    trie_match_norm = _keyword_trie.find_best_match(normalized, min_keyword_len=5)
+    if trie_match_norm and trie_match_norm[2] > best_keyword_score:
+        best_keyword_category, matched_keyword, best_keyword_score = trie_match_norm
+    
+    # If we found a high-confidence keyword match, use it
     if best_keyword_score >= 0.5 and best_keyword_category:
         return (best_keyword_category, best_keyword_score) if return_confidence else best_keyword_category
     
@@ -365,28 +524,18 @@ def detect_category(mod_name: str, return_confidence: bool = False) -> str | Tup
     if best_component_score >= 0.8:
         return (best_component_category, best_component_score) if return_confidence else best_component_category
     
-    # 4. Check all remaining keyword categories
-    for category, keywords in _category_keywords.items():
-        if category in priority_categories:
-            continue  # Already checked
-        
-        # Substring matching - require minimum keyword length of 5
-        for keyword in keywords:
-            if len(keyword) >= 5 and keyword.lower() in original_lower:
-                score = len(keyword) / len(original_lower) + 0.3
-                if score > best_keyword_score:
-                    best_keyword_score = min(score, 1.0)
-                    best_keyword_category = category
-        
-        # Word matching
-        match, score = _word_match(normalized, keywords)
-        if score > best_keyword_score:
-            best_keyword_score = score
-            best_keyword_category = category
-        match, score = _word_match(original_lower, keywords)
-        if score > best_keyword_score:
-            best_keyword_score = score
-            best_keyword_category = category
+    # 4. Trie already searched all keywords, but do word matching as fallback
+    # for multi-word phrases that might not be exact substring matches
+    if best_keyword_score < 0.4:
+        for category, keywords in _category_keywords.items():
+            match, score = _word_match(normalized, keywords)
+            if score > best_keyword_score:
+                best_keyword_score = score
+                best_keyword_category = category
+            match, score = _word_match(original_lower, keywords)
+            if score > best_keyword_score:
+                best_keyword_score = score
+                best_keyword_category = category
     
     # 5. Choose best result - prefer keyword matches for aftermarket parts
     if best_keyword_score >= 0.4:

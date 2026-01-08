@@ -1,0 +1,58 @@
+{
+  "description": "Sources needing URL discovery",
+  "validStatuses": {
+    "pending": "Not started yet",
+    "in_progress": "Currently being worked on",
+    "completed": "URL discovery complete"
+  },
+  "sources": [
+    {
+      "id": "total_cost_involved",
+      "name": "Total Cost Involved",
+      "url": "https://totalcostinvolved.com/customer-showcase/",
+      "outputDir": "data/total_cost_involved",
+      "status": "completed",
+      "priority": 1
+    },
+    {
+      "id": "ecd_auto_design",
+      "name": "ECD Auto Design",
+      "url": "https://ecdautodesign.com/ecd-showcase/",
+      "outputDir": "data/ecd_auto_design",
+      "status": "completed",
+      "priority": 2
+    },
+    {
+      "id": "charlies_custom_creations",
+      "name": "Charlie's Custom Creations",
+      "url": "https://charliescustomcreations.com/",
+      "outputDir": "data/charlies_custom_creations",
+      "status": "completed",
+      "priority": 3
+    },
+    {
+      "id": "utv_source",
+      "name": "UTV Source",
+      "url": "https://www.utvsource.com/gallery",
+      "outputDir": "data/utv_source",
+      "status": "completed",
+      "priority": 4
+    },
+    {
+      "id": "creative_bespoke",
+      "name": "Creative Bespoke",
+      "url": "https://creativebespoke.com/vehicles",
+      "outputDir": "data/creative_bespoke",
+      "status": "completed",
+      "priority": 5
+    },
+    {
+      "id": "lifted_trucks",
+      "name": "Lifted Trucks",
+      "url": "https://www.liftedtrucks.com/used-inventory/index.htm",
+      "outputDir": "data/lifted_trucks",
+      "status": "completed",
+      "priority": 6
+    }
+  ]
+}

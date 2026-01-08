@@ -1,0 +1,1 @@
+../../../tools/diagnose_scraper.py

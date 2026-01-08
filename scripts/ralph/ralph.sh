@@ -63,6 +63,9 @@ SOURCES_FILE="$SCRIPT_DIR/sources.json"
 # Track sources completed in this session
 SOURCES_COMPLETED=0
 
+# Rotate logs if needed (reads config from config.json)
+python3 "$PROJECT_ROOT/scripts/tools/log_rotator.py" --quiet 2>/dev/null || true
+
 # ═══════════════════════════════════════════════════════════════
 # Helper Functions
 # ═══════════════════════════════════════════════════════════════
@@ -236,30 +239,13 @@ show_usage() {
   echo -e "${WHITE}${BOLD}Ralph - Autonomous AI Agent Loop${NC}"
   echo ""
   echo -e "${WHITE}Usage:${NC}"
-  echo -e "  $0 <iterations>                    ${DIM}# Classic mode - run N iterations${NC}"
-  echo -e "  $0 <iterations> --scrape-only      ${DIM}# Only URL discovery + HTML scrape${NC}"
-  echo -e "  $0 --pipeline <source_id>          ${DIM}# Pipeline mode - 4 sub-ralphs${NC}"
-  echo -e "  $0 --pipeline-all                  ${DIM}# Pipeline mode - all pending sources${NC}"
+  echo -e "  $0 <iterations>                    ${DIM}# Run N iterations${NC}"
   echo ""
   echo -e "${WHITE}Examples:${NC}"
   echo -e "  $0 25                              ${DIM}# Run 25 iterations (all 4 stages)${NC}"
-  echo -e "  $0 50 --scrape-only                ${DIM}# Only scrape, skip extraction${NC}"
-  echo -e "  $0 --pipeline custom_wheel_offset  ${DIM}# Pipeline for specific source${NC}"
-  echo -e "  $0 --pipeline-all                  ${DIM}# Pipeline all pending sources${NC}"
   echo ""
   echo -e "${WHITE}Flags:${NC}"
-  echo -e "  ${CYAN}--scrape-only${NC}    Only do Stage 1 (URL discovery) and Stage 2 (HTML scrape)"
-  echo -e "                   Skip Stage 3 (build extraction) and Stage 4 (mod extraction)"
   echo -e "  ${CYAN}--verbose, -v${NC}    Show full Claude output (no progress timer)"
-  echo ""
-  echo -e "${WHITE}Pipeline Mode:${NC}"
-  echo -e "  Uses 4 specialized sub-ralphs that work in parallel:"
-  echo -e "    ${CYAN}url-detective${NC}    → Discovers all URLs"
-  echo -e "    ${CYAN}html-scraper${NC}     → Downloads HTML content"
-  echo -e "    ${CYAN}build-extractor${NC}  → Extracts vehicle data"
-  echo -e "    ${CYAN}mod-extractor${NC}    → Extracts modifications"
-  echo -e ""
-  echo -e "  Each sub-ralph triggers the next after 20 items are ready."
   echo ""
 }
 
@@ -268,47 +254,6 @@ if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
   show_usage
   exit 0
 
-# Check for pipeline mode
-elif [ "$1" == "--pipeline" ]; then
-  if [ -z "$2" ]; then
-    echo -e "${RED}Error:${NC} --pipeline requires a source_id"
-    echo -e "${DIM}Example: $0 --pipeline custom_wheel_offset${NC}"
-    exit 1
-  fi
-  
-  # Run pipeline for specific source
-  exec "$SCRIPT_DIR/pipeline.sh" "$2"
-  
-elif [ "$1" == "--pipeline-all" ]; then
-  # Run pipeline for all pending/in_progress sources
-  echo ""
-  echo -e "${CYAN}Running pipeline for all pending sources...${NC}"
-  echo ""
-  
-  # Get list of sources that need work
-  SOURCES=$(jq -r '.sources[] | select(.status == "pending" or .status == "in_progress") | .id' "$SOURCES_FILE" 2>/dev/null)
-  
-  if [ -z "$SOURCES" ]; then
-    echo -e "${YELLOW}No pending sources found.${NC}"
-    exit 0
-  fi
-  
-  for source in $SOURCES; do
-    echo ""
-    echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
-    echo -e "${CYAN}Starting pipeline for: ${WHITE}$source${NC}"
-    echo -e "${CYAN}═══════════════════════════════════════════════════════════${NC}"
-    
-    "$SCRIPT_DIR/pipeline.sh" "$source"
-    
-    echo ""
-    echo -e "${GREEN}✓ Completed: $source${NC}"
-  done
-  
-  echo ""
-  echo -e "${GREEN}All sources processed!${NC}"
-  exit 0
-  
 elif [ -z "$1" ]; then
   show_usage
   exit 1

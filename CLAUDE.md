@@ -119,14 +119,16 @@ RalphOS/
 ├── scripts/
 │   ├── ralph/              # Core orchestration
 │   │   ├── ralph.sh        # Main loop script
-│   │   ├── ralph-parallel.sh
-│   │   ├── pipeline.sh
 │   │   ├── check_completion.sh
 │   │   ├── prompt.md       # Agent instructions
-│   │   ├── prompts/        # Specialized prompts
 │   │   ├── sources.json    # Source registry
 │   │   ├── progress.txt    # Learnings
 │   │   └── archive/        # Archived PRDs
+│   │
+│   ├── ralph-stages/       # Independent stage runners
+│   │   ├── url-detective/  # Stage 1: URL discovery
+│   │   ├── html-scraper/   # Stage 2: HTML scraping
+│   │   └── data-extractor/ # Stage 3: Builds + Mods (combined)
 │   │
 │   ├── tools/              # Utility scripts
 │   │   ├── sync_progress.py
@@ -136,12 +138,18 @@ RalphOS/
 │   │   ├── category_detector.py
 │   │   ├── create_manifest.py
 │   │   ├── test_scraper.py
-│   │   └── test_url_discovery.py
+│   │   ├── test_url_discovery.py
+│   │   └── browser/        # Chrome automation
+│   │       ├── start.js    # Launch Chrome :9222
+│   │       ├── nav.js      # Navigate tabs
+│   │       ├── eval.js     # Execute JS
+│   │       ├── screenshot.js
+│   │       ├── cookies.js  # Extract cookies
+│   │       └── pick.js     # Visual element picker
 │   │
 │   └── dashboard/          # Monitoring UI
 │       ├── dashboard.html
 │       ├── dashboard_server.py
-│       ├── pipeline_monitor.py
 │       └── Build_Scrape_Progress.html
 │
 ├── data/                   # Scraped data output
@@ -210,9 +218,54 @@ Completed projects are automatically archived with timestamp:
 
 - **Claude CLI**: `npm install -g @anthropic-ai/claude-code`
 - **jq**: For JSON parsing in bash
-- **Python 3** with `requests` library
+- **Python 3** with `camoufox` library
 - **Git**: For version control
 - **Bash 4+**: For the loop script
+- **Node.js**: For browser automation scripts
+
+## Browser Tools
+
+All Ralphs have access to browser automation for web interaction:
+
+### Chrome DevTools MCP (Native tools)
+
+Configured in `~/.claude.json` for RalphOS project:
+```
+chrome_navigate - Navigate to URL
+chrome_screenshot - Capture viewport  
+chrome_evaluate - Execute JavaScript in page
+chrome_click - Click elements
+chrome_type - Type text
+```
+
+### Browser CLI Scripts
+
+Located in `scripts/tools/browser/`:
+```bash
+# Start Chrome with your profile (cookies, logins)
+./scripts/tools/browser/start.js --profile
+
+# Navigate
+./scripts/tools/browser/nav.js https://example.com
+
+# Execute JavaScript
+./scripts/tools/browser/eval.js 'document.querySelectorAll("a").length'
+
+# Screenshot
+./scripts/tools/browser/screenshot.js
+
+# Extract cookies (including HTTP-only)
+./scripts/tools/browser/cookies.js
+
+# Visual element picker
+./scripts/tools/browser/pick.js "Click the submit button"
+```
+
+### Workflow
+
+1. Start Chrome: `./scripts/tools/browser/start.js --profile`
+2. Use MCP tools OR CLI scripts (both connect to Chrome :9222)
+3. For stealth scraping, prefer `scripts/tools/stealth_scraper.py` (Camoufox)
 
 ## Key Patterns from Codebase
 

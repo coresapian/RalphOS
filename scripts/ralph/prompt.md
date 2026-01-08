@@ -17,29 +17,12 @@ If all stories are complete → generate new PRD for next stage or source.
 If there's work to do → do it immediately.
 Make decisions autonomously. Never wait for user input.
 
-## Execution Modes
+## Execution
 
-### Classic Mode (default)
 ```bash
 ./scripts/ralph/ralph.sh 25  # Run 25 iterations
 ```
 Ralph handles all 4 stages sequentially for each source.
-
-### Pipeline Mode (sub-ralphs)
-```bash
-./scripts/ralph/ralph.sh --pipeline custom_wheel_offset
-./scripts/ralph/ralph.sh --pipeline-all
-```
-4 specialized sub-ralphs work in parallel on the same source:
-
-| Sub-Ralph | Focus | Trigger | Output |
-|-----------|-------|---------|--------|
-| url-detective | URL discovery | Starts immediately | urls.json |
-| html-scraper | HTML download | After 20 URLs | html/*.html |
-| build-extractor | Data extraction | After 20 HTMLs | builds.json |
-| mod-extractor | Mod extraction | After 20 builds | mods.json |
-
-Each sub-ralph has its own prompt in `scripts/ralph/prompts/`.
 
 ## Available Tools
 
@@ -49,7 +32,6 @@ Each sub-ralph has its own prompt in `scripts/ralph/prompts/`.
 | `build_id_generator.py` | Generate build_id from URL | `from build_id_generator import url_to_build_id` |
 | `category_detector.py` | Assign mod categories | `from category_detector import detect_category` |
 | `check_completion.sh` | Validate source status | `./scripts/ralph/check_completion.sh --summary` |
-| `pipeline_monitor.py` | Track pipeline progress | `python scripts/dashboard/pipeline_monitor.py --source {id}` |
 | `stealth_scraper.py` | Anti-bot scraping (human runs) | `python scripts/tools/stealth_scraper.py --source {id}` |
 | `diagnose_scraper.py` | **Diagnose scraper issues** | `python scripts/tools/diagnose_scraper.py {outputDir}/` |
 | `test_url_discovery.py` | **Test URL discovery** | `python scripts/tools/test_url_discovery.py {outputDir}/` |
