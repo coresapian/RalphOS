@@ -53,3 +53,26 @@ This file captures accumulated knowledge from Ralph iterations. Each entry docum
 
 ---
 
+### 2026-01-08 - ECD Auto Design URL Discovery (Stage 1)
+- **Source**: ECD Auto Design (ecdautodesign.com/ecd-showcase/)
+- **Action**: URL Discovery for Stage 1 (SCRAPE-ONLY MODE)
+- **Files Created**:
+  - `data/ecd_auto_design/urls.json` - 338 URLs discovered
+  - `data/ecd_auto_design/scrape_html.py` - HTML scraper with retry logic
+  - `data/ecd_auto_design/fix_urls.py` - URL correction script
+- **Pipeline Status**: urlsFound=338, htmlScraped=1 (existing)
+- **Critical Discovery**: URLs in showcase use `/portfolio-item/` prefix
+  - Original discovery captured URLs as `/project-xyz/` (404 errors)
+  - Fixed URLs to `/portfolio-item/project-xyz/` format
+- **Challenge**: Sandbox environment blocks Python `requests` library
+  - Standard scraping cannot make network requests
+  - Requires: stealth_scraper.py or browser automation for Stage 2
+- **Note**: Source removed from sources.json during session - may have been re-prioritized
+
+**Learnings:**
+1. Always verify URL patterns by testing actual page structure before scraping
+2. Portfolio-style sites often use custom URL patterns (`/portfolio-item/` vs direct paths)
+3. Sandbox restrictions require alternative scraping methods (MCP tools, stealth_scraper.py)
+
+---
+
