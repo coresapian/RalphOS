@@ -345,6 +345,391 @@
     .success { color: var(--accent-green); }
     .warning { color: var(--accent-yellow); }
     .info { color: var(--accent-cyan); }
+    
+    /* Scraper Panel Styles */
+    .scraper-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    
+    .scraper-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .scraper-header:hover {
+      background: var(--bg-secondary);
+    }
+    
+    .scraper-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .scraper-toggle {
+      font-size: 18px;
+      transition: transform 0.3s;
+    }
+    
+    .scraper-toggle.open {
+      transform: rotate(180deg);
+    }
+    
+    .scraper-body {
+      padding: 20px;
+      display: none;
+    }
+    
+    .scraper-body.open {
+      display: block;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .form-group.full-width {
+      grid-column: span 3;
+    }
+    
+    .form-group label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .form-group input,
+    .form-group select {
+      padding: 10px 14px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      transition: border-color 0.2s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+    
+    .form-group input::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      color: var(--bg-primary);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-danger {
+      background: var(--accent-red);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #ef4444;
+    }
+    
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      border-color: var(--accent-cyan);
+    }
+    
+    .scraper-status {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .scraper-status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    
+    .scraper-status-dot.running {
+      background: var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+    
+    .scraper-status-dot.stopped {
+      background: var(--text-muted);
+    }
+    
+    .scraper-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .scraper-stat {
+      padding: 12px;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .scraper-stat .stat-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    
+    .scraper-stat .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .scraper-stat.green .stat-value { color: var(--accent-green); }
+    .scraper-stat.red .stat-value { color: var(--accent-red); }
+    .scraper-stat.yellow .stat-value { color: var(--accent-yellow); }
+    .scraper-stat.cyan .stat-value { color: var(--accent-cyan); }
+    
+    .help-text {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    
+    .preset-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .preset-btn {
+      padding: 6px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .preset-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    
+    .preset-btn.active {
+      background: rgba(34, 211, 238, 0.1);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    
+    .scraper-log {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: var(--bg-primary);
+      border-radius: 8px;
+      padding: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      margin-top: 16px;
+      display: none;
+    }
+    
+    .scraper-log.visible {
+      display: block;
+    }
+    
+    /* Ralph Panel Styles */
+    .ralph-panel {
+      background: linear-gradient(135deg, rgba(74, 222, 128, 0.05), rgba(34, 211, 238, 0.05));
+      border: 1px solid var(--accent-green);
+      border-radius: 16px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    
+    .ralph-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .ralph-header:hover {
+      background: rgba(74, 222, 128, 0.1);
+    }
+    
+    .ralph-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent-green);
+    }
+    
+    .ralph-body {
+      padding: 20px;
+      display: none;
+    }
+    
+    .ralph-body.open {
+      display: block;
+    }
+    
+    .ralph-status {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-primary);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .ralph-status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .ralph-info {
+      flex: 1;
+    }
+    
+    .ralph-info .project-name {
+      font-weight: 600;
+      color: var(--accent-green);
+    }
+    
+    .ralph-info .story-progress {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    
+    .iterations-input {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .iterations-input label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    .iterations-input input {
+      width: 80px;
+      padding: 8px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      text-align: center;
+    }
+    
+    .log-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+    
+    .log-controls button {
+      padding: 4px 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      cursor: pointer;
+    }
+    
+    .log-controls button:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    
+    .log-controls button.active {
+      background: rgba(34, 211, 238, 0.2);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    
+    .auto-scroll-indicator {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -381,6 +766,176 @@
     </div>
   </div>
   
+  <!-- Ralph Loop Panel -->
+  <div class="ralph-panel">
+    <div class="ralph-header" onclick="toggleRalphPanel()">
+      <h2>🤖 Ralph Loop</h2>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="status-badge" style="padding: 4px 12px;">
+          <div class="status-dot" id="ralphStatusDot"></div>
+          <span id="ralphStatusText" style="font-size: 11px;">Checking...</span>
+        </div>
+        <span class="scraper-toggle" id="ralphToggle">▼</span>
+      </div>
+    </div>
+    <div class="ralph-body" id="ralphBody">
+      <!-- Status Bar -->
+      <div class="ralph-status">
+        <div class="ralph-status-indicator">
+          <div class="scraper-status-dot" id="ralphStatusDot2"></div>
+        </div>
+        <div class="ralph-info">
+          <div class="project-name" id="ralphProject">No active project</div>
+          <div class="story-progress" id="ralphStoryProgress">--</div>
+        </div>
+        <span style="font-size: 11px; color: var(--text-muted);" id="ralphPid"></span>
+      </div>
+      
+      <!-- Source Selection -->
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label>Target Source(s)</label>
+        <select id="ralphSource" multiple size="6" style="width: 100%;">
+          <option value="">Loading sources...</option>
+        </select>
+        <span class="help-text">Hold Ctrl/Cmd to select multiple. Leave empty to use current PRD.</span>
+      </div>
+      
+      <!-- Iterations Config -->
+      <div class="iterations-input">
+        <label>Max Iterations:</label>
+        <input type="number" id="ralphIterations" value="25" min="1" max="100">
+        <span class="help-text">Ralph will stop after this many iterations</span>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="generatePRD()" title="Use browser to analyze site and generate PRD">
+          🌐 Generate PRD
+        </button>
+        <button class="btn btn-primary" id="startRalphBtn" onclick="startRalph()" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));">
+          ▶️ Start Ralph
+        </button>
+        <button class="btn btn-danger" id="stopRalphBtn" onclick="stopRalph()" style="display: none;">
+          ⏹️ Stop Ralph
+        </button>
+      </div>
+      
+      <!-- PRD Generation Status -->
+      <div id="prdGenStatus" style="display: none; margin-top: 16px; padding: 12px; background: var(--bg-primary); border-radius: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div class="scraper-status-dot running"></div>
+          <span id="prdGenStatusText">Analyzing site...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Stealth Scraper Panel -->
+  <div class="scraper-panel">
+    <div class="scraper-header" onclick="toggleScraperPanel()">
+      <h2>🥷 Stealth Scraper</h2>
+      <span class="scraper-toggle" id="scraperToggle">▼</span>
+    </div>
+    <div class="scraper-body" id="scraperBody">
+      <!-- Status Bar -->
+      <div class="scraper-status">
+        <div class="scraper-status-dot" id="scraperStatusDot"></div>
+        <span id="scraperStatusText">Idle</span>
+        <span style="margin-left: auto; font-size: 12px; color: var(--text-muted);" id="scraperPid"></span>
+      </div>
+      
+      <!-- Preset Buttons -->
+      <div class="preset-buttons">
+        <button class="preset-btn" onclick="applyPreset('conservative')">🐢 Conservative</button>
+        <button class="preset-btn active" onclick="applyPreset('balanced')">⚖️ Balanced</button>
+        <button class="preset-btn" onclick="applyPreset('aggressive')">🚀 Aggressive</button>
+        <button class="preset-btn" onclick="applyPreset('stealth')">🥷 Max Stealth</button>
+      </div>
+      
+      <!-- Configuration Form -->
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Source</label>
+          <select id="scraperSource">
+            <option value="">Select a source...</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Min Delay (sec)</label>
+          <input type="number" id="minDelay" value="8" min="1" max="120" step="1">
+          <span class="help-text">Wait at least this long between requests</span>
+        </div>
+        
+        <div class="form-group">
+          <label>Max Delay (sec)</label>
+          <input type="number" id="maxDelay" value="20" min="1" max="300" step="1">
+          <span class="help-text">Random delay up to this value</span>
+        </div>
+        
+        <div class="form-group">
+          <label>Daily Limit</label>
+          <input type="number" id="dailyLimit" value="50" min="1" max="1000" step="1">
+          <span class="help-text">Max URLs to scrape per day</span>
+        </div>
+        
+        <div class="form-group">
+          <label>Rotate Every</label>
+          <input type="number" id="rotateEvery" value="12" min="1" max="100" step="1">
+          <span class="help-text">New browser session every N pages</span>
+        </div>
+        
+        <div class="form-group">
+          <label>Session Limit</label>
+          <input type="number" id="sessionLimit" value="" placeholder="No limit">
+          <span class="help-text">Stop after N URLs this session</span>
+        </div>
+        
+        <div class="form-group">
+          <label>Initial Backoff (sec)</label>
+          <input type="number" id="initialBackoff" value="300" min="60" max="3600" step="60">
+          <span class="help-text">Wait time on rate limit (5 min default)</span>
+        </div>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="btn-group">
+        <button class="btn btn-primary" id="startScraperBtn" onclick="startScraper()">
+          ▶️ Start Scraper
+        </button>
+        <button class="btn btn-danger" id="stopScraperBtn" onclick="stopScraper()" style="display: none;">
+          ⏹️ Stop Scraper
+        </button>
+        <button class="btn btn-secondary" onclick="toggleScraperLog()">
+          📋 Show Log
+        </button>
+      </div>
+      
+      <!-- Scraper Stats -->
+      <div class="scraper-stats" id="scraperStats" style="display: none;">
+        <div class="scraper-stat green">
+          <div class="stat-label">Processed</div>
+          <div class="stat-value" id="statProcessed">0</div>
+        </div>
+        <div class="scraper-stat red">
+          <div class="stat-label">Blocked</div>
+          <div class="stat-value" id="statBlocked">0</div>
+        </div>
+        <div class="scraper-stat yellow">
+          <div class="stat-label">Failed</div>
+          <div class="stat-value" id="statFailed">0</div>
+        </div>
+        <div class="scraper-stat cyan">
+          <div class="stat-label">Today</div>
+          <div class="stat-value" id="statToday">0</div>
+        </div>
+      </div>
+      
+      <!-- Scraper Log -->
+      <div class="scraper-log" id="scraperLog">Loading...</div>
+    </div>
+  </div>
+  
   <div class="current-source" id="currentSource">
     <h3>🎯 Currently Processing</h3>
     <div class="source-title" id="currentSourceName">Loading...</div>
@@ -413,6 +968,12 @@
     <div class="card">
       <div class="card-header">
         <h2>📋 Live Log</h2>
+        <div class="log-controls">
+          <button onclick="refreshLogNow()" title="Refresh now">🔄</button>
+          <button id="autoRefreshBtn" class="active" onclick="toggleAutoRefresh()" title="Toggle auto-refresh">Auto</button>
+          <button onclick="clearLogDisplay()" title="Clear display">Clear</button>
+          <span class="auto-scroll-indicator" id="autoScrollIndicator">↓ Auto-scroll ON</span>
+        </div>
         <span class="refresh-time" id="logRefresh">--</span>
       </div>
       <div class="card-body">
@@ -438,11 +999,479 @@
     
     // State
     let lastLogLines = [];
+    let scraperRunning = false;
+    let allSources = [];
+    
+    // Presets for scraper configuration
+    const PRESETS = {
+      conservative: {
+        minDelay: 15,
+        maxDelay: 30,
+        dailyLimit: 30,
+        rotateEvery: 8,
+        initialBackoff: 600
+      },
+      balanced: {
+        minDelay: 8,
+        maxDelay: 20,
+        dailyLimit: 50,
+        rotateEvery: 12,
+        initialBackoff: 300
+      },
+      aggressive: {
+        minDelay: 4,
+        maxDelay: 10,
+        dailyLimit: 100,
+        rotateEvery: 20,
+        initialBackoff: 180
+      },
+      stealth: {
+        minDelay: 20,
+        maxDelay: 45,
+        dailyLimit: 20,
+        rotateEvery: 5,
+        initialBackoff: 900
+      }
+    };
     
     // Format numbers with commas
     function formatNumber(num) {
       if (num === null || num === undefined || num === 'null') return '--';
       return parseInt(num).toLocaleString();
+    }
+    
+    // Toggle scraper panel
+    function toggleScraperPanel() {
+      const body = document.getElementById('scraperBody');
+      const toggle = document.getElementById('scraperToggle');
+      body.classList.toggle('open');
+      toggle.classList.toggle('open');
+    }
+    
+    // Toggle scraper log visibility
+    function toggleScraperLog() {
+      const log = document.getElementById('scraperLog');
+      log.classList.toggle('visible');
+      if (log.classList.contains('visible')) {
+        updateScraperLog();
+      }
+    }
+    
+    // Apply preset configuration
+    function applyPreset(presetName) {
+      const preset = PRESETS[presetName];
+      if (!preset) return;
+      
+      document.getElementById('minDelay').value = preset.minDelay;
+      document.getElementById('maxDelay').value = preset.maxDelay;
+      document.getElementById('dailyLimit').value = preset.dailyLimit;
+      document.getElementById('rotateEvery').value = preset.rotateEvery;
+      document.getElementById('initialBackoff').value = preset.initialBackoff;
+      
+      // Update button states
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+    
+    // Start the scraper
+    async function startScraper() {
+      const source = document.getElementById('scraperSource').value;
+      if (!source) {
+        alert('Please select a source');
+        return;
+      }
+      
+      const config = {
+        source: source,
+        minDelay: parseInt(document.getElementById('minDelay').value),
+        maxDelay: parseInt(document.getElementById('maxDelay').value),
+        dailyLimit: parseInt(document.getElementById('dailyLimit').value),
+        rotateEvery: parseInt(document.getElementById('rotateEvery').value),
+        initialBackoff: parseInt(document.getElementById('initialBackoff').value)
+      };
+      
+      const sessionLimit = document.getElementById('sessionLimit').value;
+      if (sessionLimit) {
+        config.limit = parseInt(sessionLimit);
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE}/scraper/start`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(config)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          updateScraperUI(true, data.pid);
+          document.getElementById('scraperLog').classList.add('visible');
+          document.getElementById('scraperStats').style.display = 'grid';
+        } else {
+          alert('Failed to start scraper: ' + (data.error || 'Unknown error'));
+        }
+      } catch (error) {
+        alert('Error starting scraper: ' + error.message);
+      }
+    }
+    
+    // Stop the scraper
+    async function stopScraper() {
+      try {
+        const response = await fetch(`${API_BASE}/scraper/stop`, {
+          method: 'POST'
+        });
+        
+        const data = await response.json();
+        updateScraperUI(false);
+      } catch (error) {
+        alert('Error stopping scraper: ' + error.message);
+      }
+    }
+    
+    // Update scraper UI state
+    function updateScraperUI(running, pid = null) {
+      scraperRunning = running;
+      const statusDot = document.getElementById('scraperStatusDot');
+      const statusText = document.getElementById('scraperStatusText');
+      const pidText = document.getElementById('scraperPid');
+      const startBtn = document.getElementById('startScraperBtn');
+      const stopBtn = document.getElementById('stopScraperBtn');
+      
+      if (running) {
+        statusDot.className = 'scraper-status-dot running';
+        statusText.textContent = 'Running';
+        pidText.textContent = pid ? `PID: ${pid}` : '';
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'flex';
+      } else {
+        statusDot.className = 'scraper-status-dot stopped';
+        statusText.textContent = 'Idle';
+        pidText.textContent = '';
+        startBtn.style.display = 'flex';
+        stopBtn.style.display = 'none';
+      }
+    }
+    
+    // Update scraper status from server
+    async function updateScraperStatus() {
+      try {
+        const response = await fetch(`${API_BASE}/scraper/status`);
+        const data = await response.json();
+        
+        updateScraperUI(data.running, data.pid);
+        
+        if (data.checkpoint) {
+          document.getElementById('scraperStats').style.display = 'grid';
+          const stats = data.checkpoint;
+          document.getElementById('statProcessed').textContent = 
+            (stats.processed_urls || []).length;
+          document.getElementById('statBlocked').textContent = 
+            (stats.blocked_urls || []).length;
+          document.getElementById('statFailed').textContent = 
+            (stats.failed_urls || []).length;
+          
+          // Calculate today's count
+          const today = new Date().toISOString().split('T')[0];
+          const todayCount = (stats.daily_counts || {})[today] || 0;
+          document.getElementById('statToday').textContent = todayCount;
+        }
+        
+        // Update log if visible
+        if (document.getElementById('scraperLog').classList.contains('visible')) {
+          updateScraperLog();
+        }
+      } catch (error) {
+        console.error('Failed to fetch scraper status:', error);
+      }
+    }
+    
+    // Update scraper log
+    async function updateScraperLog() {
+      try {
+        const response = await fetch(`${API_BASE}/scraper/log`);
+        const data = await response.json();
+        
+        const logEl = document.getElementById('scraperLog');
+        if (data.log) {
+          logEl.innerHTML = colorizeLog(data.log);
+          logEl.scrollTop = logEl.scrollHeight;
+        }
+      } catch (error) {
+        console.error('Failed to fetch scraper log:', error);
+      }
+    }
+    
+    // Populate sources dropdown
+    function populateSourcesDropdown(sources) {
+      const select = document.getElementById('scraperSource');
+      const currentValue = select.value;
+      
+      // Clear existing options except the first one
+      while (select.options.length > 1) {
+        select.remove(1);
+      }
+      
+      // Sort sources: those with URLs first, then by name
+      const sortedSources = [...sources].sort((a, b) => {
+        const aHasUrls = (a.pipeline?.urlsFound || 0) > 0;
+        const bHasUrls = (b.pipeline?.urlsFound || 0) > 0;
+        if (aHasUrls !== bHasUrls) return bHasUrls - aHasUrls;
+        return a.name.localeCompare(b.name);
+      });
+      
+      sortedSources.forEach(source => {
+        const option = document.createElement('option');
+        option.value = source.id;
+        const urlCount = source.pipeline?.urlsFound || 0;
+        const htmlCount = source.pipeline?.htmlScraped || 0;
+        option.textContent = `${source.name} (${htmlCount}/${urlCount} scraped)`;
+        if (urlCount === 0) {
+          option.disabled = true;
+          option.textContent += ' - no URLs';
+        }
+        select.appendChild(option);
+      });
+      
+      // Restore selection if it still exists
+      if (currentValue) {
+        select.value = currentValue;
+      }
+      
+      // Also populate Ralph source selector
+      populateRalphSourceSelector(sources);
+    }
+    
+    // Populate Ralph source selector (multi-select)
+    function populateRalphSourceSelector(sources) {
+      const select = document.getElementById('ralphSource');
+      const currentSelections = Array.from(select.selectedOptions).map(o => o.value);
+      
+      select.innerHTML = '';
+      
+      // Sort by status (pending/in_progress first), then by name
+      const sortedSources = [...sources].sort((a, b) => {
+        const statusOrder = { 'in_progress': 0, 'pending': 1, 'blocked': 2, 'completed': 3 };
+        const aOrder = statusOrder[a.status] ?? 99;
+        const bOrder = statusOrder[b.status] ?? 99;
+        if (aOrder !== bOrder) return aOrder - bOrder;
+        return a.name.localeCompare(b.name);
+      });
+      
+      sortedSources.forEach(source => {
+        const option = document.createElement('option');
+        option.value = source.id;
+        const pipeline = source.pipeline || {};
+        const urlCount = pipeline.urlsFound || 0;
+        const htmlCount = pipeline.htmlScraped || 0;
+        const buildCount = pipeline.builds || 0;
+        
+        // Status indicator
+        const statusIcon = {
+          'in_progress': '🔄',
+          'pending': '⏳',
+          'blocked': '🚫',
+          'completed': '✅'
+        }[source.status] || '❓';
+        
+        option.textContent = `${statusIcon} ${source.name} (URLs:${urlCount} HTML:${htmlCount} Builds:${buildCount})`;
+        
+        // Restore selection
+        if (currentSelections.includes(source.id)) {
+          option.selected = true;
+        }
+        
+        select.appendChild(option);
+      });
+    }
+    
+    // Toggle Ralph panel
+    function toggleRalphPanel() {
+      const body = document.getElementById('ralphBody');
+      const toggle = document.getElementById('ralphToggle');
+      body.classList.toggle('open');
+      toggle.classList.toggle('open');
+    }
+    
+    // Start Ralph
+    async function startRalph() {
+      const iterations = parseInt(document.getElementById('ralphIterations').value) || 25;
+      const sourceSelect = document.getElementById('ralphSource');
+      const selectedSources = Array.from(sourceSelect.selectedOptions).map(o => o.value).filter(v => v);
+      
+      const config = {
+        iterations: iterations,
+        sources: selectedSources
+      };
+      
+      try {
+        const response = await fetch(`${API_BASE}/ralph/start`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(config)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          updateRalphUI(true, data.pid);
+        } else {
+          alert('Failed to start Ralph: ' + (data.error || 'Unknown error'));
+        }
+      } catch (error) {
+        alert('Error starting Ralph: ' + error.message);
+      }
+    }
+    
+    // Stop Ralph
+    async function stopRalph() {
+      try {
+        const response = await fetch(`${API_BASE}/ralph/stop`, {
+          method: 'POST'
+        });
+        
+        const data = await response.json();
+        updateRalphUI(false);
+      } catch (error) {
+        alert('Error stopping Ralph: ' + error.message);
+      }
+    }
+    
+    // Update Ralph UI state
+    function updateRalphUI(running, pid = null) {
+      const statusDot = document.getElementById('ralphStatusDot');
+      const statusDot2 = document.getElementById('ralphStatusDot2');
+      const statusText = document.getElementById('ralphStatusText');
+      const pidText = document.getElementById('ralphPid');
+      const startBtn = document.getElementById('startRalphBtn');
+      const stopBtn = document.getElementById('stopRalphBtn');
+      
+      if (running) {
+        statusDot.className = 'status-dot running';
+        statusDot2.className = 'scraper-status-dot running';
+        statusText.textContent = 'Running';
+        pidText.textContent = pid ? `PID: ${pid}` : '';
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'flex';
+      } else {
+        statusDot.className = 'status-dot stopped';
+        statusDot2.className = 'scraper-status-dot stopped';
+        statusText.textContent = 'Stopped';
+        pidText.textContent = '';
+        startBtn.style.display = 'flex';
+        stopBtn.style.display = 'none';
+      }
+    }
+    
+    // Update Ralph status from server
+    async function updateRalphStatus() {
+      try {
+        const response = await fetch(`${API_BASE}/ralph/status`);
+        const data = await response.json();
+        
+        updateRalphUI(data.running, data.pid);
+        
+        if (data.prd && data.prd.project) {
+          document.getElementById('ralphProject').textContent = data.prd.project;
+          document.getElementById('ralphStoryProgress').textContent = 
+            `Stories: ${data.prd.stories_completed}/${data.prd.stories_total} | Source: ${data.prd.source || 'N/A'}`;
+        } else {
+          document.getElementById('ralphProject').textContent = 'No active project';
+          document.getElementById('ralphStoryProgress').textContent = '--';
+        }
+      } catch (error) {
+        console.error('Failed to fetch Ralph status:', error);
+      }
+    }
+    
+    // Log refresh controls
+    let autoRefreshEnabled = true;
+    let autoScrollEnabled = true;
+    
+    function toggleAutoRefresh() {
+      autoRefreshEnabled = !autoRefreshEnabled;
+      const btn = document.getElementById('autoRefreshBtn');
+      btn.classList.toggle('active', autoRefreshEnabled);
+    }
+    
+    function clearLogDisplay() {
+      document.getElementById('logOutput').innerHTML = '<span class="info">Log cleared. Waiting for new data...</span>';
+    }
+    
+    async function refreshLogNow() {
+      try {
+        const response = await fetch(`${API_BASE}/log/fresh?lines=200`);
+        const data = await response.json();
+        
+        if (data.log) {
+          const logOutput = document.getElementById('logOutput');
+          logOutput.innerHTML = colorizeLog(data.log);
+          if (autoScrollEnabled) {
+            logOutput.scrollTop = logOutput.scrollHeight;
+          }
+          document.getElementById('logRefresh').textContent = `Updated: ${new Date().toLocaleTimeString()} (${data.total_lines || '?'} lines)`;
+        }
+      } catch (error) {
+        console.error('Failed to refresh log:', error);
+      }
+    }
+    
+    // Generate PRD using browser analysis
+    async function generatePRD() {
+      const sourceSelect = document.getElementById('ralphSource');
+      const selectedSources = Array.from(sourceSelect.selectedOptions).map(o => o.value).filter(v => v);
+      
+      if (selectedSources.length === 0) {
+        alert('Please select a source first');
+        return;
+      }
+      
+      if (selectedSources.length > 1) {
+        alert('Please select only one source for PRD generation');
+        return;
+      }
+      
+      const sourceId = selectedSources[0];
+      const source = allSources.find(s => s.id === sourceId);
+      
+      if (!source) {
+        alert('Source not found');
+        return;
+      }
+      
+      // Show status
+      const statusDiv = document.getElementById('prdGenStatus');
+      const statusText = document.getElementById('prdGenStatusText');
+      statusDiv.style.display = 'block';
+      statusText.textContent = `Analyzing ${source.name}...`;
+      
+      try {
+        const response = await fetch(`${API_BASE}/prd/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sourceId: sourceId,
+            url: source.url,
+            name: source.name,
+            useBrowser: true
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          statusText.innerHTML = `<span class="success">✓ PRD generated for ${source.name}</span>`;
+          setTimeout(() => {
+            statusDiv.style.display = 'none';
+            updateRalphStatus();
+          }, 3000);
+        } else {
+          statusText.innerHTML = `<span class="error">✗ ${data.error || 'Failed to generate PRD'}</span>`;
+        }
+      } catch (error) {
+        statusText.innerHTML = `<span class="error">✗ Error: ${error.message}</span>`;
+      }
     }
     
     // Colorize log output
@@ -495,16 +1524,25 @@
         // Update sources list
         updateSourcesList(data.all_sources || []);
         
-        // Update log
-        if (data.log_tail) {
-          const logOutput = document.getElementById('logOutput');
-          logOutput.innerHTML = colorizeLog(data.log_tail);
-          logOutput.scrollTop = logOutput.scrollHeight;
+        // Populate scraper dropdown
+        if (data.all_sources) {
+          allSources = data.all_sources;
+          populateSourcesDropdown(data.all_sources);
         }
+        
+        // Update scraper status
+        updateScraperStatus();
+        
+        // Update log (use fresh endpoint for better updates)
+        if (autoRefreshEnabled) {
+          refreshLogNow();
+        }
+        
+        // Update Ralph status
+        updateRalphStatus();
         
         // Update refresh times
         const now = new Date().toLocaleTimeString();
-        document.getElementById('logRefresh').textContent = `Updated: ${now}`;
         document.getElementById('sourcesRefresh').textContent = `Updated: ${now}`;
         
       } catch (error) {
