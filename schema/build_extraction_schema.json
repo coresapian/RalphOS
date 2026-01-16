@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-L  "$id": "https://ralphos.motormia.com/schema/build_extraction_schema.json",
+  "$id": "https://ralphos.motormia.com/schema/build_extraction_schema.json",
   "title": "Vehicle Build Extraction Schema",
   "version": "1.0.0",
   "description": "Schema for extracting vehicle build and modification data from scraped sources. Ralph reads this before Stage 3 (Build Extraction) and Stage 4 (Mod Extraction).",
