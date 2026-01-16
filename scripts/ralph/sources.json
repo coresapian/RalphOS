@@ -33,7 +33,7 @@
       "lastAttempted": "2026-01-16T16:20:00Z",
       "pipeline": {
         "expectedUrls": 12,
-        "urlsFound": 12,
+        "urlsFound": 18,
         "htmlScraped": 12,
         "htmlFailed": 0,
         "htmlBlocked": 0,

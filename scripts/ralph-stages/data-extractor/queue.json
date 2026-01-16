@@ -1,4 +1,21 @@
 {
   "stage": "data-extractor",
-  "sources": []
+  "sources": [
+    {
+      "id": "audiocityusa",
+      "name": "AudioCityUSA",
+      "outputDir": "data/audiocityusa",
+      "htmlCount": 48,
+      "status": "pending",
+      "priority": 1
+    },
+    {
+      "id": "pistonheads_auctions",
+      "name": "PistonHeads Auctions",
+      "outputDir": "data/pistonheads_auctions",
+      "htmlCount": 68,
+      "status": "pending",
+      "priority": 5
+    }
+  ]
 }
