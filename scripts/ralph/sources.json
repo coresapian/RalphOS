@@ -30,14 +30,14 @@
       "status": "in_progress",
       "priority": 5,
       "attempted": 1,
-      "lastAttempted": "2026-01-08T22:44:00Z",
+      "lastAttempted": "2026-01-16T16:17:00Z",
       "pipeline": {
         "expectedUrls": 12,
         "urlsFound": 12,
         "htmlScraped": 12,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": 0,
+        "builds": 7,
         "mods": 0
       }
     },
@@ -1749,6 +1749,253 @@
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
+      }
+    },
+    {
+      "id": "carandclassic",
+      "name": "Car and Classic",
+      "url": "https://carandclassic.com",
+      "outputDir": "data/carandclassic",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 9406,
+        "urlsFound": 9406,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "audiocityusa",
+      "name": "AudioCityUSA",
+      "url": "https://audiocityusa.com",
+      "outputDir": "data/audiocityusa",
+      "status": "in_progress",
+      "priority": 1,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 3731,
+        "urlsFound": 3731,
+        "htmlScraped": 48,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "hennesseyperformance",
+      "name": "Hennessey Performance",
+      "url": "https://hennesseyperformance.com",
+      "outputDir": "data/hennesseyperformance",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 141,
+        "urlsFound": 141,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "tunedbyanton",
+      "name": "Tuned By Anton",
+      "url": "https://tunedbyanton.com",
+      "outputDir": "data/tunedbyanton",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 427,
+        "urlsFound": 427,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "pistonheads_auctions",
+      "name": "PistonHeads Auctions",
+      "url": "https://pistonheads.com",
+      "outputDir": "data/pistonheads_auctions",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 414,
+        "urlsFound": 414,
+        "htmlScraped": 68,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "goo_net_exchange",
+      "name": "Goo-net Exchange",
+      "url": "https://goo-net-exchange.com",
+      "outputDir": "data/goo_net_exchange",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 100,
+        "urlsFound": 100,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "autotempest",
+      "name": "AutoTempest",
+      "url": "https://autotempest.com",
+      "outputDir": "data/autotempest",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 199,
+        "urlsFound": 199,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "roushperformance",
+      "name": "Roush Performance",
+      "url": "https://roushperformance.com",
+      "outputDir": "data/roushperformance",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 59,
+        "urlsFound": 59,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "amc_ebay",
+      "name": "AMC eBay",
+      "url": "https://ebay.com",
+      "outputDir": "data/amc_ebay",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 35,
+        "urlsFound": 35,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "hamann_motorsport",
+      "name": "Hamann Motorsport",
+      "url": "https://hamann-motorsport.com",
+      "outputDir": "data/hamann_motorsport",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 23,
+        "urlsFound": 23,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "twostepperformance",
+      "name": "Two Step Performance",
+      "url": "https://twostepperformance.com",
+      "outputDir": "data/twostepperformance",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 9,
+        "urlsFound": 9,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "paramount_performance",
+      "name": "Paramount Performance",
+      "url": "https://paramount-performance.com",
+      "outputDir": "data/paramount_performance",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 7,
+        "urlsFound": 7,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "manhart_automotive",
+      "name": "Manhart Automotive",
+      "url": "https://manhart-automotive.de",
+      "outputDir": "data/manhart_automotive",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 5,
+        "urlsFound": 5,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
       }
     }
   ]

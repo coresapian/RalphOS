@@ -14,7 +14,7 @@
         "Map HTML structure to schema fields"
       ],
       "priority": 1,
-      "passes": false
+      "passes": true
     },
     {
       "id": "BUILD-002",
@@ -27,7 +27,7 @@
         "Handle both showcase and garage page formats"
       ],
       "priority": 2,
-      "passes": false
+      "passes": true
     },
     {
       "id": "BUILD-003",
@@ -39,7 +39,7 @@
         "Update sources.json with builds count"
       ],
       "priority": 3,
-      "passes": false
+      "passes": true
     },
     {
       "id": "BUILD-004",
@@ -51,7 +51,7 @@
         "All builds extracted successfully"
       ],
       "priority": 4,
-      "passes": false
+      "passes": true
     }
   ]
 }
