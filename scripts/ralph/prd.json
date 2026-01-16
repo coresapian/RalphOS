@@ -1,54 +1,53 @@
 {
-  "projectName": "Luxury4Play Build Extraction",
+  "projectName": "Luxury4Play Mod Extraction",
   "branchName": "multi-ralph",
   "targetUrl": "https://luxury4play.com",
   "outputDir": "data/luxury4play",
-  "pipelineStage": 3,
+  "pipelineStage": 4,
   "userStories": [
     {
-      "id": "BUILD-001",
-      "title": "Read schema and analyze HTML structure",
+      "id": "MOD-001",
+      "title": "Read schema and analyze existing modifications",
       "acceptanceCriteria": [
-        "Read schema/build_extraction_schema.json for output format",
-        "Analyze sample HTML files to identify data patterns",
-        "Map HTML structure to schema fields"
+        "Read schema/build_extraction_schema.json for modifications array format",
+        "Read schema/Vehicle_Componets.json for valid categories",
+        "Analyze builds.json to identify existing modifications"
       ],
       "priority": 1,
       "passes": true
     },
     {
-      "id": "BUILD-002",
-      "title": "Create build extraction script",
+      "id": "MOD-002",
+      "title": "Create mod extraction script",
       "acceptanceCriteria": [
-        "Create extract_builds.py script",
-        "Parse HTML files from html/ directory",
-        "Extract required fields: build_id, source_type, build_type, build_source, source_url, year, make, model",
-        "Generate build_id using build_id_generator.py",
-        "Handle both showcase and garage page formats"
+        "Create extract_mods.py script",
+        "Use category_detector.py for automatic categorization",
+        "Extract brand from modification names where identifiable",
+        "Output format: {build_id, name, category, brand, confidence}"
       ],
       "priority": 2,
       "passes": true
     },
     {
-      "id": "BUILD-003",
-      "title": "Execute build extraction",
+      "id": "MOD-003",
+      "title": "Execute mod extraction",
       "acceptanceCriteria": [
-        "Run extract_builds.py script",
-        "Extract builds from all 12 HTML files",
-        "Save to builds.json with proper metadata",
-        "Update sources.json with builds count"
+        "Run extract_mods.py script",
+        "Extract mods from all builds in builds.json",
+        "Save to mods.json with proper metadata",
+        "Update sources.json with mods count"
       ],
       "priority": 3,
       "passes": true
     },
     {
-      "id": "BUILD-004",
-      "title": "Verify build extraction completeness",
+      "id": "MOD-004",
+      "title": "Verify mod extraction and mark source complete",
       "acceptanceCriteria": [
-        "Verify builds.json contains all extracted builds",
-        "Verify each build has required fields",
-        "Update sources.json with final build count",
-        "All builds extracted successfully"
+        "Verify mods.json contains all extracted modifications",
+        "Verify categories match Vehicle_Componets.json schema",
+        "Update sources.json status to completed",
+        "All stages complete for luxury4play source"
       ],
       "priority": 4,
       "passes": true

@@ -102,3 +102,61 @@ This file captures accumulated knowledge from Ralph iterations. Each entry docum
 
 ---
 
+### 2026-01-16 - Luxury4Play Build Extraction (Stage 3)
+- **Source**: Luxury4Play (luxury4play.com)
+- **Action**: Build Extraction for Stage 3
+- **Files Created/Modified**:
+  - `data/luxury4play/extract_builds.py` - Build extraction script
+  - `data/luxury4play/builds.json` - 7 extracted builds
+  - `scripts/ralph/sources.json` - Updated builds=7
+  - `scripts/ralph/prd.json` - All BUILD stories marked passes=true
+- **Pipeline Status**: urlsFound=12, htmlScraped=12, builds=7, mods=0
+- **Extraction Results**:
+  - 7 valid builds extracted from 12 HTML files
+  - 5 files skipped (spam/non-vehicle content)
+  - Builds: Ferrari Enzo, McLaren P1, Porsche GT3RS, Pagani Huayra Roadster,
+    2014 Chevrolet Corvette, 2025 Bugatti Tourbillon, 1985 Golf GTI Altis
+  - Porsche GT3RS has 3 modifications (Interior, Exterior, Exhaust)
+- **Key Patterns Discovered**:
+  - Showcase pages have structured fields: Year/Make/Model/Color/History/Modifications
+  - Garage pages have simpler Details section: User/Make/Model/Year
+  - Some garage entries are spam (years as make/model, non-vehicle content)
+  - HTML stored as JSON from webReader with title, content, metadata fields
+- **Next Stage**: Stage 4 - Mod Extraction using category_detector.py
+
+**Learnings:**
+1. Luxury4Play uses XenForo forum software - consistent structure across pages
+2. Showcase pages are richer in data; garage pages are user-submitted and vary in quality
+3. Filter spam by checking if make/model are numeric or content mentions non-vehicle services
+4. build_id_generator.py creates deterministic 63-bit IDs from URLs (DuckDB compatible)
+
+---
+
+### 2026-01-16 - Luxury4Play Mod Extraction (Stage 4) - SOURCE COMPLETE
+- **Source**: Luxury4Play (luxury4play.com)
+- **Action**: Mod Extraction for Stage 4 (FINAL)
+- **Files Created/Modified**:
+  - `data/luxury4play/extract_mods.py` - Mod extraction script with brand detection
+  - `data/luxury4play/mods.json` - 3 extracted modifications
+  - `scripts/ralph/sources.json` - Updated mods=3, status=completed
+  - `scripts/ralph/prd.json` - All MOD stories marked passes=true
+- **Pipeline Status**: COMPLETE ✓
+  - urlsFound=12, htmlScraped=12, builds=7, mods=3
+  - All stages complete: URL Discovery → HTML Scraping → Build Extraction → Mod Extraction
+- **Extraction Results**:
+  - 3 modifications from 1 build (2019 Porsche GT3RS)
+  - Categories: Interior (1), Exterior (1), Exhaust & Emission (1)
+  - Brands detected: Ed Guard, Premier Protective Films, Sharkwerks
+- **Key Implementation Details**:
+  - extract_mods.py uses category_detector.py for categorization
+  - Brand list sorted by length (longest first) to avoid substring issues (e.g., "Sharkwerks" vs "KW")
+  - Preserves source-provided categories when category_detector confidence is low
+
+**Learnings:**
+1. Brand detection order matters - longer brand names must be checked first
+2. Category_detector uses Trie for O(k) lookup - efficient for large keyword sets
+3. Most Luxury4Play entries are stock vehicles (no modifications to extract)
+4. Source now marked COMPLETE - all 4 pipeline stages finished
+
+---
+

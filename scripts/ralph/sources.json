@@ -27,10 +27,10 @@
       "name": "Luxury4Play",
       "url": "https://luxury4play.com",
       "outputDir": "data/luxury4play",
-      "status": "in_progress",
+      "status": "completed",
       "priority": 5,
       "attempted": 1,
-      "lastAttempted": "2026-01-16T16:17:00Z",
+      "lastAttempted": "2026-01-16T16:20:00Z",
       "pipeline": {
         "expectedUrls": 12,
         "urlsFound": 12,
@@ -38,7 +38,7 @@
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": 7,
-        "mods": 0
+        "mods": 3
       }
     },
     {
