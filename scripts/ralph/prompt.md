@@ -37,6 +37,132 @@ Ralph handles all 4 stages sequentially for each source.
 | `test_url_discovery.py` | **Test URL discovery** | `python scripts/tools/test_url_discovery.py {outputDir}/` |
 | `test_scraper.py` | **Test HTML scraper** | `python scripts/tools/test_scraper.py {outputDir}/scrape_html.py` |
 
+## Factory Ralph Enhanced Tools
+
+**IMPORTANT:** For robust, consistent operations, use these enhanced tools instead of raw Python/shell commands.
+
+See `scripts/ralph/TOOLS.md` for complete documentation.
+
+### Core Utilities (`ralph_utils.py`)
+
+```python
+from ralph_utils import safe_write, safe_write_json, safe_read_json, logger
+from ralph_utils import normalize_url, deduplicate_urls, get_robust_session
+
+# ALWAYS use safe_write (atomic, crash-safe)
+safe_write_json("output.json", data)
+
+# Use structured logging (NOT print)
+logger.info("Scraping started", {"source": "luxury4play"})
+logger.error("Request failed", {"status": 403})
+
+# URL operations
+urls = deduplicate_urls(url_list)
+clean_url = normalize_url(messy_url)
+
+# HTTP with auto-retry
+session = get_robust_session(retries=3)
+response = session.get(url)
+```
+
+### DuckDB Database (`ralph_duckdb.py`)
+
+```python
+from ralph_duckdb import RalphDuckDB
+
+db = RalphDuckDB("ralph_data.duckdb")
+
+# Import data (auto-detects format)
+db.import_file("builds.json", "builds")
+
+# Query
+df = db.query_to_df("SELECT * FROM builds WHERE year > 2020")
+
+# Export
+db.export_table("builds", "output.parquet")  # Best performance
+
+# DuckDB-specific SQL:
+# - Use GROUP BY ALL (auto-group non-aggregated columns)
+# - Use SELECT * EXCLUDE (columns) for cleaner queries
+```
+
+### Vision Analysis (`ralph_vlm.py`)
+
+```python
+from ralph_vlm import MoondreamClient
+
+vlm = MoondreamClient(provider="ollama")
+
+# Ask questions about images
+result = vlm.analyze_image("screenshot.png", "What color is the button?")
+
+# OCR
+text = vlm.extract_text("code_screenshot.png")
+
+# UI analysis
+description = vlm.describe_ui("dashboard.png")
+```
+
+### Visual Validation Gate (`ralph_validator.py`)
+
+**MANDATORY before marking tasks complete!**
+
+```python
+from ralph_validator import RalphValidator
+
+validator = RalphValidator()
+
+# Validate visual criteria
+result = validator.validate("screenshot.png", "Submit button is blue and visible")
+
+if result['passed']:
+    create_success_file()  # Safe to proceed
+else:
+    print(f"Fix needed: {result['reasoning']}")
+    # DO NOT mark as complete - fix the issue first
+```
+
+### Browser Helper (`browser_helper.js`)
+
+Inject into browser context, then use:
+
+```javascript
+// Find by text (most robust - ignores CSS class changes)
+RALPH.findByText('Submit').click()
+
+// Wait for elements (efficient MutationObserver)
+await RALPH.waitFor('.modal-content')
+
+// Extract data
+const data = RALPH.extractTable('table.results')
+const links = RALPH.getLinks({ internal: true })
+
+// Form filling (with React/Vue event dispatch)
+RALPH.fillForm({ '#email': 'test@example.com', '#pass': '123' })
+
+// React/Vue state inspection
+const props = RALPH.getReactProps('.product-card')
+```
+
+### Tool Selection Guide
+
+| Task | Tool |
+|------|------|
+| File I/O | `ralph_utils.safe_write`, `safe_read_json` |
+| HTTP requests | `ralph_utils.get_robust_session` |
+| Data storage | `ralph_duckdb.RalphDuckDB` |
+| Image analysis | `ralph_vlm.MoondreamClient` |
+| Visual validation | `ralph_validator.RalphValidator` |
+| DOM traversal | `browser_helper.js` (RALPH.*) |
+
+### Mandatory Rules for Tool Usage
+
+1. **NEVER use `open()` directly** - Always use `safe_write()` / `safe_read_json()`
+2. **NEVER use `print()` for logging** - Use `logger.info()` / `logger.error()`
+3. **NEVER guess selectors** - Use `RALPH.findByText()` for robustness
+4. **ALWAYS validate visually** - Use `RalphValidator` before declaring success
+5. **ALWAYS use GROUP BY ALL** - Avoid listing columns in DuckDB aggregations
+
 ## REQUIRED: Run Tests Before Marking Complete
 
 **Stage 1 (URL Discovery)**: Must pass before marking URL stories complete:

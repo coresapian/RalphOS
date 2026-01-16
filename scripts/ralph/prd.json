@@ -1,57 +1,57 @@
 {
-  "projectName": "Luxury4Play HTML Scraping",
+  "projectName": "Luxury4Play Build Extraction",
   "branchName": "multi-ralph",
   "targetUrl": "https://luxury4play.com",
   "outputDir": "data/luxury4play",
-  "pipelineStage": 2,
+  "pipelineStage": 3,
   "userStories": [
     {
-      "id": "HTML-001",
-      "title": "Create html/ directory and normalize URLs",
+      "id": "BUILD-001",
+      "title": "Read schema and analyze HTML structure",
       "acceptanceCriteria": [
-        "Create data/luxury4play/html/ directory",
-        "Parse urls.jsonl to extract unique URLs (remove #comments duplicates)",
-        "Update urls.json with normalized unique URLs list",
-        "Update totalCount in urls.json to match actual unique URLs"
+        "Read schema/build_extraction_schema.json for output format",
+        "Analyze sample HTML files to identify data patterns",
+        "Map HTML structure to schema fields"
       ],
       "priority": 1,
-      "passes": true
+      "passes": false
     },
     {
-      "id": "HTML-002",
-      "title": "Create HTML scraping script with retry logic",
+      "id": "BUILD-002",
+      "title": "Create build extraction script",
       "acceptanceCriteria": [
-        "Create scrape_html.py script in data/luxury4play/",
-        "Implement User-Agent header",
-        "Implement retry logic with exponential backoff",
-        "Save HTML to html/ directory with proper filenames",
-        "Track progress in scrape_progress.json"
+        "Create extract_builds.py script",
+        "Parse HTML files from html/ directory",
+        "Extract required fields: build_id, source_type, build_type, build_source, source_url, year, make, model",
+        "Generate build_id using build_id_generator.py",
+        "Handle both showcase and garage page formats"
       ],
       "priority": 2,
-      "passes": true
+      "passes": false
     },
     {
-      "id": "HTML-003",
-      "title": "Execute full HTML scrape",
+      "id": "BUILD-003",
+      "title": "Execute build extraction",
       "acceptanceCriteria": [
-        "Run scrape_html.py script",
-        "Successfully scrape all unique URLs",
-        "Verify htmlScraped count matches unique URLs"
+        "Run extract_builds.py script",
+        "Extract builds from all 12 HTML files",
+        "Save to builds.json with proper metadata",
+        "Update sources.json with builds count"
       ],
       "priority": 3,
-      "passes": true
+      "passes": false
     },
     {
-      "id": "HTML-004",
-      "title": "Test and verify scraping completion",
+      "id": "BUILD-004",
+      "title": "Verify build extraction completeness",
       "acceptanceCriteria": [
-        "Run test_url_discovery.py to verify URL discovery passed",
-        "Run test_scraper.py to verify HTML scraping passed",
-        "Update sources.json with htmlScraped count",
-        "All tests pass (exit code 0)"
+        "Verify builds.json contains all extracted builds",
+        "Verify each build has required fields",
+        "Update sources.json with final build count",
+        "All builds extracted successfully"
       ],
       "priority": 4,
-      "passes": true
+      "passes": false
     }
   ]
 }
