@@ -1460,6 +1460,7 @@ START by navigating to the URL and taking a snapshot.
             
             cmd = [
                 chrome_path,
+                '--headless=new',  # Run headless (new Chrome headless mode)
                 f'--remote-debugging-port={browser_cdp_port}',
                 f'--user-data-dir={user_data_dir}',
                 '--no-first-run',
@@ -1467,10 +1468,13 @@ START by navigating to the URL and taking a snapshot.
                 '--disable-background-networking',
                 '--disable-sync',
                 '--disable-translate',
+                '--disable-gpu',  # Often needed for headless
                 '--metrics-recording-only',
                 '--safebrowsing-disable-auto-update',
                 '--window-size=1280,800',
                 '--disable-extensions',
+                '--hide-scrollbars',
+                '--mute-audio',
                 'about:blank'
             ]
             

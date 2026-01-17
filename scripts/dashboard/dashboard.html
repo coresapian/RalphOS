@@ -1571,12 +1571,14 @@
     function handleScreencastFrame(params) {
       const img = document.getElementById('browserScreenshot');
       const placeholder = document.getElementById('browserPlaceholder');
+      const loading = document.getElementById('browserLoading');
       
       img.src = 'data:image/jpeg;base64,' + params.data;
       img.style.display = 'block';
       placeholder.style.display = 'none';
+      loading.style.display = 'none';
       
-      // Acknowledge the frame
+      // Acknowledge the frame to continue receiving
       sendCDPCommand('Page.screencastFrameAck', {
         sessionId: params.sessionId
       });
