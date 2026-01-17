@@ -3094,14 +3094,17 @@
           
           <div class="prd-actions-sidebar">
             <h3 style="margin-top: 0;">⚡ Actions</h3>
-            <button class="prd-action-btn" onclick="generatePrd()">
-              🔄 Generate PRD
+            <button class="prd-action-btn" onclick="runDomainAnalysis()" title="Analyze website structure with browser">
+              🔍 Run Domain Analysis
             </button>
-            <button class="prd-action-btn" onclick="generatePrdVariant()">
-              🎲 Generate Variant
+            <button class="prd-action-btn" onclick="runPrdGeneration()" title="Generate PRD from analysis">
+              📝 Generate PRD
             </button>
-            <button class="prd-action-btn" onclick="analyzeSiteStructure()">
-              🔍 Analyze Site
+            <button class="prd-action-btn" onclick="runAutomatedPrdWorkflow(currentPrdSource?.id, currentPrdSource?.name, currentPrdSource?.url)" title="Run full automated workflow">
+              🤖 Auto (Analysis + PRD)
+            </button>
+            <button class="prd-action-btn" onclick="savePrdToRalph()" title="Save PRD for Ralph to use">
+              💾 Save PRD
             </button>
             <button class="prd-action-btn danger" onclick="clearPrdEditor()">
               🗑️ Clear
@@ -3176,22 +3179,110 @@
       document.getElementById('varSourceUrl').value = sourceUrl || '';
       document.getElementById('varOutputDir').value = `data/${sourceId}`;
       
-      // Reset content
-      document.getElementById('prdStreamText').textContent = 'Checking for existing analysis...';
+      // Reset content - show instructions instead of auto-running
+      document.getElementById('prdStreamText').textContent = `🔧 PRD Generator for ${sourceName}\n\n` +
+        `Source ID: ${sourceId}\n` +
+        `URL: ${sourceUrl || 'Not set'}\n\n` +
+        `─────────────────────────────────────\n\n` +
+        `📋 Available Actions:\n\n` +
+        `  🔍 Run Domain Analysis\n` +
+        `     Analyzes the website structure using browser automation\n\n` +
+        `  📝 Generate PRD\n` +
+        `     Creates a PRD from the domain analysis\n\n` +
+        `─────────────────────────────────────\n\n` +
+        `Click a button below to start.`;
       document.getElementById('prdEditorContent').value = '';
       document.getElementById('prdPreviewContent').innerHTML = '<p style="color: var(--text-muted);">Generate a PRD to see the preview...</p>';
-      document.getElementById('prdStreamStatus').style.display = 'flex';
-      document.getElementById('prdCursor').style.display = 'inline-block';
-      document.getElementById('prdStatus').textContent = 'Loading...';
+      document.getElementById('prdStreamStatus').style.display = 'none';
+      document.getElementById('prdCursor').style.display = 'none';
+      document.getElementById('prdStatus').textContent = 'Ready';
       document.getElementById('prdTimestamp').textContent = '--';
       
       // Show modal
       document.getElementById('prdModal').classList.add('visible');
       switchPrdTab('stream');
+    }
+    
+    // Manual trigger for domain analysis
+    async function runDomainAnalysis() {
+      if (!currentPrdSource) return;
+      const { id: sourceId, name: sourceName, url: sourceUrl } = currentPrdSource;
       
-      // Wait 0.5 seconds then start automated workflow
-      await new Promise(r => setTimeout(r, 500));
-      await runAutomatedPrdWorkflow(sourceId, sourceName, sourceUrl);
+      const streamEl = document.getElementById('prdStreamText');
+      document.getElementById('prdStreamStatus').style.display = 'flex';
+      document.getElementById('prdCursor').style.display = 'inline-block';
+      document.getElementById('prdStatus').textContent = 'Analyzing...';
+      
+      streamEl.textContent = `🌐 Starting domain analysis for ${sourceName}...\n`;
+      streamEl.textContent += `   Target: ${sourceUrl || 'No URL'}\n\n`;
+      
+      try {
+        const response = await fetch(`${API_BASE}/prd/analyze-domain`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sourceId, sourceName, sourceUrl })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          streamEl.textContent += result.analysis || '✅ Analysis complete.\n';
+          streamEl.textContent += `\n\n✅ Saved to: ${result.path}\n`;
+          streamEl.textContent += `\nMethod: ${result.method || 'unknown'}\n`;
+        } else {
+          streamEl.textContent += `\n❌ Error: ${result.error}\n`;
+        }
+      } catch (error) {
+        streamEl.textContent += `\n❌ Error: ${error.message}\n`;
+      }
+      
+      document.getElementById('prdStreamStatus').style.display = 'none';
+      document.getElementById('prdCursor').style.display = 'none';
+      document.getElementById('prdStatus').textContent = 'Ready';
+      document.getElementById('prdTimestamp').textContent = new Date().toLocaleTimeString();
+    }
+    
+    // Manual trigger for PRD generation
+    async function runPrdGeneration() {
+      if (!currentPrdSource) return;
+      const { id: sourceId, name: sourceName, url: sourceUrl } = currentPrdSource;
+      
+      const streamEl = document.getElementById('prdStreamText');
+      document.getElementById('prdStreamStatus').style.display = 'flex';
+      document.getElementById('prdCursor').style.display = 'inline-block';
+      document.getElementById('prdStatus').textContent = 'Generating...';
+      
+      streamEl.textContent = `📝 Generating PRD for ${sourceName}...\n\n`;
+      
+      try {
+        const response = await fetch(`${API_BASE}/prd/generate-from-analysis`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sourceId, sourceName, sourceUrl })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success || result.prd) {
+          const prd = result.prd;
+          const prdJson = JSON.stringify(prd, null, 2);
+          streamEl.textContent += prdJson;
+          streamEl.textContent += `\n\n✅ PRD generated!\n`;
+          
+          document.getElementById('prdEditorContent').value = prdJson;
+          updatePrdPreview(prd);
+          currentPrdContent = prdJson;
+        } else {
+          streamEl.textContent += `\n❌ Error: ${result.error}\n`;
+        }
+      } catch (error) {
+        streamEl.textContent += `\n❌ Error: ${error.message}\n`;
+      }
+      
+      document.getElementById('prdStreamStatus').style.display = 'none';
+      document.getElementById('prdCursor').style.display = 'none';
+      document.getElementById('prdStatus').textContent = 'Ready';
+      document.getElementById('prdTimestamp').textContent = new Date().toLocaleTimeString();
     }
     
     // Automated PRD workflow
