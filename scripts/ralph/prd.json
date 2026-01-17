@@ -1,16 +1,16 @@
 {
-  "projectName": "Paramount Performance UK Tuner Scraping",
-  "sourceId": "paramount_performance",
+  "projectName": "Two Step Performance Honda Tuner Scraping",
+  "sourceId": "twostepperformance",
   "branchName": "main",
-  "targetUrl": "https://paramount-performance.com",
-  "outputDir": "data/paramount_performance",
+  "targetUrl": "https://www.twostepperformance.com",
+  "outputDir": "data/twostepperformance",
   "pipelineStage": 2,
   "userStories": [
     {
       "id": "HTML-001",
-      "title": "Create HTML scraper for Paramount Performance showcase pages",
+      "title": "Create HTML scraper for Two Step Performance build pages",
       "acceptanceCriteria": [
-        "scrape_html.py handles UK performance tuner content",
+        "scrape_html.py handles Shopify blog structure",
         "Proper compression handling (gzip/brotli)",
         "Rate limiting to avoid blocks"
       ],
@@ -19,10 +19,10 @@
     },
     {
       "id": "HTML-002",
-      "title": "Execute HTML scraping for all 7 URLs",
+      "title": "Execute HTML scraping for all 9 URLs",
       "acceptanceCriteria": [
-        "All 7 URLs attempted",
-        "HTML files saved to data/paramount_performance/html/"
+        "All 9 URLs attempted",
+        "HTML files saved to data/twostepperformance/html/"
       ],
       "priority": 2,
       "passes": true
@@ -31,8 +31,8 @@
       "id": "BUILD-001",
       "title": "Create and execute build extraction",
       "acceptanceCriteria": [
-        "extract_builds.py parses tuner showcase pages",
-        "Extracts: make, model, package name, power specs"
+        "extract_builds.py parses Honda/Ford build pages",
+        "Extracts: year, make, model, chassis code"
       ],
       "priority": 3,
       "passes": true
@@ -48,7 +48,7 @@
       "passes": true
     }
   ],
-  "createdAt": "2026-01-17T07:30:00Z",
+  "createdAt": "2026-01-17T08:30:00Z",
   "createdBy": "ralph",
-  "updatedAt": "2026-01-17T07:30:00Z"
+  "updatedAt": "2026-01-17T08:30:00Z"
 }

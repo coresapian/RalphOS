@@ -1964,19 +1964,20 @@
       "name": "Two Step Performance",
       "url": "https://twostepperformance.com",
       "outputDir": "data/twostepperformance",
-      "status": "pending",
+      "status": "completed",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T09:00:00Z",
       "pipeline": {
         "expectedUrls": 9,
         "urlsFound": 9,
-        "htmlScraped": 0,
+        "htmlScraped": 9,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": null,
-        "mods": null
-      }
+        "builds": 9,
+        "mods": 252
+      },
+      "notes": "COMPLETE: 9 builds, 252 mods. Honda specialist tuner (8 Honda + 1 Ford). Chassis: FK8/FL5 Type R, FE1 Si, FC4/FL1 Civic, CV2 Accord, ED8 CRX, EJ6 Civic, FX4 F-150. Top brands: PRL (33), TSP (27), Hybrid Racing (18), 27WON (14). Categories: Engine (62), Suspension (38), Exterior (31), Tuning (28)."
     },
     {
       "id": "paramount_performance",

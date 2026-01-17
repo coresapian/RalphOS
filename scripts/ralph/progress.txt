@@ -836,3 +836,66 @@ for product in soup.find_all("div", class_="wc-block-grid__product-title"):
 - Multi-brand tuners serve diverse European luxury/performance markets
 
 ---
+
+## 2026-01-17 - Two Step Performance (twostepperformance)
+
+**Source:** https://twostepperformance.com
+**Pipeline Stage:** COMPLETE (all 4 stages)
+**Result:** 9 builds, 252 mods (100% mod rate, avg 28 mods/build)
+
+**Vehicle Distribution:**
+| Chassis Code | Vehicle | Year |
+|--------------|---------|------|
+| FK8 | Honda Civic Type R (10th Gen) | 2019 |
+| FL5 | Honda Civic Type R (11th Gen) | 2023 |
+| FE1 | Honda Civic Si (11th Gen) | 2023 |
+| FC4 | Honda Civic (10th Gen) | 2020 |
+| FL1 | Honda Civic (11th Gen) | 2023 |
+| CV2 | Honda Accord Sport 2.0T | 2022 |
+| ED8 | Honda CRX (2nd Gen) | 1989 |
+| EJ6 | Honda Civic (6th Gen) | 1998 |
+| FX4 | Ford F-150 EcoBoost | 2021 |
+
+**Brand Distribution:**
+| Brand | Count | Notes |
+|-------|-------|-------|
+| PRL Motorsports | 33 | Intakes, inlet pipes, radiators |
+| TSP (Two Step Performance) | 27 | In-house titanium hardware, couplers |
+| Hybrid Racing | 18 | Exhaust systems, oil caps, hardware |
+| 27WON | 14 | Turbo upgrades, strut bars, coilovers |
+| KTuner/Hondata | 10 | ECU tuning solutions |
+| OLM | 5 | LED headlights, taillights |
+| Escort | 5 | Radar detectors (safety category) |
+
+**Category Breakdown:**
+- Engine: 62 (turbo, intake, motor mounts, radiator)
+- Suspension: 38 (coilovers, strut bars, sway bars)
+- Exterior: 31 (lighting, aero, carbon)
+- Tuning: 28 (ECU, calibration, flex fuel)
+- Interior: 27 (shift knobs, gauges, mounts)
+- Brakes: 10 (rotors, pads, BBK)
+- Wheels: 10 (Titan7, lug nuts, spacers)
+- Drivetrain: 7 (clutch, short shifter, transmission)
+- Exhaust: 7 (catback, downpipe, heat shields)
+- Cooling: 6 (radiators, intercooler)
+
+**Technical Approach - Shopify Blog Extraction:**
+Uses og:title format: "TSP {chassis_code} - {year} {model} {trim}"
+Mod extraction from article__content.rte with category headers in strong tags.
+
+**Learnings:**
+1. Honda Chassis Codes: Internal platform codes (FK8, FL5, FE1) uniquely identify each model generation
+2. Shopify Blog Structure: /blogs/{blog-name}/{slug} pattern with og:title containing build specs
+3. High Mod Density: 28 mods/build average - extensively modified showcase vehicles
+4. Category Headers in strong: TSP uses bold text for category labels
+5. PRL + TSP + Hybrid Racing Ecosystem: 78/252 mods (31%) - key Honda aftermarket partners
+6. Plain Text Mods: Some items (tires) appear without a tags - need NavigableString extraction
+
+**Pattern: Honda Turbo Platform Specialist**
+- 8/9 vehicles are Honda (turbo platforms: 1.5T, 2.0T)
+- Chassis codes map directly to Honda internal designations
+- Heavy focus on engine/tuning (90+ mods combined)
+- TSP manufactures their own titanium hardware line
+- Builds span 1989-2023 (classic to modern Honda enthusiasts)
+
+---
