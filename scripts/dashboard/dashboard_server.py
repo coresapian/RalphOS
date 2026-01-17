@@ -1786,7 +1786,11 @@ def main():
     import webbrowser
     webbrowser.open(f'http://localhost:{PORT}/')
     
-    with socketserver.TCPServer(("", PORT), DashboardHandler) as httpd:
+    # Allow socket reuse to prevent "Address already in use" errors
+    class ReusableTCPServer(socketserver.TCPServer):
+        allow_reuse_address = True
+    
+    with ReusableTCPServer(("", PORT), DashboardHandler) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
