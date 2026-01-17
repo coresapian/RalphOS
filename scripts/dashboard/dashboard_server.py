@@ -1317,63 +1317,80 @@ START by navigating to the URL and taking a snapshot.
                     self.send_json({'success': True, 'message': 'No Ralph running'})
     
     def handle_kill_all_ralphs(self):
-        """Kill ALL Ralph-related processes aggressively"""
+        """Gracefully kill ALL Ralph-related processes (SIGTERM first, then SIGKILL)"""
         global ralph_process
-        killed = []
+        import time
         
+        # Process patterns to kill
+        patterns = [
+            ('ralph.sh', 'ralph.sh loops'),
+            ('claude.*--dangerously-skip-permissions', 'claude CLI'),
+            ('stealth_scraper.py', 'stealth scrapers'),
+            ('aggressive_stealth_scraper.py', 'aggressive scrapers'),
+            ('run_factory_ralph', 'factory ralph'),
+            ('camoufox', 'camoufox browsers'),
+        ]
+        
+        graceful = []
+        forced = []
+        
+        # Step 1: Handle our tracked process gracefully
         with ralph_lock:
-            # 1. Kill our tracked process
             if ralph_process and ralph_process.poll() is None:
-                ralph_process.kill()
-                killed.append('tracked ralph process')
+                ralph_process.terminate()  # SIGTERM first
+                try:
+                    ralph_process.wait(timeout=3)
+                    graceful.append('tracked ralph process')
+                except subprocess.TimeoutExpired:
+                    ralph_process.kill()  # SIGKILL if needed
+                    forced.append('tracked ralph process')
                 ralph_process = None
         
-        # 2. Kill ralph.sh bash loops
-        try:
-            result = subprocess.run(['pkill', '-9', '-f', 'ralph.sh'], capture_output=True)
-            if result.returncode == 0:
-                killed.append('ralph.sh loops')
-        except Exception as e:
-            print(f"Error killing ralph.sh: {e}")
+        # Step 2: Send SIGTERM to all patterns
+        for pattern, name in patterns:
+            try:
+                result = subprocess.run(['pkill', '-TERM', '-f', pattern], capture_output=True)
+                if result.returncode == 0:
+                    graceful.append(name)
+            except Exception as e:
+                print(f"Error sending SIGTERM to {name}: {e}")
         
-        # 3. Kill Claude CLI processes
-        try:
-            result = subprocess.run(['pkill', '-9', '-f', 'claude.*--dangerously-skip-permissions'], capture_output=True)
-            if result.returncode == 0:
-                killed.append('claude CLI')
-        except Exception as e:
-            print(f"Error killing claude: {e}")
+        # Step 3: Wait for graceful shutdown
+        if graceful:
+            time.sleep(3)  # Give processes time to clean up
         
-        # 4. Kill stealth scraper processes
-        try:
-            result = subprocess.run(['pkill', '-9', '-f', 'stealth_scraper.py'], capture_output=True)
-            if result.returncode == 0:
-                killed.append('stealth scrapers')
-        except Exception as e:
-            print(f"Error killing stealth scrapers: {e}")
+        # Step 4: Force kill any remaining processes
+        for pattern, name in patterns:
+            try:
+                # Check if still running
+                check = subprocess.run(['pgrep', '-f', pattern], capture_output=True)
+                if check.returncode == 0:
+                    # Still running, force kill
+                    subprocess.run(['pkill', '-9', '-f', pattern], capture_output=True)
+                    if name in graceful:
+                        graceful.remove(name)
+                    forced.append(name)
+            except Exception as e:
+                print(f"Error force killing {name}: {e}")
         
-        # 5. Kill aggressive stealth scraper
-        try:
-            result = subprocess.run(['pkill', '-9', '-f', 'aggressive_stealth_scraper.py'], capture_output=True)
-            if result.returncode == 0:
-                killed.append('aggressive scrapers')
-        except Exception as e:
-            print(f"Error killing aggressive scrapers: {e}")
+        # Build response message
+        parts = []
+        if graceful:
+            parts.append(f"✓ Gracefully stopped: {', '.join(graceful)}")
+        if forced:
+            parts.append(f"⚡ Force killed: {', '.join(forced)}")
         
-        # 6. Kill any run_factory_ralph processes
-        try:
-            result = subprocess.run(['pkill', '-9', '-f', 'run_factory_ralph'], capture_output=True)
-            if result.returncode == 0:
-                killed.append('factory ralph')
-        except Exception as e:
-            print(f"Error killing factory ralph: {e}")
-        
-        if killed:
-            message = f"Killed: {', '.join(killed)}"
+        if parts:
+            message = ' | '.join(parts)
         else:
             message = "No Ralph processes found"
         
-        self.send_json({'success': True, 'message': message, 'killed': killed})
+        self.send_json({
+            'success': True, 
+            'message': message, 
+            'graceful': graceful,
+            'forced': forced
+        })
     
     def handle_ralph_status(self):
         """Get Ralph status"""
