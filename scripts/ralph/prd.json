@@ -1,16 +1,16 @@
 {
-  "projectName": "650Scom Scraping",
-  "sourceId": "650scom",
+  "projectName": "Hamann Motorsport Scraping",
+  "sourceId": "hamann_motorsport",
   "branchName": "main",
-  "targetUrl": "https://650sforum.com",
-  "outputDir": "data/650scom",
-  "pipelineStage": 4,
+  "targetUrl": "https://hamann-motorsport.com",
+  "outputDir": "data/hamann_motorsport",
+  "pipelineStage": 2,
   "userStories": [
     {
       "id": "URL-001",
-      "title": "Discover all build/vehicle URLs on the site",
+      "title": "Discover all BMW tuning package URLs",
       "acceptanceCriteria": [
-        "urls.json contains all discoverable URLs",
+        "urls.json contains all product URLs",
         "URLs are deduplicated and normalized"
       ],
       "priority": 1,
@@ -30,7 +30,7 @@
       "id": "HTML-002",
       "title": "Execute full HTML scrape with progress tracking",
       "acceptanceCriteria": [
-        "All 288 URLs scraped to html/ directory",
+        "All 23 URLs scraped to html/ directory",
         "Progress >= 95% of URLs"
       ],
       "priority": 2,
@@ -38,10 +38,10 @@
     },
     {
       "id": "BUILD-001",
-      "title": "Create build extraction script for forum threads",
+      "title": "Create build extraction script for tuning packages",
       "acceptanceCriteria": [
-        "extract_builds.py parses XenForo thread HTML",
-        "Extracts: year, make, model, build_title, build_story, images"
+        "extract_builds.py parses product page HTML",
+        "Extracts: year, make, model, build_title, modifications, images"
       ],
       "priority": 1,
       "passes": true
@@ -58,9 +58,9 @@
     },
     {
       "id": "MOD-001",
-      "title": "Create mod extraction script for forum builds",
+      "title": "Create mod extraction script for tuning packages",
       "acceptanceCriteria": [
-        "extract_mods.py extracts modifications from build_story text",
+        "extract_mods.py extracts modifications from build records",
         "Uses category_detector for classification"
       ],
       "priority": 1,
@@ -77,7 +77,7 @@
       "passes": true
     }
   ],
-  "createdAt": "2026-01-16T18:53:47.272170",
-  "createdBy": "dashboard",
-  "updatedAt": "2026-01-16T19:30:00Z"
+  "createdAt": "2026-01-16T19:35:00Z",
+  "createdBy": "ralph",
+  "updatedAt": "2026-01-16T19:50:00Z"
 }

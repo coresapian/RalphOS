@@ -535,3 +535,55 @@ r'\b(blue|red|yellow|orange)\s+(?:brake\s+)?calipers?\b'
 - mods: 13
 
 ---
+
+### 2026-01-16 - Hamann Motorsport COMPLETE (All Stages)
+
+**Source:** hamann-motorsport.com (German BMW tuner)
+**Platform:** WordPress with Yoast SEO
+
+**Pipeline Results:**
+- URLs: 23 (all BMW tuning packages)
+- HTML Scraped: 23/23 (100%)
+- Builds: 23
+- Mods: 119 (avg 5.2 mods/build)
+
+**Category Breakdown:**
+- Body & Lamp Assembly: 46 (front/rear spoilers, diffusers, side skirts)
+- Wheel: 22 (Vision, Challenge, Monobloc forged wheels)
+- Exhaust & Emission: 19 (exhaust systems, tailpipe covers)
+- Suspension: 14 (lowering springs, 25mm drops)
+- Interior: 12 (pedal sets, floor mats, carbon trim)
+- Aero: 4 (diffusers, splitters)
+
+**Technical Approach:**
+1. Fixed decompress_response to handle incorrect Content-Encoding headers
+   - Server claims gzip but sends raw HTML (starts with `<!`)
+   - Check magic bytes before attempting decompression
+2. Used Revolution Slider data-lazyload for image extraction
+3. Pattern-based modification detection from page content
+
+**HTML Structure Insights:**
+```python
+# Title from h1.headline
+title = soup.select_one('h1.headline').get_text()
+
+# Images from Revolution Slider
+images = soup.select('rs-slide img[data-lazyload]')
+
+# Content in .project-page-custom-content
+content = soup.select('.project-page-custom-content p')
+```
+
+**Learnings:**
+1. German tuner sites often have rich structured content in page copy
+2. All 23 builds have modifications (100% mod rate - best in pipeline)
+3. Body kits and wheels are primary product categories for German tuners
+4. Check Content-Encoding vs actual content - servers lie about compression
+5. Revolution Slider common on WordPress car sites - use data-lazyload
+
+**Notable Packages:**
+- BMW X6 M F96: 9 mods (widebody, exhaust, suspension)
+- BMW X5 F15: 8 mods (full body kit + wheels)
+- BMW M5 F90: 7 mods (complete tuning package)
+
+---

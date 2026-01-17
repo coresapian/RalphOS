@@ -1941,19 +1941,20 @@
       "name": "Hamann Motorsport",
       "url": "https://hamann-motorsport.com",
       "outputDir": "data/hamann_motorsport",
-      "status": "pending",
+      "status": "completed",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T19:50:00Z",
       "pipeline": {
         "expectedUrls": 23,
         "urlsFound": 23,
-        "htmlScraped": 0,
+        "htmlScraped": 23,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": null,
-        "mods": null
-      }
+        "builds": 23,
+        "mods": 119
+      },
+      "notes": "COMPLETE: 23 builds, 119 mods. BMW tuner. Categories: Body (46), Wheels (22), Exhaust (19), Suspension (14), Interior (12), Aero (4)."
     },
     {
       "id": "twostepperformance",
