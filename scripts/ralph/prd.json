@@ -1,50 +1,51 @@
 {
-  "projectName": "Roush Performance HTML Scraping",
+  "projectName": "Roush Performance Build Extraction",
   "sourceId": "roushperformance",
   "branchName": "main",
   "targetUrl": "https://roushperformance.com",
   "outputDir": "data/roushperformance",
-  "pipelineStage": 2,
+  "pipelineStage": 3,
   "userStories": [
     {
-      "id": "HTML-001",
-      "title": "Create HTML scraper script with checkpoint support",
+      "id": "BUILD-001",
+      "title": "Create build extraction script",
       "acceptanceCriteria": [
-        "Create scrape_html.py with retry logic and exponential backoff",
-        "Handle brotli/gzip Content-Encoding properly",
-        "Save HTML to {outputDir}/html/{build_id}.html format",
-        "Track progress in scrape_checkpoint.json and scrape_progress.jsonl"
+        "Create extract_builds.py that parses HTML files",
+        "Extract: year, make (always Ford), model, package from og:title",
+        "Extract: horsepower, torque from og:description",
+        "Generate build_id from URL using build_id_generator.py",
+        "Output to builds.json with schema compliance"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Created scrape_html.py adapted from Hennessey template. Added proxy env var clearing."
+      "notes": "Created extract_builds.py with og:title parsing, package detection for Stage 1-3, NITEMARE, TRAKPAK, etc."
     },
     {
-      "id": "HTML-002",
-      "title": "Execute HTML scraping for all URLs",
+      "id": "BUILD-002",
+      "title": "Execute build extraction for all HTML files",
       "acceptanceCriteria": [
-        "Scrape all 59 URLs discovered",
-        "Handle 404s gracefully - mark as htmlFailed",
-        "If blocked (403/429) - STOP and mark source as blocked"
+        "Extract builds from all 59 HTML files",
+        "Handle missing fields gracefully",
+        "Set source_type=gallery, build_source=roushperformance"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "SUCCESS: 59/59 URLs scraped (100%). Zero failures, zero blocks. Shopify platform is scraper-friendly."
+      "notes": "59/59 builds extracted. Models: Mustang (23), F-150 (20), Super Duty (8), Raptor (4), Ranger (3), Slingshot (1)."
     },
     {
-      "id": "HTML-003",
-      "title": "Verify scraping completion and update sources.json",
+      "id": "BUILD-003",
+      "title": "Update sources.json and verify completion",
       "acceptanceCriteria": [
-        "Count HTML files in html/ directory",
-        "Update sources.json pipeline: htmlScraped, htmlFailed, htmlBlocked",
-        "Mark source in_progress or blocked based on results"
+        "Update sources.json with builds count",
+        "Validate builds.json against schema",
+        "Mark stage complete if all builds extracted"
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Verified 59 HTML files. Updated sources.json: status=in_progress, htmlScraped=59. Ready for Stage 3."
+      "notes": "Updated sources.json: builds=59. Ready for Stage 4 (Mod Extraction)."
     }
   ],
-  "createdAt": "2026-01-17T01:05:00Z",
+  "createdAt": "2026-01-17T01:25:00Z",
   "createdBy": "ralph",
-  "completedAt": "2026-01-17T01:20:00Z"
+  "completedAt": "2026-01-17T01:35:00Z"
 }

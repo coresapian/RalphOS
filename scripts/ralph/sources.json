@@ -1896,17 +1896,17 @@
       "status": "in_progress",
       "priority": 5,
       "attempted": 1,
-      "lastAttempted": "2026-01-17T01:15:00Z",
+      "lastAttempted": "2026-01-17T01:30:00Z",
       "pipeline": {
         "expectedUrls": 59,
         "urlsFound": 59,
         "htmlScraped": 59,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": null,
+        "builds": 59,
         "mods": null
       },
-      "notes": "Stage 2 COMPLETE: 59/59 URLs scraped (100%). No blocks. Shopify-based site. Ready for Stage 3."
+      "notes": "Stage 3 COMPLETE: 59/59 builds extracted. Models: Mustang (23), F-150 (20), Super Duty (8). Ready for Stage 4."
     },
     {
       "id": "amc_ebay",
