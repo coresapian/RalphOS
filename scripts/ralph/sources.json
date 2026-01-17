@@ -1836,19 +1836,20 @@
       "name": "PistonHeads Auctions",
       "url": "https://pistonheads.com",
       "outputDir": "data/pistonheads_auctions",
-      "status": "pending",
+      "status": "completed",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T01:55:00Z",
       "pipeline": {
         "expectedUrls": 414,
         "urlsFound": 414,
         "htmlScraped": 105,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": null,
-        "mods": null
-      }
+        "builds": 105,
+        "mods": 0
+      },
+      "notes": "COMPLETE: 105 builds, 0 mods (auction vehicles are stock). UK auctions. Top makes: Porsche (20), BMW (17), Mazda (6), Renault (6), Mercedes-Benz (6)."
     },
     {
       "id": "goo_net_exchange",

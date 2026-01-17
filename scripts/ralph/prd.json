@@ -1,9 +1,9 @@
 {
-  "projectName": "Roush Performance Mod Extraction",
-  "sourceId": "roushperformance",
+  "projectName": "PistonHeads Auctions Mod Extraction",
+  "sourceId": "pistonheads_auctions",
   "branchName": "main",
-  "targetUrl": "https://roushperformance.com",
-  "outputDir": "data/roushperformance",
+  "targetUrl": "https://pistonheads.com",
+  "outputDir": "data/pistonheads_auctions",
   "pipelineStage": 4,
   "userStories": [
     {
@@ -17,19 +17,18 @@
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Created extract_mods.py following Hennessey pattern."
+      "notes": "Created extract_mods.py following standard pattern."
     },
     {
       "id": "MOD-002",
       "title": "Execute mod extraction",
       "acceptanceCriteria": [
-        "Extract mods from all 59 builds",
-        "Validate categories using category_detector",
+        "Extract mods from all 105 builds",
         "Output mods.json with proper metadata"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "33 mods extracted (all Engine category - ROUSH packages). 33/59 builds have modifications."
+      "notes": "0 mods extracted - auction vehicles are typically stock."
     },
     {
       "id": "MOD-003",
@@ -41,10 +40,10 @@
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Updated sources.json: mods=33, status=completed. SOURCE COMPLETE!"
+      "notes": "Updated sources.json: mods=0, status=completed. SOURCE COMPLETE!"
     }
   ],
-  "createdAt": "2026-01-17T01:35:00Z",
+  "createdAt": "2026-01-17T01:50:00Z",
   "createdBy": "ralph",
-  "completedAt": "2026-01-17T01:40:00Z"
+  "completedAt": "2026-01-17T01:55:00Z"
 }

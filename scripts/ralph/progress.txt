@@ -313,3 +313,38 @@ def decompress_response(response):
 
 ---
 
+### 2026-01-17 - PistonHeads Auctions Build & Mod Extraction (Stages 3-4) - SOURCE COMPLETE
+- **Source**: PistonHeads Auctions (pistonheads.com)
+- **Action**: Build Extraction → Mod Extraction
+- **Files Created/Modified**:
+  - `data/pistonheads_auctions/extract_builds.py` - Build extractor with JSON field extraction
+  - `data/pistonheads_auctions/extract_mods.py` - Mod extractor (no mods for auctions)
+  - `data/pistonheads_auctions/builds.json` - 105 builds extracted
+  - `data/pistonheads_auctions/mods.json` - 0 mods (stock vehicles)
+- **Pipeline Status**: COMPLETE ✓
+  - expectedUrls=414, urlsFound=414, htmlScraped=105
+  - builds=105, mods=0 (auction vehicles are typically stock)
+  - 100% extraction rate - well-structured JSON data in HTML
+- **Key Technical Discoveries**:
+  1. **JSON data in HTML** - PistonHeads embeds structured JSON: year, make, model, mileage, colour, fuelType
+     - Pattern: `"field":"value"` or `"field":number`
+     - Much cleaner than parsing og:title alone
+  2. **Auction URL pattern** - `https://www.pistonheads.com/buy/auction/{auction_id}`
+     - Found via `href="..."` pattern, not canonical link
+  3. **og:title format** - `{Year} {Make} {Model} {Trim?} for sale by auction`
+     - Useful for trim/variant info not in JSON
+- **Data Summary**:
+  - UK auction site - currency GBP, location UK
+  - Top makes: Porsche (20), BMW (17), Mazda (6), Renault (6), Mercedes-Benz (6)
+  - 0 modifications - auction vehicles are typically unmodified/stock
+  - Era split: mostly Modern (2000+) with some Classic vehicles (1957 Morris, 1964 VW Camper, etc.)
+
+**Learnings:**
+1. Auction sites have 0% modification rate - vehicles sold stock
+2. JSON-embedded data in React/Next.js sites is more reliable than og: metadata parsing
+3. UK-specific data: GBP currency, UK location default
+4. source_type=auction with is_auction=true for proper schema compliance
+5. Regex extraction `"field":"([^"]*)"` works well for embedded JSON fields
+
+---
+
