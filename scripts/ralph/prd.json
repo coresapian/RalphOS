@@ -1,28 +1,28 @@
 {
-  "projectName": "Manhart Automotive German Tuner Scraping",
-  "sourceId": "manhart_automotive",
+  "projectName": "Paramount Performance UK Tuner Scraping",
+  "sourceId": "paramount_performance",
   "branchName": "main",
-  "targetUrl": "https://manhart-automotive.de",
-  "outputDir": "data/manhart_automotive",
+  "targetUrl": "https://paramount-performance.com",
+  "outputDir": "data/paramount_performance",
   "pipelineStage": 2,
   "userStories": [
     {
       "id": "HTML-001",
-      "title": "Create HTML scraper for Manhart builds",
+      "title": "Create HTML scraper for Paramount Performance showcase pages",
       "acceptanceCriteria": [
-        "scrape_html.py handles German/English content",
-        "Proper compression handling",
-        "Rate limiting"
+        "scrape_html.py handles UK performance tuner content",
+        "Proper compression handling (gzip/brotli)",
+        "Rate limiting to avoid blocks"
       ],
       "priority": 1,
       "passes": true
     },
     {
       "id": "HTML-002",
-      "title": "Execute HTML scraping for all 5 URLs",
+      "title": "Execute HTML scraping for all 7 URLs",
       "acceptanceCriteria": [
-        "All 5 URLs attempted",
-        "HTML files saved to data/manhart_automotive/html/"
+        "All 7 URLs attempted",
+        "HTML files saved to data/paramount_performance/html/"
       ],
       "priority": 2,
       "passes": true
@@ -31,7 +31,7 @@
       "id": "BUILD-001",
       "title": "Create and execute build extraction",
       "acceptanceCriteria": [
-        "extract_builds.py parses tuner package pages",
+        "extract_builds.py parses tuner showcase pages",
         "Extracts: make, model, package name, power specs"
       ],
       "priority": 3,
@@ -42,13 +42,13 @@
       "title": "Create and execute mod extraction",
       "acceptanceCriteria": [
         "extract_mods.py detects performance upgrades",
-        "Categories: Engine, Exhaust, Suspension, Wheels"
+        "Categories: Engine, Exhaust, Suspension, Wheels, Exterior"
       ],
       "priority": 4,
-      "passes": false
+      "passes": true
     }
   ],
-  "createdAt": "2026-01-17T07:00:00Z",
+  "createdAt": "2026-01-17T07:30:00Z",
   "createdBy": "ralph",
-  "updatedAt": "2026-01-17T07:00:00Z"
+  "updatedAt": "2026-01-17T07:30:00Z"
 }

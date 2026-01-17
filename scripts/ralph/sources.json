@@ -1983,18 +1983,18 @@
       "name": "Paramount Performance",
       "url": "https://paramount-performance.com",
       "outputDir": "data/paramount_performance",
-      "status": "pending",
+      "status": "completed",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T08:00:00Z",
       "pipeline": {
         "expectedUrls": 7,
         "urlsFound": 7,
-        "htmlScraped": 0,
+        "htmlScraped": 7,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": null,
-        "mods": null
+        "builds": 7,
+        "mods": 55
       }
     },
     {

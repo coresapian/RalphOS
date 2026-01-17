@@ -770,3 +770,54 @@ STOCK_PATTERNS = [
 - Third-party manufacturers noted with " by " pattern
 
 ---
+
+### 2026-01-17 - Paramount Performance COMPLETE (All Stages)
+
+**Source:** paramount-performance.com (UK performance tuner)
+**Platform:** WordPress with Bootscore theme
+
+**Pipeline Results:**
+- URLs: 7 (tuner showcase pages)
+- HTML Scraped: 7/7 (100%)
+- Builds: 7
+- Mods: 55 (7.9 mods per build)
+
+**Vehicles & Package Names:**
+| Package | Vehicle | Mods |
+|---------|---------|------|
+| GRAVITY WAVE | BMW M3 | 8 |
+| PREDATOR II | Jaguar F-Type | 12 |
+| PREDATOR | Jaguar F-Type | 9 |
+| BEAST | Land Rover Defender | 8 |
+| KRAKEN | Mercedes-AMG A45 | 4 |
+| TYPHON | Range Rover Sport SVR | 2 |
+| KATANA FIRE | Volkswagen Golf R | 12 |
+
+**Category Breakdown:**
+- Engine: 22 (ECU remaps, tuning packages)
+- Exterior: 20 (carbon fiber, splitters, diffusers)
+- Exhaust: 8 (performance systems, catback)
+- Suspension: 3 (coilovers, springs)
+- Wheels/Tires: 2 (alloys, forged)
+
+**Technical Approach:**
+1. WordPress "showcase" custom post type with package codenames
+2. OG:image provides hero image for each build
+3. Meta description contains build overview
+4. JSON-LD BreadcrumbList provides structured navigation
+5. wp-block-list contains individual mod items
+
+**Learnings:**
+1. UK tuner showcase pattern: branded package names (GRAVITY WAVE, PREDATOR, etc.)
+2. WordPress OG tags reliable for hero images and descriptions
+3. Multi-brand tuner: BMW, Jaguar, Land Rover, Mercedes, Range Rover, VW
+4. Regex patterns on full page text effective for UK tuner terminology
+5. No explicit HP figures - power specs likely in body content only
+
+**Pattern: UK Tuner Showcase Pages**
+- Package names are marketing codenames, not technical specs
+- Each showcase page = 1 complete tuning package
+- wp-block-list items often contain linked modifications
+- Multi-brand tuners serve diverse European luxury/performance markets
+
+---

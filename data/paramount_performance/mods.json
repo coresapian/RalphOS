@@ -1,0 +1,792 @@
+{
+  "mods": [
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "Bespoke VIEZU Performance Remap",
+      "brand": "VIEZU",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "High Performance Cat Back Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "Sports Cat and downpipe",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "Lowering Springs",
+      "brand": "Paramount Performance",
+      "category": "Suspension",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "Carbon Fibre Cold Air Intake",
+      "brand": "Paramount Performance",
+      "category": "Intake",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "Uprated Intercooler",
+      "brand": "Paramount Performance",
+      "category": "Cooling",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "Carbon Fibre Side Skirts",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "Carbon Fibre Front Splitter",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "Carbon Fibre Engine Cover",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "Carbon Fibre Mirror Caps",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 7977026447905614932,
+      "source_url": "https://paramount-performance.com/showcase/vw-golf-r-katana-fire/",
+      "mod_name": "Enhance the look of your VW MK8 Golf R with our premium range of carbon fibre styling upgrades",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "KATANA FIRE",
+      "confidence": 0.7
+    },
+    {
+      "build_id": 6382079842313834113,
+      "source_url": "https://paramount-performance.com/showcase/range-rover-typhon-upgrades/",
+      "mod_name": "Full exhaust system with valve control system integrating directly with original switchable exhaust system",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "TYPHON",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 6382079842313834113,
+      "source_url": "https://paramount-performance.com/showcase/range-rover-typhon-upgrades/",
+      "mod_name": "200 cell exhaust catalytic converters",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "TYPHON",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 6382079842313834113,
+      "source_url": "https://paramount-performance.com/showcase/range-rover-typhon-upgrades/",
+      "mod_name": "Supercharger pulley upgrade",
+      "brand": "Paramount Performance",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "TYPHON",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 6382079842313834113,
+      "source_url": "https://paramount-performance.com/showcase/range-rover-typhon-upgrades/",
+      "mod_name": "VIEZU custom engine software",
+      "brand": "VIEZU",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "TYPHON",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 6382079842313834113,
+      "source_url": "https://paramount-performance.com/showcase/range-rover-typhon-upgrades/",
+      "mod_name": "Range Rover Vogue 3.0 SCV6 Exhaust Valvetronic",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "TYPHON",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 6382079842313834113,
+      "source_url": "https://paramount-performance.com/showcase/range-rover-typhon-upgrades/",
+      "mod_name": "Range Rover SVR Exhaust System – Full cat back exhaust system for the SVR",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "TYPHON",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 6382079842313834113,
+      "source_url": "https://paramount-performance.com/showcase/range-rover-typhon-upgrades/",
+      "mod_name": "New Range Rover Exhaust System – Mufflers 5.0 2013/2014",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "TYPHON",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 6382079842313834113,
+      "source_url": "https://paramount-performance.com/showcase/range-rover-typhon-upgrades/",
+      "mod_name": "Range Rover Exhaust System 4.2 / Exhaust Mufflers",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "TYPHON",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 6382079842313834113,
+      "source_url": "https://paramount-performance.com/showcase/range-rover-typhon-upgrades/",
+      "mod_name": "Range Rover 5.0L Exhaust Mufflers",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "TYPHON",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5394464825077166480,
+      "source_url": "https://paramount-performance.com/showcase/mercedes-a45-amg-upgrades/",
+      "mod_name": "Mercedes A45 AMG ECU Remapping Tuning",
+      "brand": "Paramount Performance",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "KRAKEN",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5394464825077166480,
+      "source_url": "https://paramount-performance.com/showcase/mercedes-a45-amg-upgrades/",
+      "mod_name": "Mercedes A45 AMG Tuning and Remapping Box",
+      "brand": "Paramount Performance",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "KRAKEN",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "Carbon Fibre Front Splitter – Make a bold statement with a sleek and stylish carbon fibre front splitter.",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "You can also install the carbon fibre rear diffuser to match your side skirts and continue your carbon fibre theme.",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "This rear diffuser matches the front splitter and side skirts in carbon fibre and is the final piece in the set.",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "Carbon Fibre Dashboard – The F-Type is an elegant vehicle, but there is always room for improvement.  Adding a carbon fibre dashboard will lift up the interior.",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "Also available, Carbon Fibre Boot Spoilers for the Coupe and Convertible",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "Carbon Fibre Door Mirror Covers",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "The Jaguar F-Type Predator 30mm lowering springs and upgraded suspension bushings result in improved handling and stance.",
+      "brand": "Paramount Performance",
+      "category": "Suspension",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "Carbon fibre grille inserts",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "Exclusive Sports Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "Bespoke alloy wheel options",
+      "brand": "Paramount Performance",
+      "category": "Wheels & Tires",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 2586051586540609096,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-upgrades/",
+      "mod_name": "Tinted rear lights",
+      "brand": "Paramount Performance",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Supercharger Upper Pulley Upgrade",
+      "brand": "Paramount Performance",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Crank Pulley Upgrade",
+      "brand": "Paramount Performance",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Custom VIEZU performance remap",
+      "brand": "VIEZU",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Stage 2 Cold Air Intake system",
+      "brand": "Paramount Performance",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Harrop Supercharger",
+      "brand": "Harrop",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Full Stainless Steel Valve Control Performance Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "200 cell sports catalytic convertors",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Uprated Supercharger Cooler Pump",
+      "brand": "Paramount Performance",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Charge Cooler",
+      "brand": "Paramount Performance",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Chiller Kit",
+      "brand": "Paramount Performance",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "H&R Lowering Springs",
+      "brand": "H&R",
+      "category": "Suspension",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "H&R Front Spacers",
+      "brand": "H&R",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "20 x 9 Front Alloy Wheels",
+      "brand": "Paramount Performance",
+      "category": "Wheels & Tires",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "20 x 11 Rear Alloy Wheels",
+      "brand": "Paramount Performance",
+      "category": "Wheels & Tires",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "20 Inch Custom Alloy Wheels",
+      "brand": "Paramount Performance",
+      "category": "Wheels & Tires",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Carbon Fibre GT Rear Wing",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Carbon Fibre Grille Insert",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Carbon Fibre Side Skirts",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Carbon Fibre Front Splitter",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Carbon Fibre Rear Diffuser",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Carbon Fibre Mirror Caps",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "The savage Predator II for Jaguar F-Type package isn’t just about straight line speed",
+      "brand": "Paramount Performance",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.7
+    },
+    {
+      "build_id": 1095678537445215836,
+      "source_url": "https://paramount-performance.com/showcase/jaguar-f-type-predator-ii/",
+      "mod_name": "Predator II will bite if you don’t show it some respect",
+      "brand": "Paramount Performance",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "PREDATOR II",
+      "confidence": 0.7
+    },
+    {
+      "build_id": 8149259902650903931,
+      "source_url": "https://paramount-performance.com/showcase/land-rover-defender-beast/",
+      "mod_name": "Supercharger Upper Pulley Upgrade",
+      "brand": "Paramount Performance",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "BEAST",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 8149259902650903931,
+      "source_url": "https://paramount-performance.com/showcase/land-rover-defender-beast/",
+      "mod_name": "Crank Pulley Upgrade",
+      "brand": "Paramount Performance",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "BEAST",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 8149259902650903931,
+      "source_url": "https://paramount-performance.com/showcase/land-rover-defender-beast/",
+      "mod_name": "Custom developed Cold Air Intake",
+      "brand": "Paramount Performance",
+      "category": "Intake",
+      "is_tuner_package": true,
+      "package_name": "BEAST",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 8149259902650903931,
+      "source_url": "https://paramount-performance.com/showcase/land-rover-defender-beast/",
+      "mod_name": "VIEZU Bespoke ECU tuning software",
+      "brand": "VIEZU",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "BEAST",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 8149259902650903931,
+      "source_url": "https://paramount-performance.com/showcase/land-rover-defender-beast/",
+      "mod_name": "Harrop TVS2300 uprated supercharger",
+      "brand": "Harrop",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "BEAST",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 8149259902650903931,
+      "source_url": "https://paramount-performance.com/showcase/land-rover-defender-beast/",
+      "mod_name": "Milltek Performance Exhaust system",
+      "brand": "Milltek",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "BEAST",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 8149259902650903931,
+      "source_url": "https://paramount-performance.com/showcase/land-rover-defender-beast/",
+      "mod_name": "200 Cell Catalytic Converters",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "BEAST",
+      "confidence": 0.9
+    },
+    {
+      "build_id": 8149259902650903931,
+      "source_url": "https://paramount-performance.com/showcase/land-rover-defender-beast/",
+      "mod_name": "Talking of increased air flow",
+      "brand": "Paramount Performance",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "BEAST",
+      "confidence": 0.7
+    },
+    {
+      "build_id": 8149259902650903931,
+      "source_url": "https://paramount-performance.com/showcase/land-rover-defender-beast/",
+      "mod_name": "Visit the shop now to order your Land Rover Defender V8 Beast package today",
+      "brand": "Paramount Performance",
+      "category": "Exterior",
+      "is_tuner_package": true,
+      "package_name": "BEAST",
+      "confidence": 0.7
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "BMW 1 Series M135i xDrive 5 Door (F70 OPF/GPF Equipped) Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "BMW Z4 G29 3.0 I6 (B58) (OPF/GPF Models only) Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "BMW X4 X4M / X4M Comp (G02) 3.0 (with OPF/GPF S58 Engine – LCI only) Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "BMW X4 X4M / X4M Comp (G02) 3.0 (ROW & North American S58 Engine – LCI only) (2022 and Later) Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "BMW X3 X3M / X3M Comp (G01) 3.0 (with OPF/GPF S58 Engine – Pre LCI only) Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "BMW X3 X3M / X3M Comp (G01) 3.0 (with OPF/GPF S58 Engine – LCI only) Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "BMW X3 X3M / X3M Comp (G01) 3.0 (ROW & North American S58 Engine – LCI only) (2022 and Later) Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "BMW i8 1.5T Hybrid Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Exhaust",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "BMW 8 Series M8 & M8 Competition 4.4l V8 Twin Turbo F93 Gran Coupe LCI (OPF/GPF Equipped Cars Only) Exhaust System",
+      "brand": "Paramount Performance",
+      "category": "Engine",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.8
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "The BMW Gravity Wave package is available with a high quality",
+      "brand": "Paramount Performance",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.7
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "In addition to upgrading the performance of your BMW M3",
+      "brand": "Paramount Performance",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.7
+    },
+    {
+      "build_id": 5490744721174123338,
+      "source_url": "https://paramount-performance.com/showcase/bmw-m3-upgrades/",
+      "mod_name": "Gravity Wave adds performance",
+      "brand": "Paramount Performance",
+      "category": "Other",
+      "is_tuner_package": true,
+      "package_name": "GRAVITY WAVE",
+      "confidence": 0.7
+    }
+  ],
+  "metadata": {
+    "total_mods": 77,
+    "builds_with_mods": 7,
+    "total_builds": 7,
+    "mod_rate": 100.0,
+    "extracted_at": "2026-01-17T04:16:12.099686Z",
+    "source": "paramount-performance.com",
+    "categories": {
+      "Engine": 15,
+      "Exhaust": 22,
+      "Suspension": 3,
+      "Intake": 2,
+      "Cooling": 1,
+      "Exterior": 19,
+      "Other": 11,
+      "Wheels & Tires": 4
+    }
+  }
+}
