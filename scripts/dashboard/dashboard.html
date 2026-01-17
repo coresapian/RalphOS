@@ -2322,23 +2322,26 @@
       const generateBtn = document.getElementById('menuGeneratePrd');
       
       // Check if Ralph is currently running
-      const ralphRunning = document.getElementById('statusText').textContent === 'Running';
+      const statusText = document.getElementById('statusText')?.textContent || '';
+      const ralphRunning = statusText.toLowerCase().includes('running');
       const isCurrentSource = sourceStatus === 'in_progress';
       
+      // Always enable both buttons - let the action handle the state
+      startBtn.classList.remove('disabled');
+      stopBtn.classList.remove('disabled');
+      
       if (ralphRunning && isCurrentSource) {
-        // This source is currently running - show stop option
-        startBtn.classList.add('disabled');
-        stopBtn.classList.remove('disabled');
+        // This source is currently running - highlight stop
+        startBtn.querySelector('.label').textContent = 'Restart Ralph';
+        stopBtn.querySelector('.label').textContent = '⏹️ Stop Ralph (running)';
       } else if (ralphRunning) {
-        // Ralph is running on a different source - disable start
-        startBtn.classList.add('disabled');
-        startBtn.querySelector('.label').textContent = 'Ralph busy...';
-        stopBtn.classList.remove('disabled');
-      } else {
-        // Ralph not running - show start option
-        startBtn.classList.remove('disabled');
+        // Ralph is running on a different source
         startBtn.querySelector('.label').textContent = 'Start Ralph';
-        stopBtn.classList.add('disabled');
+        stopBtn.querySelector('.label').textContent = '⏹️ Stop Ralph (running)';
+      } else {
+        // Ralph not running
+        startBtn.querySelector('.label').textContent = 'Start Ralph';
+        stopBtn.querySelector('.label').textContent = 'Stop Ralph';
       }
       
       // Position menu near the clicked element
@@ -2416,6 +2419,7 @@
       showNotification('🛑 Stopping Ralph...', 'info');
       
       try {
+        // First try normal stop
         const response = await fetch(`${API_BASE}/ralph/stop`, {
           method: 'POST'
         });
@@ -2423,10 +2427,22 @@
         const data = await response.json();
         
         if (data.success) {
-          showNotification('✅ Ralph stopped', 'success');
+          showNotification(`✅ ${data.message || 'Ralph stopped'}`, 'success');
           setTimeout(updateDashboard, 1000);
         } else {
-          showNotification(`❌ Failed: ${data.error}`, 'error');
+          // If normal stop fails, try kill-all
+          showNotification('⚠️ Trying force stop...', 'info');
+          const killResponse = await fetch(`${API_BASE}/ralph/kill-all`, {
+            method: 'POST'
+          });
+          const killData = await killResponse.json();
+          
+          if (killData.success) {
+            showNotification(`✅ ${killData.message || 'Processes killed'}`, 'success');
+            setTimeout(updateDashboard, 1000);
+          } else {
+            showNotification(`❌ Failed: ${killData.error || 'Unknown error'}`, 'error');
+          }
         }
       } catch (err) {
         showNotification(`❌ Error: ${err.message}`, 'error');
@@ -2551,7 +2567,7 @@
       <span class="icon">▶️</span>
       <span class="label">Start Ralph</span>
     </div>
-    <div class="source-action-item stop disabled" id="menuStopRalph" onclick="stopRalph()">
+    <div class="source-action-item stop" id="menuStopRalph" onclick="stopRalph()">
       <span class="icon">⏹️</span>
       <span class="label">Stop Ralph</span>
     </div>
