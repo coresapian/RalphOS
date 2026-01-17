@@ -635,20 +635,20 @@
       "name": "Wheel Specialists",
       "url": "https://wheelspecialists.com",
       "outputDir": "data/wheelspecialists",
-      "status": "in_progress",
+      "status": "completed",
       "priority": 5,
-      "attempted": 1,
-      "lastAttempted": "2026-01-16T20:00:00Z",
+      "attempted": 2,
+      "lastAttempted": "2026-01-16T22:30:00Z",
       "pipeline": {
         "expectedUrls": 4654,
         "urlsFound": 4654,
-        "htmlScraped": 310,
+        "htmlScraped": 4654,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
+        "builds": 4627,
+        "mods": 4587
       },
-      "notes": "URL-001 COMPLETE. HTML-001 IN PROGRESS: 100/4654 scraped via browser-based method. Sandbox blocks Python httpx requests (DNS errors). Site has no anti-bot. To continue: run `python3 data/wheelspecialists/scrape_html.py` outside sandbox."
+      "notes": "COMPLETE! All 4 stages done. 4654 URLs scraped, 4627 builds extracted, 4587 wheel mods. Top brands: Giovanna (792), Vossen (791), Gianelle (562)."
     },
     {
       "id": "jeepgarage",

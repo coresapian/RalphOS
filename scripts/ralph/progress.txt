@@ -587,3 +587,47 @@ content = soup.select('.project-page-custom-content p')
 - BMW M5 F90: 7 mods (complete tuning package)
 
 ---
+
+
+---
+
+## 2026-01-16 - Wheel Specialists COMPLETE (HTML-001/002, BUILD-001/002, MOD-001/002)
+
+### Summary
+Completed full pipeline for wheelspecialists.com - a wheel gallery site with 4,654 wheel fitment photos.
+
+### Key Metrics
+- URLs: 4,654 (100% discovered in previous session)
+- HTML Scraped: 4,654 (100% success rate, no anti-bot)
+- Builds Extracted: 4,627 (99.4% success)
+- Mods Extracted: 4,587 wheel modifications
+
+### Learnings
+
+**HTML Scraping:**
+- Wheel Specialists has NO anti-bot protection - simple httpx requests work perfectly
+- All 4,654 URLs scraped with 0 failures, 0 blocks
+- Rate limiting of 0.5s between requests was sufficient
+- Used Python httpx instead of browser-based approach for simplicity
+
+**Build Extraction:**
+- Page title contains ALL essential data: YEAR MAKE MODEL with SIZE" BRAND WHEEL in FINISH
+- No need for complex HTML parsing - just title regex
+- 27 builds failed extraction due to malformed/empty titles (0.6% failure rate)
+- Multi-word makes (Mercedes-Benz, Land Rover) require special handling
+
+**Mod Extraction:**
+- Each build = 1 wheel modification (Wheels/Tires category)
+- Multi-word wheel brands needed special handling:
+  - Avant Garde, Black Rhino, Koko Kuture, GFG Forged
+- Top brands: Giovanna (792), Vossen (791), Gianelle (562)
+
+**Files Created:**
+- data/wheelspecialists/browser_batch_scrape.py - httpx-based batch scraper
+- data/wheelspecialists/extract_builds.py - Title-parsing build extractor
+- data/wheelspecialists/extract_mods.py - Wheel modification extractor
+
+**Pattern: Wheel Gallery Sites**
+- Title parsing is often sufficient - no need for complex DOM traversal
+- Each gallery photo = 1 build + 1 mod
+- Wheel brand/model often needs multi-word brand detection

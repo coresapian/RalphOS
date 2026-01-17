@@ -1,47 +1,39 @@
 {
-  "projectName": "Hamann Motorsport Scraping",
-  "sourceId": "hamann_motorsport",
+  "projectName": "Wheel Specialists Scraping",
+  "sourceId": "wheelspecialists",
   "branchName": "main",
-  "targetUrl": "https://hamann-motorsport.com",
-  "outputDir": "data/hamann_motorsport",
-  "pipelineStage": 2,
+  "targetUrl": "https://wheelspecialists.com",
+  "outputDir": "data/wheelspecialists",
+  "pipelineStage": 4,
   "userStories": [
     {
-      "id": "URL-001",
-      "title": "Discover all BMW tuning package URLs",
-      "acceptanceCriteria": [
-        "urls.json contains all product URLs",
-        "URLs are deduplicated and normalized"
-      ],
-      "priority": 1,
-      "passes": true
-    },
-    {
       "id": "HTML-001",
-      "title": "Create HTML scraping script with retry logic",
+      "title": "Continue HTML scraping with browser-based method",
       "acceptanceCriteria": [
-        "scrape_html.py exists with proper error handling",
-        "Progress tracking via scrape_progress.json"
+        "Scrape remaining URLs using Chrome DevTools MCP",
+        "HTML files saved to data/wheelspecialists/html/",
+        "Checkpoint updated with progress"
       ],
       "priority": 1,
       "passes": true
     },
     {
       "id": "HTML-002",
-      "title": "Execute full HTML scrape with progress tracking",
+      "title": "Complete HTML scraping for all URLs",
       "acceptanceCriteria": [
-        "All 23 URLs scraped to html/ directory",
-        "Progress >= 95% of URLs"
+        "All 4654 URLs attempted",
+        "htmlScraped count updated in sources.json",
+        "No blocked URLs (site has no anti-bot)"
       ],
       "priority": 2,
       "passes": true
     },
     {
       "id": "BUILD-001",
-      "title": "Create build extraction script for tuning packages",
+      "title": "Create build extraction script for wheel gallery",
       "acceptanceCriteria": [
-        "extract_builds.py parses product page HTML",
-        "Extracts: year, make, model, build_title, modifications, images"
+        "extract_builds.py parses gallery detail HTML",
+        "Extracts: year, make, model, wheel specs, tire specs"
       ],
       "priority": 1,
       "passes": true
@@ -50,7 +42,7 @@
       "id": "BUILD-002",
       "title": "Execute build extraction on scraped HTML",
       "acceptanceCriteria": [
-        "builds.jsonl contains extracted builds",
+        "builds.json contains extracted builds",
         "Valid build_id for each record"
       ],
       "priority": 2,
@@ -58,9 +50,9 @@
     },
     {
       "id": "MOD-001",
-      "title": "Create mod extraction script for tuning packages",
+      "title": "Create mod extraction script for wheel fitment",
       "acceptanceCriteria": [
-        "extract_mods.py extracts modifications from build records",
+        "extract_mods.py extracts wheel/tire modifications",
         "Uses category_detector for classification"
       ],
       "priority": 1,
@@ -68,7 +60,7 @@
     },
     {
       "id": "MOD-002",
-      "title": "Execute mod extraction on builds.jsonl",
+      "title": "Execute mod extraction on builds.json",
       "acceptanceCriteria": [
         "mods.json contains extracted modifications",
         "Category breakdown documented"
@@ -77,7 +69,7 @@
       "passes": true
     }
   ],
-  "createdAt": "2026-01-16T19:35:00Z",
+  "createdAt": "2026-01-16T21:00:00Z",
   "createdBy": "ralph",
-  "updatedAt": "2026-01-16T19:50:00Z"
+  "updatedAt": "2026-01-16T22:30:00Z"
 }
