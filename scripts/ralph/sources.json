@@ -635,19 +635,20 @@
       "name": "Wheel Specialists",
       "url": "https://wheelspecialists.com",
       "outputDir": "data/wheelspecialists",
-      "status": "pending",
-      "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "status": "in_progress",
+      "priority": 1,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T20:00:00Z",
       "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
+        "expectedUrls": 4654,
+        "urlsFound": 4654,
         "htmlScraped": 0,
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
-      }
+      },
+      "notes": "URL-001 COMPLETE: 4,654 URLs discovered across 54 manufacturers. Gallery IDs range 49-5681. Top: Mercedes-Benz (882), Chevrolet (314), Lexus (308), Land Rover (292), BMW (284). Ready for HTML scraping."
     },
     {
       "id": "jeepgarage",
@@ -1763,13 +1764,19 @@
       "pipeline": {
         "expectedUrls": 9406,
         "urlsFound": 9406,
-        "htmlScraped": 52,
+        "htmlScraped": 225,
         "htmlFailed": 0,
         "htmlBlocked": 9353,
         "builds": null,
         "mods": null
       },
-      "blockEvents": [{"timestamp": "2026-01-16T17:26:00Z", "type": "429", "afterUrls": 52}],
+      "blockEvents": [
+        {
+          "timestamp": "2026-01-16T17:26:00Z",
+          "type": "429",
+          "afterUrls": 52
+        }
+      ],
       "notes": "BLOCKED: 429 after 52/9406 URLs. Previous scrape had corrupted HTML (not decompressed). Run: python scripts/tools/stealth_scraper.py --source carandclassic"
     },
     {
@@ -1818,7 +1825,7 @@
       "url": "https://tunedbyanton.com",
       "outputDir": "data/tunedbyanton",
       "status": "completed",
-      "priority": 1,
+      "priority": 5,
       "attempted": 1,
       "lastAttempted": "2026-01-16T17:14:02Z",
       "pipeline": {
