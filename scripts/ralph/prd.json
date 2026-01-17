@@ -1,75 +1,75 @@
 {
-  "projectName": "Wheel Specialists Scraping",
-  "sourceId": "wheelspecialists",
+  "projectName": "Goo-net Exchange JDM Vehicle Scraping",
+  "sourceId": "goo_net_exchange",
   "branchName": "main",
-  "targetUrl": "https://wheelspecialists.com",
-  "outputDir": "data/wheelspecialists",
-  "pipelineStage": 4,
+  "targetUrl": "https://goo-net-exchange.com",
+  "outputDir": "data/goo_net_exchange",
+  "pipelineStage": 2,
   "userStories": [
     {
       "id": "HTML-001",
-      "title": "Continue HTML scraping with browser-based method",
+      "title": "Create HTML scraper for JDM vehicle listings",
       "acceptanceCriteria": [
-        "Scrape remaining URLs using Chrome DevTools MCP",
-        "HTML files saved to data/wheelspecialists/html/",
-        "Checkpoint updated with progress"
+        "scrape_html.py handles Japanese characters and UTF-8",
+        "Proper brotli/gzip decompression",
+        "Rate limiting to avoid blocks"
       ],
       "priority": 1,
       "passes": true
     },
     {
       "id": "HTML-002",
-      "title": "Complete HTML scraping for all URLs",
+      "title": "Execute HTML scraping for all 100 URLs",
       "acceptanceCriteria": [
-        "All 4654 URLs attempted",
-        "htmlScraped count updated in sources.json",
-        "No blocked URLs (site has no anti-bot)"
+        "All 100 URLs attempted",
+        "HTML files saved to data/goo_net_exchange/html/",
+        "htmlScraped count updated in sources.json"
       ],
       "priority": 2,
       "passes": true
     },
     {
       "id": "BUILD-001",
-      "title": "Create build extraction script for wheel gallery",
+      "title": "Create build extractor for JDM listings",
       "acceptanceCriteria": [
-        "extract_builds.py parses gallery detail HTML",
-        "Extracts: year, make, model, wheel specs, tire specs"
+        "extract_builds.py parses vehicle details",
+        "Extracts: year, make, model, mileage, price, specs"
       ],
-      "priority": 1,
+      "priority": 3,
       "passes": true
     },
     {
       "id": "BUILD-002",
-      "title": "Execute build extraction on scraped HTML",
+      "title": "Execute build extraction",
       "acceptanceCriteria": [
-        "builds.json contains extracted builds",
+        "builds.json contains extracted JDM vehicles",
         "Valid build_id for each record"
       ],
-      "priority": 2,
+      "priority": 4,
       "passes": true
     },
     {
       "id": "MOD-001",
-      "title": "Create mod extraction script for wheel fitment",
+      "title": "Create mod extractor for JDM modifications",
       "acceptanceCriteria": [
-        "extract_mods.py extracts wheel/tire modifications",
+        "extract_mods.py detects aftermarket parts",
         "Uses category_detector for classification"
       ],
-      "priority": 1,
+      "priority": 5,
       "passes": true
     },
     {
       "id": "MOD-002",
-      "title": "Execute mod extraction on builds.json",
+      "title": "Execute mod extraction",
       "acceptanceCriteria": [
-        "mods.json contains extracted modifications",
+        "mods.json contains modifications if present",
         "Category breakdown documented"
       ],
-      "priority": 2,
+      "priority": 6,
       "passes": true
     }
   ],
-  "createdAt": "2026-01-16T21:00:00Z",
+  "createdAt": "2026-01-17T06:00:00Z",
   "createdBy": "ralph",
-  "updatedAt": "2026-01-16T22:30:00Z"
+  "updatedAt": "2026-01-17T06:00:00Z"
 }

@@ -1864,19 +1864,20 @@
       "name": "Goo-net Exchange",
       "url": "https://goo-net-exchange.com",
       "outputDir": "data/goo_net_exchange",
-      "status": "pending",
+      "status": "completed",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T06:40:00Z",
       "pipeline": {
         "expectedUrls": 100,
         "urlsFound": 100,
-        "htmlScraped": 0,
-        "htmlFailed": 0,
+        "htmlScraped": 89,
+        "htmlFailed": 11,
         "htmlBlocked": 0,
-        "builds": null,
-        "mods": null
-      }
+        "builds": 89,
+        "mods": 164
+      },
+      "notes": "COMPLETE: 89 JDM builds, 164 factory package mods. Top models: GR Yaris (31), Mark II (16), Chaser (15). Factory mods: GR, RZ, TOURER V, GRMN, HIGH PERFORMANCE packages."
     },
     {
       "id": "autotempest",

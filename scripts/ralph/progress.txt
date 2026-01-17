@@ -631,3 +631,68 @@ Completed full pipeline for wheelspecialists.com - a wheel gallery site with 4,6
 - Title parsing is often sufficient - no need for complex DOM traversal
 - Each gallery photo = 1 build + 1 mod
 - Wheel brand/model often needs multi-word brand detection
+
+---
+
+### 2026-01-17 - Goo-net Exchange COMPLETE (All Stages)
+
+**Source:** goo-net-exchange.com (Japanese used car export platform)
+**Platform:** Custom Japanese marketplace
+
+**Pipeline Results:**
+- URLs: 100 (JDM enthusiast vehicles)
+- HTML Scraped: 89/100 (89% - 11 sold vehicles returned 404)
+- Builds: 89 (100% extraction rate)
+- Mods: 164 (factory performance packages)
+
+**Category Breakdown:**
+- Engine: 144 (GR, RZ, TOURER V, HIGH PERFORMANCE packages)
+- Forced Induction: 10 (TWIN TURBO, GT TWIN TURBO, SUPER CHARGER)
+- Exterior: 7 (FIRST EDITION, WRC driver editions)
+- Suspension: 2 (CIRCUIT PACKAGE)
+- Interior: 1 (EXCITING PACKAGE)
+
+**Model Breakdown:**
+- GR Yaris: 31 (most popular - Toyota's rally-bred hot hatch)
+- Mark II: 16 (JZX90/JZX100 platform with 1JZ-GTE)
+- Chaser: 15 (same JZX platform as Mark II)
+- GR Corolla: 7 (AWD hot hatch)
+- Supra: 7 (A70/A80/A90 generations)
+- GRMN Yaris: 2 (Masters of Nürburgring limited edition)
+- iQ GRMN: 2 (supercharged micro car!)
+- Sprinter Trueno: 1 (AE86 - Initial D legend)
+
+**Technical Approach:**
+1. JSON-LD Schema.org product data in HTML for structured extraction
+2. dt/dd pairs for vehicle specs (Month/Year, Mileage, Transmission, etc.)
+3. JDM-specific fields: Chassis No, Model code, Steering (RHD), Repair History
+
+**Key Discovery - JDM Factory Performance Packages:**
+```python
+FACTORY_PACKAGES = {
+    "GRMN": "Gazoo Racing Masters of Nürburgring",
+    "GR": "Gazoo Racing factory package",
+    "TRD": "Toyota Racing Development",
+    "TOURER V": "1JZ-GTE twin-turbo engine",
+    "RZ": "Top-spec GR performance grade",
+    "HIGH PERFORMANCE": "Uprated engine tune",
+    "MORIZO EDITION": "Akio Toyoda signature edition",
+    "CIRCUIT PACKAGE": "Track-focused suspension",
+}
+```
+
+**Learnings:**
+1. JDM listings have factory "mods" via performance packages (86.5% mod rate!)
+2. 404s are expected for used car sites - vehicles sell and get delisted
+3. Schema.org JSON-LD provides reliable structured data
+4. Japanese cars use JDM-specific model codes (4BA-GXPA16 = GR Yaris)
+5. Chassis codes reveal platform (JZX100 = Chaser/Mark II, GXPA16 = GR Yaris)
+6. Special editions (Rovanperä, Ogier, MORIZO) count as factory modifications
+
+**Pattern: JDM Used Car Sites**
+- Factory performance trims = valid modifications
+- Model codes and chassis numbers are valuable JDM-specific data
+- Repair history is mandatory disclosure in Japan
+- Pricing in JPY, RHD steering default
+
+---
