@@ -1,0 +1,391 @@
+/**
+ * PRD Editor Feature Styles
+ * Modal, tabs, editor, and preview
+ */
+
+/* PRD Modal Overlay */
+.prd-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+}
+
+.prd-modal-overlay.visible {
+  display: flex;
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+/* PRD Modal */
+.prd-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  width: 100%;
+  max-width: 1200px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: modalSlide var(--transition-slow) ease-out;
+}
+
+.prd-modal-header {
+  padding: 20px var(--spacing-xl);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prd-modal-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.prd-modal-header .source-badge {
+  background: var(--bg-secondary);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+}
+
+.prd-modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 18px;
+  transition: all var(--transition-normal);
+}
+
+.prd-modal-close:hover {
+  background: var(--accent-red);
+  color: white;
+}
+
+/* PRD Modal Body */
+.prd-modal-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* PRD Sidebar */
+.prd-sidebar {
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  overflow-y: auto;
+  background: var(--bg-secondary);
+}
+
+.prd-sidebar h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-md);
+}
+
+.prd-variables {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.prd-variable {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.prd-variable label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.prd-variable input,
+.prd-variable select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: var(--font-mono);
+}
+
+.prd-variable input:focus,
+.prd-variable select:focus {
+  outline: none;
+  border-color: var(--accent-cyan);
+}
+
+/* PRD Actions Sidebar */
+.prd-actions-sidebar {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.prd-action-btn {
+  padding: 10px var(--spacing-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  transition: all var(--transition-normal);
+}
+
+.prd-action-btn:hover {
+  border-color: var(--accent-cyan);
+  background: var(--bg-card);
+}
+
+.prd-action-btn.primary {
+  background: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+  color: black;
+  font-weight: 600;
+}
+
+.prd-action-btn.primary:hover {
+  background: #1cb5cc;
+}
+
+.prd-action-btn.danger {
+  color: var(--accent-red);
+}
+
+.prd-action-btn.danger:hover {
+  background: var(--accent-red);
+  border-color: var(--accent-red);
+  color: white;
+}
+
+/* PRD Main Content */
+.prd-main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* PRD Tabs */
+.prd-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  background: var(--bg-secondary);
+}
+
+.prd-tab {
+  padding: var(--spacing-md) 20px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all var(--transition-normal);
+}
+
+.prd-tab:hover {
+  color: var(--text-primary);
+}
+
+.prd-tab.active {
+  color: var(--accent-cyan);
+  border-bottom-color: var(--accent-cyan);
+}
+
+/* PRD Content */
+.prd-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.prd-panel {
+  position: absolute;
+  inset: 0;
+  padding: 20px;
+  overflow-y: auto;
+  display: none;
+}
+
+.prd-panel.active {
+  display: block;
+}
+
+/* PRD Editor */
+.prd-editor {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  resize: none;
+}
+
+.prd-editor:focus {
+  outline: none;
+  border-color: var(--accent-cyan);
+}
+
+/* PRD Stream */
+.prd-stream {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  min-height: 400px;
+  position: relative;
+}
+
+.prd-stream .cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background: var(--accent-cyan);
+  animation: blink 1s infinite;
+  vertical-align: middle;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.prd-stream-status {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.prd-stream-status .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  animation: pulse 1.5s infinite;
+}
+
+/* PRD Preview */
+.prd-preview {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.prd-preview h4 {
+  font-size: 14px;
+  margin-bottom: var(--spacing-lg);
+  color: var(--accent-cyan);
+}
+
+/* PRD Stories */
+.prd-stories {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.prd-story {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+}
+
+.prd-story-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.prd-story-id {
+  background: var(--accent-purple);
+  color: white;
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+.prd-story-title {
+  font-weight: 500;
+}
+
+.prd-story-criteria {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: 20px;
+}
+
+.prd-story-criteria li {
+  margin: var(--spacing-xs) 0;
+}
+
+/* PRD Modal Footer */
+.prd-modal-footer {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-secondary);
+}
+
+.prd-footer-info {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.prd-footer-actions {
+  display: flex;
+  gap: var(--spacing-md);
+}

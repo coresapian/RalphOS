@@ -1,0 +1,224 @@
+/**
+ * Card Components
+ * Base card styling and variants
+ */
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: var(--spacing-lg) 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-body.scrollable {
+  max-height: 600px;
+  overflow-y: auto;
+  contain: content;
+  will-change: scroll-position;
+}
+
+/* Log Card Collapsible */
+.card.log-card {
+  min-width: 0;
+  transition: all var(--transition-smooth);
+  transform-origin: left center;
+}
+
+.main-grid:not(.logs-expanded) .card.log-card {
+  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
+  cursor: pointer;
+}
+
+.main-grid:not(.logs-expanded) .card.log-card .card-header,
+.main-grid:not(.logs-expanded) .card.log-card .card-body {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.main-grid:not(.logs-expanded) .card.log-card .log-collapsed-tab {
+  display: flex;
+}
+
+.log-collapsed-tab {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border-radius: var(--radius-2xl);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.log-collapsed-tab:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.log-collapsed-tab .log-expand-icon {
+  font-size: 18px;
+  animation: pulseRight 2s infinite;
+}
+
+@keyframes pulseRight {
+  0%, 100% { transform: translateX(0); opacity: 0.6; }
+  50% { transform: translateX(3px); opacity: 1; }
+}
+
+/* Sources Card */
+.card.sources-card {
+  transition: all var(--transition-smooth);
+}
+
+/* Scraper Panel */
+.scraper-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  margin-bottom: var(--spacing-xl);
+  overflow: hidden;
+}
+
+.scraper-header {
+  padding: var(--spacing-lg) 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background var(--transition-normal);
+}
+
+.scraper-header:hover {
+  background: var(--bg-secondary);
+}
+
+.scraper-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.scraper-toggle {
+  font-size: 18px;
+  transition: transform var(--transition-slow);
+}
+
+.scraper-toggle.open {
+  transform: rotate(180deg);
+}
+
+.scraper-body {
+  padding: 20px;
+  display: none;
+}
+
+.scraper-body.open {
+  display: block;
+}
+
+/* Ralph Panel */
+.ralph-panel {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.05), rgba(34, 211, 238, 0.05));
+  border: 1px solid var(--accent-green);
+  border-radius: var(--radius-2xl);
+  margin-bottom: var(--spacing-xl);
+  overflow: hidden;
+}
+
+.ralph-header {
+  padding: var(--spacing-lg) 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background var(--transition-normal);
+}
+
+.ralph-header:hover {
+  background: rgba(74, 222, 128, 0.1);
+}
+
+.ralph-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--accent-green);
+}
+
+.ralph-body {
+  padding: 20px;
+  display: none;
+}
+
+.ralph-body.open {
+  display: block;
+}
+
+.ralph-status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.ralph-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.ralph-info {
+  flex: 1;
+}
+
+.ralph-info .project-name {
+  font-weight: 600;
+  color: var(--accent-green);
+}
+
+.ralph-info .story-progress {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: var(--spacing-xs);
+}

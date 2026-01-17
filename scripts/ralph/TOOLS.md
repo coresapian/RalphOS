@@ -15,6 +15,7 @@ This document describes all available tools for Factory Ralph loops.
 | `ralph_validator.py` | Visual validation gate | `from ralph_validator import RalphValidator` |
 | `ralph_mcp.py` | MCP server integration | `from ralph_mcp import get_mcp_client` |
 | `browser_helper.js` | Browser DOM utilities | `browser_evaluate(script=...)` |
+| `cloudflare_bypass_scraper.py` | FREE CF Turnstile bypass | `python scripts/tools/cloudflare_bypass_scraper.py` |
 
 ---
 
@@ -513,9 +514,138 @@ const count = RALPH.count('.product-item')
 | Data storage | `ralph_duckdb.RalphDuckDB` |
 | Image analysis | `ralph_vlm.MoondreamClient` |
 | Visual validation | `ralph_validator.RalphValidator` |
+| Cloudflare bypass | `cloudflare_bypass_scraper.py` |
 | Web search | `ralph_mcp.search_web` |
 | GitHub exploration | `ralph_mcp.get_repo_structure` |
 | DOM traversal | `browser_helper.js` (RALPH.*) |
+
+---
+
+## 7. Cloudflare Bypass Scraper (`cloudflare_bypass_scraper.py`)
+
+A FREE Cloudflare Turnstile bypass solution using Camoufox's anti-detection capabilities combined with `camoufox-captcha` for automatic solving. **No proxies or paid services required.**
+
+### Why It Works Without Proxies
+
+| Factor | Impact |
+|--------|--------|
+| **Home IP = Residential** | ISP-assigned IPs have high trust scores (no datacenter reputation) |
+| **Camoufox Fingerprinting** | C++ level injection is undetectable via JavaScript |
+| **camoufox-captcha** | Traverses Shadow DOM to click CF checkbox automatically |
+| **Persistent Profile** | Saves `cf_clearance` cookies between runs |
+
+### Installation
+
+```bash
+# Install dependencies
+pip install "camoufox[geoip]>=0.4.11" camoufox-captcha orjson tqdm
+
+# Fetch Camoufox browser binary
+python -m camoufox fetch
+```
+
+### Basic Usage
+
+```bash
+# Standard scraping (headless mode)
+python scripts/tools/cloudflare_bypass_scraper.py --source audiocityusa --limit 50
+
+# Debug mode (visible browser)
+python scripts/tools/cloudflare_bypass_scraper.py --source nicheroadwheels --no-headless --limit 10
+
+# Custom output directory
+python scripts/tools/cloudflare_bypass_scraper.py --source mysite --output data/mysite/html
+```
+
+### Critical Configuration
+
+```python
+from camoufox.async_api import AsyncCamoufox
+from camoufox_captcha import solve_captcha
+
+# These settings are REQUIRED for CF bypass
+launch_kwargs = {
+    "os": "windows",  # Vary: windows, macos, linux
+    "humanize": True,  # Natural cursor movement at C++ level
+    "block_webrtc": True,  # Prevent IP leaks
+    "config": {
+        "forceScopeAccess": True  # CRITICAL: Pierces closed Shadow DOM
+    },
+    "disable_coop": True,  # CRITICAL: CF iframe cross-origin bypass
+    "headless": True,
+    "persistent_context": True,
+    "user_data_dir": "/path/to/profile",  # Saves cookies
+}
+
+async with AsyncCamoufox(**launch_kwargs) as browser:
+    page = await browser.new_page()
+    await page.goto(url)
+
+    # Detect and solve Cloudflare
+    if await is_cloudflare_challenge(page):
+        success = await solve_captcha(
+            page,
+            captcha_type="cloudflare",
+            challenge_type="turnstile",  # or "interstitial"
+            solve_attempts=3,
+            solve_click_delay=(0.5, 1.5),
+        )
+```
+
+### How camoufox-captcha Works
+
+1. **Shadow DOM Traversal**: CF hides its checkbox in a closed Shadow DOM. `forceScopeAccess: True` opens access.
+2. **COOP Bypass**: `disable_coop: True` allows interaction with CF's cross-origin iframe.
+3. **Human-like Clicking**: Random delays (0.5-1.5s) + Camoufox's C++ cursor movement.
+4. **Cookie Persistence**: After solving, `cf_clearance` cookie is saved for future requests.
+
+### Challenge Types
+
+| Type | Detection Pattern | Description |
+|------|-------------------|-------------|
+| `interstitial` | Full-page challenge | "Checking your browser..." wait page |
+| `turnstile` | Embedded checkbox | Smaller widget on page requiring click |
+
+### Python Integration Example
+
+```python
+from pathlib import Path
+from cloudflare_bypass_scraper import CloudflareBypassScraper, CloudflareScraperConfig
+
+config = CloudflareScraperConfig(
+    source_name="mysite",
+    headless=True,
+    user_data_dir=Path("./browser_profiles/mysite"),
+    solve_attempts=3,
+    page_load_timeout=60000,
+)
+
+scraper = CloudflareBypassScraper(config)
+
+# Scrape URLs
+results = await scraper.scrape_urls(
+    urls=["https://example.com/page1", "https://example.com/page2"],
+    output_dir=Path("data/mysite/html"),
+)
+
+print(f"Success: {results['success']}, Failed: {results['failed']}")
+```
+
+### Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| Still getting blocked | Enable `--no-headless` to verify challenge appears |
+| Challenge not detected | Check page content for "Checking your browser" or `cf-turnstile` |
+| Cookie not persisting | Verify `persistent_context=True` and `user_data_dir` is writable |
+| Slow solving | Increase `solve_click_delay` range for more natural timing |
+
+### When to Use This Tool
+
+- **audiocityusa**, **nicheroadwheels** - Known CF-protected sources
+- Any site showing "Checking your browser..." interstitial
+- Sites with Turnstile checkbox captchas
+- When `aggressive_stealth_scraper.py` hits 403/429 errors
 
 ---
 

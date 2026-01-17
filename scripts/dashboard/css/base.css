@@ -1,0 +1,61 @@
+/**
+ * Base Styles
+ * Reset, typography, and global styles
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  font-family: var(--font-primary);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: var(--spacing-xl);
+  background-image:
+    radial-gradient(ellipse at top left, rgba(34, 211, 238, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(167, 139, 250, 0.05) 0%, transparent 50%);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
+/* Utility Classes */
+.error { color: var(--accent-red); }
+.success { color: var(--accent-green); }
+.warning { color: var(--accent-yellow); }
+.info { color: var(--accent-cyan); }
+
+/* Focus Styles */
+:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: rgba(34, 211, 238, 0.3);
+  color: var(--text-primary);
+}

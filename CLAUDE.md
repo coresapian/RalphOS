@@ -11,10 +11,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 RalphOS processes sources through a 3-stage pipeline:
 
 ```
-Stage 1: URL Discovery    →  Stage 2: HTML Scraping    →  Stage 3: Data Extraction
-(url-detective)              (html-scraper)               (data-extractor)
-    ↓                            ↓                            ↓
-urls.jsonl                  html/*.html                  builds.jsonl + mods.jsonl
+Stage 1: URL Discovery → Stage 2: HTML Scraping → Stage 3: Data Extraction
+(url-detective) (html-scraper) (data-extractor)
+ ↓ ↓ ↓
+urls.jsonl html/*.html builds.jsonl + mods.jsonl
 ```
 
 Each stage has an independent runner in `scripts/ralph-stages/` with its own prompt.md and queue.json.
@@ -32,7 +32,7 @@ Each stage has an independent runner in `scripts/ralph-stages/` with its own pro
 
 # Factory Ralph (production-grade with Git snapshots, JSONL logging, circuit breakers)
 ./scripts/ralph/run_factory_ralph.sh 25
-./scripts/ralph/run_factory_ralph.sh 50 high   # auto_level: low/medium/high
+./scripts/ralph/run_factory_ralph.sh 50 high # auto_level: low/medium/high
 ```
 
 ### Testing & Validation
@@ -78,7 +78,19 @@ python3 scripts/tools/stealth_scraper.py --source source_id --limit 100
 
 # Aggressive mode (more fingerprint rotation)
 python3 scripts/tools/aggressive_stealth_scraper.py --source source_id
+
+# Cloudflare bypass (FREE - no proxies or paid services required)
+# Uses camoufox-captcha to auto-solve Turnstile challenges
+python3 scripts/tools/cloudflare_bypass_scraper.py --source source_id --limit 50
+python3 scripts/tools/cloudflare_bypass_scraper.py --source source_id --no-headless  # Debug mode
 ```
+
+**Cloudflare Bypass Key Facts:**
+- Home IP = Residential IP = High trust (no proxy needed)
+- `forceScopeAccess: True` pierces closed Shadow DOM where CF hides checkbox
+- `disable_coop: True` enables cross-origin CF iframe interaction
+- Persistent browser profile saves `cf_clearance` cookie between runs
+- See `scripts/ralph/TOOLS.md` Section 7 for full documentation
 
 ## Architecture
 
@@ -118,43 +130,43 @@ Each stage directory contains: `prompt.md`, `queue.json`, `progress.txt`
 
 ```
 RalphOS/
-├── scripts/
-│   ├── ralph/              # Core orchestration
-│   │   ├── ralph.sh        # Main loop
-│   │   ├── run_factory_ralph.sh  # Production loop
-│   │   ├── prompt.md       # Agent instructions
-│   │   ├── TOOLS.md        # Toolkit documentation
-│   │   ├── ralph_utils.py  # Core utilities
-│   │   ├── ralph_duckdb.py # Database ops
-│   │   ├── ralph_vlm.py    # Vision analysis
-│   │   ├── ralph_validator.py  # Visual validation
-│   │   └── ralph_mcp.py    # MCP integration
-│   │
-│   ├── ralph-stages/       # Independent stage runners
-│   │   ├── url-detective/
-│   │   ├── html-scraper/
-│   │   └── data-extractor/
-│   │
-│   ├── tools/              # Utility scripts
-│   │   ├── build_id_generator.py
-│   │   ├── category_detector.py
-│   │   ├── stealth_scraper.py
-│   │   ├── diagnose_scraper.py
-│   │   └── browser/        # Chrome automation
-│   │
-│   └── dashboard/          # Monitoring UI
-│
-├── data/                   # Scraped data output
-│   └── {source_name}/
-│       ├── urls.jsonl
-│       ├── html/
-│       ├── builds.jsonl
-│       └── mods.jsonl
-│
-├── input/                  # Source CSV files
-├── schema/                 # Data schemas
-├── logs/                   # Log files
-└── archive/                # Blocked source data
+ scripts/
+ ralph/ # Core orchestration
+ ralph.sh # Main loop
+ run_factory_ralph.sh # Production loop
+ prompt.md # Agent instructions
+ TOOLS.md # Toolkit documentation
+ ralph_utils.py # Core utilities
+ ralph_duckdb.py # Database ops
+ ralph_vlm.py # Vision analysis
+ ralph_validator.py # Visual validation
+ ralph_mcp.py # MCP integration
+ 
+ ralph-stages/ # Independent stage runners
+ url-detective/
+ html-scraper/
+ data-extractor/
+ 
+ tools/ # Utility scripts
+ build_id_generator.py
+ category_detector.py
+ stealth_scraper.py
+ diagnose_scraper.py
+ browser/ # Chrome automation
+ 
+ dashboard/ # Monitoring UI
+
+ data/ # Scraped data output
+ {source_name}/
+ urls.jsonl
+ html/
+ builds.jsonl
+ mods.jsonl
+
+ input/ # Source CSV files
+ schema/ # Data schemas
+ logs/ # Log files
+ archive/ # Blocked source data
 ```
 
 ## Enhanced Toolkit
@@ -200,7 +212,7 @@ from ralph_validator import RalphValidator
 validator = RalphValidator()
 result = validator.validate("screenshot.png", "Submit button is visible")
 if result['passed']:
-    create_success_file()
+ create_success_file()
 ```
 
 ### Key Tool Scripts
@@ -239,11 +251,11 @@ chrome_click - Click elements
 
 ### 2. Browser CLI Scripts
 ```bash
-scripts/tools/browser/start.js --profile  # Start Chrome with logins
-scripts/tools/browser/nav.js https://...  # Navigate
-scripts/tools/browser/eval.js 'document.title'  # Execute JS
-scripts/tools/browser/cookies.js           # Extract cookies
-scripts/tools/browser/pick.js "Click button"  # Visual picker
+scripts/tools/browser/start.js --profile # Start Chrome with logins
+scripts/tools/browser/nav.js https://... # Navigate
+scripts/tools/browser/eval.js 'document.title' # Execute JS
+scripts/tools/browser/cookies.js # Extract cookies
+scripts/tools/browser/pick.js "Click button" # Visual picker
 ```
 
 ### 3. Camoufox Stealth Browser
@@ -258,19 +270,19 @@ For anti-bot protected sites. Features:
 
 ```json
 {
-  "projectName": "Project Name",
-  "branchName": "main",
-  "targetUrl": "https://example.com",
-  "outputDir": "data/source_name",
-  "userStories": [
-    {
-      "id": "US-001",
-      "title": "Story title",
-      "acceptanceCriteria": ["criteria 1", "criteria 2"],
-      "priority": 1,
-      "passes": false
-    }
-  ]
+ "projectName": "Project Name",
+ "branchName": "main",
+ "targetUrl": "https://example.com",
+ "outputDir": "data/source_name",
+ "userStories": [
+ {
+ "id": "US-001",
+ "title": "Story title",
+ "acceptanceCriteria": ["criteria 1", "criteria 2"],
+ "priority": 1,
+ "passes": false
+ }
+ ]
 }
 ```
 
