@@ -92,6 +92,11 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self.handle_browser_stop()
         elif path == '/browser/save-dom':
             self.handle_browser_save_dom(data)
+        elif path == '/analyze-error':
+            self.handle_analyze_error(data)
+        elif path.startswith('/source/') and path.endswith('/retry'):
+            source_id = path.split('/')[2]
+            self.handle_retry_source(source_id)
         else:
             self.send_json({'error': 'Not found'}, 404)
     
@@ -130,13 +135,17 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
     
     def handle_status(self):
         """Return comprehensive status data"""
+        all_sources = self.get_all_sources()
+        builds_mods = self.count_builds_and_mods(all_sources)
         data = {
             'timestamp': datetime.now().isoformat(),
             'running': self.check_ralph_running(),
             'sources': self.get_sources_summary(),
             'current_source': self.get_current_source(),
-            'all_sources': self.get_all_sources(),
+            'all_sources': all_sources,
             'html_files': self.count_html_files(),
+            'total_builds': builds_mods['builds'],
+            'total_mods': builds_mods['mods'],
             'log_tail': self.get_log_tail(100)
         }
         self.send_json(data)
@@ -1617,6 +1626,179 @@ START by navigating to the URL and taking a snapshot.
     # End Browser Preview Handlers
     # ============================================
     
+    # ============================================
+    # Error Analysis Handlers
+    # ============================================
+    
+    def handle_analyze_error(self, data):
+        """Analyze source error with LLM and provide fix suggestions"""
+        source_id = data.get('sourceId')
+        source_name = data.get('sourceName', source_id)
+        source_url = data.get('sourceUrl', '')
+        error_type = data.get('errorType', 'error')
+        log_context = data.get('logContext', '')
+        pipeline = data.get('pipeline', {})
+        
+        # Build analysis prompt
+        analysis_prompt = f"""Analyze this web scraping error and provide a concise fix suggestion.
+
+Source: {source_name} ({source_id})
+URL: {source_url}
+Error Type: {error_type}
+Pipeline Status: URLs={pipeline.get('urlsFound', 0)}, HTML={pipeline.get('htmlScraped', 0)}, Builds={pipeline.get('builds', 0)}
+
+Recent Log Context:
+{log_context[:2000] if log_context else 'No log context available'}
+
+Provide your response as JSON with these fields:
+- summary: One-line description of the error (max 80 chars)
+- suggestion: Specific fix recommendation (max 200 chars)
+- error_category: One of [rate_limit, blocked, selector_change, network, auth, captcha, other]
+- confidence: 0-1 how confident you are in the diagnosis
+
+Focus on actionable fixes like:
+- Adjusting rate limits/delays
+- Updating PRD settings
+- Changing scrape_mode to stealth
+- Updating CSS selectors
+- Handling auth/captcha
+"""
+        
+        try:
+            # Try Claude CLI first (preferred for code analysis)
+            result = subprocess.run(
+                ['claude', '-p', analysis_prompt, '--output-format', 'json'],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=str(PROJECT_ROOT)
+            )
+            
+            if result.returncode == 0 and result.stdout.strip():
+                try:
+                    response = json.loads(result.stdout)
+                    # Extract from claude response format
+                    analysis_text = response.get('result', response.get('text', result.stdout))
+                    
+                    # Try to parse as JSON
+                    if isinstance(analysis_text, str):
+                        # Find JSON in response
+                        import re
+                        json_match = re.search(r'\{[^{}]*"summary"[^{}]*\}', analysis_text, re.DOTALL)
+                        if json_match:
+                            analysis = json.loads(json_match.group())
+                        else:
+                            analysis = {
+                                'summary': analysis_text[:80],
+                                'suggestion': self._get_default_suggestion(error_type),
+                                'error_category': error_type
+                            }
+                    else:
+                        analysis = analysis_text
+                    
+                    self.send_json({
+                        'success': True,
+                        'summary': analysis.get('summary', f'{error_type.title()} detected'),
+                        'suggestion': analysis.get('suggestion', self._get_default_suggestion(error_type)),
+                        'error_category': analysis.get('error_category', error_type),
+                        'confidence': analysis.get('confidence', 0.7)
+                    })
+                    return
+                except json.JSONDecodeError:
+                    pass
+            
+            # Fallback to pattern-based analysis
+            self._send_pattern_analysis(error_type, log_context, source_url)
+            
+        except subprocess.TimeoutExpired:
+            self._send_pattern_analysis(error_type, log_context, source_url)
+        except FileNotFoundError:
+            # Claude CLI not available, use pattern matching
+            self._send_pattern_analysis(error_type, log_context, source_url)
+        except Exception as e:
+            print(f"Error analysis failed: {e}")
+            self._send_pattern_analysis(error_type, log_context, source_url)
+    
+    def _send_pattern_analysis(self, error_type, log_context, source_url):
+        """Fallback pattern-based error analysis"""
+        log_lower = log_context.lower() if log_context else ''
+        
+        # Pattern matching for common errors
+        if '403' in log_lower or 'forbidden' in log_lower:
+            summary = 'Access denied (403 Forbidden)'
+            suggestion = 'Enable stealth mode in PRD, increase delays to 5-10s, rotate proxy.'
+            category = 'blocked'
+        elif '429' in log_lower or 'rate limit' in log_lower or 'too many' in log_lower:
+            summary = 'Rate limit exceeded (429)'
+            suggestion = 'Increase min_delay to 10-15s, reduce concurrency, add exponential backoff.'
+            category = 'rate_limit'
+        elif 'captcha' in log_lower or 'challenge' in log_lower or 'verify' in log_lower:
+            summary = 'CAPTCHA or verification required'
+            suggestion = 'Mark as hitl status, consider using browser with saved session cookies.'
+            category = 'captcha'
+        elif 'timeout' in log_lower or 'timed out' in log_lower:
+            summary = 'Request timeout'
+            suggestion = 'Increase timeout in PRD, check if site is slow, try different time of day.'
+            category = 'network'
+        elif 'selector' in log_lower or 'not found' in log_lower or 'none' in log_lower:
+            summary = 'Selector/element not found'
+            suggestion = 'Site structure may have changed. Re-run domain analysis, update selectors.'
+            category = 'selector_change'
+        elif 'cloudflare' in log_lower or 'cf_' in log_lower:
+            summary = 'Cloudflare protection detected'
+            suggestion = 'Use aggressive stealth mode, enable browser fingerprint rotation.'
+            category = 'blocked'
+        elif 'login' in log_lower or 'auth' in log_lower or 'sign in' in log_lower:
+            summary = 'Authentication required'
+            suggestion = 'Site requires login. Use browser tool to login and export cookies.'
+            category = 'auth'
+        else:
+            summary = f'{error_type.title()} state detected'
+            suggestion = self._get_default_suggestion(error_type)
+            category = error_type
+        
+        self.send_json({
+            'success': True,
+            'summary': summary,
+            'suggestion': suggestion,
+            'error_category': category,
+            'confidence': 0.6
+        })
+    
+    def _get_default_suggestion(self, error_type):
+        """Get default suggestion based on error type"""
+        suggestions = {
+            'blocked': 'Try increasing delays (5-10s), enable stealth mode, or rotate proxies.',
+            'error': 'Check if website structure changed. Re-run domain analysis to update selectors.',
+            'hitl': 'Human verification needed. Check for CAPTCHA or login requirements.',
+            'rate_limit': 'Reduce request rate, increase delays, implement exponential backoff.'
+        }
+        return suggestions.get(error_type, 'Review logs and PRD configuration for issues.')
+    
+    def handle_retry_source(self, source_id):
+        """Reset source status to pending for retry"""
+        try:
+            if SOURCES_FILE.exists():
+                with open(SOURCES_FILE, 'r+') as f:
+                    data = json.load(f)
+                    sources = data.get('sources', [])
+                    
+                    for source in sources:
+                        if source.get('id') == source_id:
+                            source['status'] = 'pending'
+                            source['retry_count'] = source.get('retry_count', 0) + 1
+                            break
+                    
+                    f.seek(0)
+                    json.dump(data, f, indent=2)
+                    f.truncate()
+                    
+                self.send_json({'success': True, 'message': f'Source {source_id} queued for retry'})
+            else:
+                self.send_json({'error': 'Sources file not found'}, 404)
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+    
     def check_ralph_running(self):
         """Check if ralph.sh is currently running"""
         try:
@@ -1751,6 +1933,20 @@ START by navigating to the URL and taking a snapshot.
         except:
             pass
         return total
+    
+    def count_builds_and_mods(self, all_sources):
+        """Aggregate builds and mods from all sources"""
+        total_builds = 0
+        total_mods = 0
+        for source in all_sources:
+            pipeline = source.get('pipeline', {})
+            builds = pipeline.get('builds')
+            mods = pipeline.get('mods')
+            if builds is not None:
+                total_builds += builds
+            if mods is not None:
+                total_mods += mods
+        return {'builds': total_builds, 'mods': total_mods}
     
     def get_log_tail(self, lines=50):
         """Get last N lines of the log file"""

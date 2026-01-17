@@ -1075,6 +1075,211 @@
     
     .browser-btn:hover {
       border-color: var(--accent-purple);
+    }
+    
+    /* Notification Bell */
+    .notif-container {
+      position: relative;
+    }
+    
+    .notif-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .notif-btn:hover {
+      border-color: var(--accent-yellow);
+      background: rgba(255, 193, 7, 0.1);
+    }
+    
+    .notif-btn.has-alerts {
+      animation: notifPulse 2s ease-in-out infinite;
+      border-color: var(--accent-red);
+    }
+    
+    @keyframes notifPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    }
+    
+    .notif-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--accent-red);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    
+    .notif-badge:empty {
+      display: none;
+    }
+    
+    .notif-dropdown {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      width: 380px;
+      max-height: 500px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+      overflow: hidden;
+    }
+    
+    .notif-dropdown.visible {
+      display: flex;
+    }
+    
+    .notif-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+    
+    .notif-header h3 {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    
+    .notif-clear-btn {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    
+    .notif-clear-btn:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+    
+    .notif-list {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 400px;
+    }
+    
+    .notif-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .notif-item:hover {
+      background: var(--bg-secondary);
+    }
+    
+    .notif-item.unread {
+      background: rgba(239, 68, 68, 0.05);
+      border-left: 3px solid var(--accent-red);
+    }
+    
+    .notif-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+    
+    .notif-source {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--accent-red);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .notif-time {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    
+    .notif-message {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    
+    .notif-suggestion {
+      font-size: 11px;
+      color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.1);
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
+    
+    .notif-suggestion strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--accent-cyan);
+    }
+    
+    .notif-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .notif-action-btn {
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .notif-action-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    
+    .notif-empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+    
+    .notif-empty-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+      opacity: 0.5;
       background: var(--bg-secondary);
     }
     
@@ -1351,6 +1556,26 @@
     <button class="browser-btn" onclick="toggleBrowserPanel()" title="Browser Preview" id="browserBtn">
       🌐
     </button>
+    
+    <div class="notif-container">
+      <button class="notif-btn" onclick="toggleNotifications()" title="Alerts & Suggestions" id="notifBtn">
+        🔔
+        <span class="notif-badge" id="notifBadge"></span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-header">
+          <h3>🚨 Alerts & Suggestions</h3>
+          <button class="notif-clear-btn" onclick="clearAllNotifications()">Clear All</button>
+        </div>
+        <div class="notif-list" id="notifList">
+          <div class="notif-empty">
+            <div class="notif-empty-icon">✅</div>
+            <div>No alerts - all systems running smoothly</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <button class="settings-btn" onclick="toggleSettingsPanel()" title="Settings">
       ⚙️
     </button>
@@ -1416,6 +1641,231 @@
     // State
     let lastLogLines = [];
     let allSources = [];
+    let notifications = [];
+    let analyzedErrors = new Set(); // Track which errors we've already analyzed
+    let previousSourceStatuses = {}; // Track status changes
+    
+    // Notification System
+    function toggleNotifications() {
+      const dropdown = document.getElementById('notifDropdown');
+      dropdown.classList.toggle('visible');
+      
+      // Mark all as read when opened
+      if (dropdown.classList.contains('visible')) {
+        notifications.forEach(n => n.unread = false);
+        updateNotificationBadge();
+        renderNotifications();
+      }
+    }
+    
+    function closeNotifications() {
+      document.getElementById('notifDropdown').classList.remove('visible');
+    }
+    
+    function updateNotificationBadge() {
+      const badge = document.getElementById('notifBadge');
+      const btn = document.getElementById('notifBtn');
+      const unreadCount = notifications.filter(n => n.unread).length;
+      
+      badge.textContent = unreadCount > 0 ? (unreadCount > 9 ? '9+' : unreadCount) : '';
+      btn.classList.toggle('has-alerts', unreadCount > 0);
+    }
+    
+    function addNotification(notification) {
+      notifications.unshift({
+        id: Date.now(),
+        unread: true,
+        timestamp: new Date(),
+        ...notification
+      });
+      
+      // Keep only last 50 notifications
+      if (notifications.length > 50) {
+        notifications = notifications.slice(0, 50);
+      }
+      
+      updateNotificationBadge();
+      renderNotifications();
+      
+      // Show toast for new critical notifications
+      if (notification.type === 'error') {
+        showNotification(`🚨 ${notification.source}: ${notification.message}`, 'error');
+      }
+    }
+    
+    function renderNotifications() {
+      const list = document.getElementById('notifList');
+      
+      if (notifications.length === 0) {
+        list.innerHTML = `
+          <div class="notif-empty">
+            <div class="notif-empty-icon">✅</div>
+            <div>No alerts - all systems running smoothly</div>
+          </div>
+        `;
+        return;
+      }
+      
+      list.innerHTML = notifications.map(n => `
+        <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="viewNotificationDetails('${n.id}')">
+          <div class="notif-item-header">
+            <span class="notif-source">
+              ${n.type === 'error' ? '🔴' : n.type === 'warning' ? '🟡' : '🔵'} 
+              ${n.source}
+            </span>
+            <span class="notif-time">${formatTimeAgo(n.timestamp)}</span>
+          </div>
+          <div class="notif-message">${n.message}</div>
+          ${n.suggestion ? `
+            <div class="notif-suggestion">
+              <strong>💡 Suggested Fix:</strong>
+              ${n.suggestion}
+            </div>
+          ` : ''}
+          ${n.actions ? `
+            <div class="notif-actions">
+              ${n.actions.map(a => `
+                <button class="notif-action-btn" onclick="event.stopPropagation(); ${a.action}">${a.label}</button>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+    
+    function formatTimeAgo(date) {
+      const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+      if (seconds < 60) return 'just now';
+      if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+      if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+      return `${Math.floor(seconds / 86400)}d ago`;
+    }
+    
+    function clearAllNotifications() {
+      notifications = [];
+      analyzedErrors.clear();
+      updateNotificationBadge();
+      renderNotifications();
+    }
+    
+    function viewNotificationDetails(id) {
+      const notif = notifications.find(n => n.id == id);
+      if (notif && notif.sourceId) {
+        closeNotifications();
+        openPrdModal(notif.sourceId, notif.source, notif.sourceUrl);
+      }
+    }
+    
+    // Error Detection and LLM Analysis
+    async function checkForErrorsAndAnalyze(sources, logTail) {
+      for (const source of sources) {
+        const prevStatus = previousSourceStatuses[source.id];
+        const currentStatus = source.status;
+        
+        // Check if source just went into error/blocked/hitl state
+        if ((currentStatus === 'blocked' || currentStatus === 'error' || currentStatus === 'hitl') 
+            && prevStatus !== currentStatus) {
+          
+          const errorKey = `${source.id}-${currentStatus}-${Date.now().toString().slice(0, -4)}`;
+          
+          if (!analyzedErrors.has(errorKey)) {
+            analyzedErrors.add(errorKey);
+            
+            // Get relevant log lines for this source
+            const relevantLogs = logTail
+              .filter(line => line.toLowerCase().includes(source.id.toLowerCase()) || 
+                             line.toLowerCase().includes(source.name?.toLowerCase() || '') ||
+                             line.includes('error') || line.includes('Error') ||
+                             line.includes('blocked') || line.includes('403') || line.includes('429'))
+              .slice(-20)
+              .join('\n');
+            
+            // Analyze with LLM
+            analyzeErrorWithLLM(source, relevantLogs, currentStatus);
+          }
+        }
+        
+        // Update tracking
+        previousSourceStatuses[source.id] = currentStatus;
+      }
+    }
+    
+    async function analyzeErrorWithLLM(source, logContext, errorType) {
+      try {
+        const response = await fetch(`${API_BASE}/analyze-error`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sourceId: source.id,
+            sourceName: source.name,
+            sourceUrl: source.url,
+            errorType: errorType,
+            logContext: logContext,
+            pipeline: source.pipeline
+          })
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          
+          addNotification({
+            type: 'error',
+            source: source.name,
+            sourceId: source.id,
+            sourceUrl: source.url,
+            message: result.summary || `Source entered ${errorType} state`,
+            suggestion: result.suggestion,
+            actions: result.actions || [
+              { label: '📋 View PRD', action: `openPrdModal('${source.id}', '${source.name}', '${source.url}')` },
+              { label: '🔄 Retry', action: `retrySource('${source.id}')` }
+            ]
+          });
+        } else {
+          // Fallback notification without LLM analysis
+          addNotification({
+            type: 'error',
+            source: source.name,
+            sourceId: source.id,
+            sourceUrl: source.url,
+            message: `Source entered ${errorType} state - check logs for details`,
+            suggestion: getDefaultSuggestion(errorType),
+            actions: [
+              { label: '📋 View PRD', action: `openPrdModal('${source.id}', '${source.name}', '${source.url}')` }
+            ]
+          });
+        }
+      } catch (error) {
+        console.error('Error analyzing with LLM:', error);
+        // Add basic notification without LLM
+        addNotification({
+          type: 'error',
+          source: source.name,
+          sourceId: source.id,
+          sourceUrl: source.url,
+          message: `Source entered ${errorType} state`,
+          suggestion: getDefaultSuggestion(errorType)
+        });
+      }
+    }
+    
+    function getDefaultSuggestion(errorType) {
+      const suggestions = {
+        'blocked': 'Try increasing delays in PRD (min_delay: 5-10s), enable stealth mode, or rotate proxies.',
+        'error': 'Check if website structure changed. May need to update selectors in the extractor.',
+        'hitl': 'Human verification needed. Check for CAPTCHA or login requirements.'
+      };
+      return suggestions[errorType] || 'Review logs and PRD configuration.';
+    }
+    
+    async function retrySource(sourceId) {
+      showNotification(`🔄 Retrying ${sourceId}...`, 'info');
+      try {
+        await fetch(`${API_BASE}/source/${sourceId}/retry`, { method: 'POST' });
+        showNotification(`✅ Retry initiated for ${sourceId}`, 'success');
+      } catch (err) {
+        showNotification(`❌ Failed to retry: ${err.message}`, 'error');
+      }
+    }
     
     // Format numbers with commas
     function formatNumber(num) {
@@ -1852,7 +2302,8 @@
           'completed': '✅'
         }[source.status] || '❓';
         
-        option.textContent = `${statusIcon} ${source.name} (URLs:${urlCount} HTML:${htmlCount} Builds:${buildCount})`;
+        const modCount = pipeline.mods || 0;
+        option.textContent = `${statusIcon} ${source.name} (URLs:${urlCount} HTML:${htmlCount} Builds:${buildCount} Mods:${modCount})`;
         
         // Restore selection
         if (currentSelections.includes(source.id)) {
@@ -2209,6 +2660,9 @@
         if (data.all_sources) {
           allSources = data.all_sources;
           populateSourcesDropdown(data.all_sources);
+          
+          // Check for errors and analyze with LLM
+          checkForErrorsAndAnalyze(data.all_sources, data.log_tail || []);
         }
         
         // Update log (use fresh endpoint for better updates)
@@ -2338,7 +2792,8 @@
                 <div class="source-stats">
                   URLs: ${formatNumber(pipeline.urlsFound)} | 
                   HTML: ${formatNumber(pipeline.htmlScraped)} |
-                  Builds: ${formatNumber(pipeline.builds)}
+                  Builds: ${formatNumber(pipeline.builds)} |
+                  Mods: ${formatNumber(pipeline.mods)}
                 </div>
               </div>
             </div>
@@ -2426,16 +2881,22 @@
       activeSourceMenu = null;
     }
     
-    // Close menu when clicking outside
+    // Close menus when clicking outside
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.source-action-menu') && !e.target.closest('.source-status')) {
         hideSourceMenu();
       }
+      if (!e.target.closest('.notif-container')) {
+        closeNotifications();
+      }
     });
     
-    // Close menu on escape
+    // Close menus on escape
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') hideSourceMenu();
+      if (e.key === 'Escape') {
+        hideSourceMenu();
+        closeNotifications();
+      }
     });
     
     async function startRalphForSource() {
