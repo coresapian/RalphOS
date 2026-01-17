@@ -2005,7 +2005,7 @@
       "status": "completed",
       "priority": 5,
       "attempted": 1,
-      "lastAttempted": "2026-01-17T07:15:00Z",
+      "lastAttempted": "2026-01-17T07:30:00Z",
       "pipeline": {
         "expectedUrls": 5,
         "urlsFound": 5,
@@ -2013,9 +2013,9 @@
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": 5,
-        "mods": 9
+        "mods": 70
       },
-      "notes": "COMPLETE: 5 builds, 9 mods. German tuner. Vehicles: AMG GT R (585hp), Cayenne CRT 800 (800hp), Defender DP 500, MH1 350, Supra GR 450. Categories: Engine (5), Exhaust (2), Suspension (1), Exterior (1)."
+      "notes": "COMPLETE: 5 builds, 70 mods. German high-end tuner. Vehicles: AMG GT R (585hp), Cayenne CRT 800 (800hp), Defender DP 500, MH1 350, Supra GR 450. Categories: Exhaust (16), Engine (14), Exterior (14), Wheels (12), Suspension (11), Interior (3). Top parts: MHtronik Powerbox, ECU Remapping, Coilover Kits."
     }
   ]
 }
