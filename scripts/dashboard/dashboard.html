@@ -998,6 +998,262 @@
       align-items: center;
       gap: 8px;
     }
+    
+    /* Browser Preview Panel */
+    .browser-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .browser-btn:hover {
+      border-color: var(--accent-purple);
+      background: var(--bg-secondary);
+    }
+    
+    .browser-btn.active {
+      border-color: var(--accent-purple);
+      background: rgba(167, 139, 250, 0.2);
+    }
+    
+    .browser-panel {
+      position: fixed;
+      top: 0;
+      right: -700px;
+      width: 700px;
+      height: 100vh;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      z-index: 1000;
+      transition: right 0.3s ease-out;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .browser-panel.visible {
+      right: 0;
+    }
+    
+    .browser-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-secondary);
+    }
+    
+    .browser-header h2 {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .browser-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .browser-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+    
+    .browser-status-dot.connected {
+      background: var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+    
+    .browser-status-dot.loading {
+      background: var(--accent-yellow);
+      animation: pulse 0.5s infinite;
+    }
+    
+    .browser-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--bg-card);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+    }
+    
+    .browser-close:hover {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+    
+    .browser-toolbar {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .browser-url-bar {
+      flex: 1;
+      padding: 8px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    
+    .browser-toolbar button {
+      padding: 8px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    
+    .browser-toolbar button:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    
+    .browser-viewport {
+      flex: 1;
+      padding: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .browser-screenshot-container {
+      flex: 1;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .browser-screenshot {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    
+    .browser-screenshot-placeholder {
+      color: var(--text-muted);
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .browser-screenshot-placeholder .icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    .browser-log {
+      height: 150px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 12px;
+    }
+    
+    .browser-log-entry {
+      margin-bottom: 4px;
+      display: flex;
+      gap: 8px;
+    }
+    
+    .browser-log-time {
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    
+    .browser-log-action {
+      color: var(--accent-cyan);
+    }
+    
+    .browser-log-url {
+      color: var(--accent-purple);
+      word-break: break-all;
+    }
+    
+    .browser-log-error {
+      color: var(--accent-red);
+    }
+    
+    .browser-log-success {
+      color: var(--accent-green);
+    }
+    
+    .browser-controls {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    
+    .browser-controls button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .browser-controls button:hover {
+      border-color: var(--accent-cyan);
+    }
+    
+    .browser-controls button.primary {
+      background: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+      color: var(--bg-primary);
+    }
+    
+    .browser-controls button.primary:hover {
+      background: #1cb5d1;
+    }
+    
+    .browser-controls button.danger {
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+    }
+    
+    .browser-controls button.danger:hover {
+      background: rgba(248, 113, 113, 0.2);
+    }
   </style>
 </head>
 <body>
@@ -1033,6 +1289,9 @@
       </div>
     </div>
     
+    <button class="browser-btn" onclick="toggleBrowserPanel()" title="Browser Preview" id="browserBtn">
+      🌐
+    </button>
     <button class="settings-btn" onclick="toggleSettingsPanel()" title="Settings">
       ⚙️
     </button>
@@ -1115,6 +1374,377 @@
       const overlay = document.getElementById('settingsOverlay');
       overlay.classList.remove('visible');
     }
+    
+    // ============================================
+    // Browser Preview Panel (CDP WebSocket)
+    // ============================================
+    
+    let browserWs = null;
+    let browserSessionId = null;
+    let screencastEnabled = false;
+    let browserConnected = false;
+    
+    function toggleBrowserPanel() {
+      const panel = document.getElementById('browserPanel');
+      const btn = document.getElementById('browserBtn');
+      panel.classList.toggle('visible');
+      btn.classList.toggle('active', panel.classList.contains('visible'));
+    }
+    
+    function closeBrowserPanel() {
+      const panel = document.getElementById('browserPanel');
+      const btn = document.getElementById('browserBtn');
+      panel.classList.remove('visible');
+      btn.classList.remove('active');
+    }
+    
+    function browserLog(message, type = 'info') {
+      const log = document.getElementById('browserLog');
+      const time = new Date().toLocaleTimeString();
+      const typeClass = type === 'error' ? 'browser-log-error' : 
+                        type === 'success' ? 'browser-log-success' :
+                        type === 'url' ? 'browser-log-url' : 
+                        type === 'action' ? 'browser-log-action' : '';
+      
+      const entry = document.createElement('div');
+      entry.className = 'browser-log-entry';
+      entry.innerHTML = `<span class="browser-log-time">[${time}]</span><span class="${typeClass}">${message}</span>`;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+    }
+    
+    function updateBrowserStatus(connected, text) {
+      browserConnected = connected;
+      const dot = document.getElementById('browserStatusDot');
+      const statusText = document.getElementById('browserStatusText');
+      dot.className = 'browser-status-dot' + (connected ? ' connected' : '');
+      statusText.textContent = text || (connected ? 'Connected' : 'Disconnected');
+    }
+    
+    async function startBrowserSession() {
+      browserLog('🚀 Starting browser session...', 'action');
+      updateBrowserStatus(false, 'Starting...');
+      
+      document.getElementById('browserLoading').style.display = 'block';
+      document.getElementById('browserPlaceholder').style.display = 'none';
+      
+      try {
+        // Request backend to start Chrome with CDP
+        const response = await fetch(`${API_BASE}/browser/start`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          browserLog(`✅ Browser started on port ${data.port}`, 'success');
+          browserLog(`WebSocket: ${data.ws_url}`, 'url');
+          
+          // Connect to CDP WebSocket
+          await connectToCDP(data.ws_url);
+          
+          document.getElementById('startBrowserBtn').style.display = 'none';
+          document.getElementById('stopBrowserBtn').style.display = 'inline-block';
+        } else {
+          throw new Error(data.error || 'Failed to start browser');
+        }
+      } catch (error) {
+        browserLog(`❌ Error: ${error.message}`, 'error');
+        updateBrowserStatus(false, 'Error');
+        document.getElementById('browserLoading').style.display = 'none';
+        document.getElementById('browserPlaceholder').style.display = 'block';
+      }
+    }
+    
+    async function connectToCDP(wsUrl) {
+      return new Promise((resolve, reject) => {
+        browserLog(`🔌 Connecting to CDP: ${wsUrl}`, 'action');
+        
+        browserWs = new WebSocket(wsUrl);
+        
+        browserWs.onopen = () => {
+          browserLog('✅ CDP WebSocket connected', 'success');
+          updateBrowserStatus(true, 'Connected');
+          document.getElementById('browserLoading').style.display = 'none';
+          
+          // Enable page events
+          sendCDPCommand('Page.enable');
+          sendCDPCommand('Runtime.enable');
+          sendCDPCommand('DOM.enable');
+          
+          // Start screencast for live preview
+          startScreencast();
+          
+          resolve();
+        };
+        
+        browserWs.onmessage = (event) => {
+          handleCDPMessage(JSON.parse(event.data));
+        };
+        
+        browserWs.onerror = (error) => {
+          browserLog(`❌ WebSocket error`, 'error');
+          updateBrowserStatus(false, 'Error');
+          reject(error);
+        };
+        
+        browserWs.onclose = () => {
+          browserLog('🔌 WebSocket disconnected', 'action');
+          updateBrowserStatus(false, 'Disconnected');
+          browserWs = null;
+          screencastEnabled = false;
+        };
+      });
+    }
+    
+    let cdpCommandId = 1;
+    const cdpCallbacks = {};
+    
+    function sendCDPCommand(method, params = {}) {
+      if (!browserWs || browserWs.readyState !== WebSocket.OPEN) {
+        browserLog('⚠️ Not connected to browser', 'error');
+        return Promise.reject(new Error('Not connected'));
+      }
+      
+      const id = cdpCommandId++;
+      
+      return new Promise((resolve, reject) => {
+        cdpCallbacks[id] = { resolve, reject };
+        
+        browserWs.send(JSON.stringify({
+          id,
+          method,
+          params
+        }));
+      });
+    }
+    
+    function handleCDPMessage(msg) {
+      // Handle command responses
+      if (msg.id && cdpCallbacks[msg.id]) {
+        if (msg.error) {
+          cdpCallbacks[msg.id].reject(new Error(msg.error.message));
+        } else {
+          cdpCallbacks[msg.id].resolve(msg.result);
+        }
+        delete cdpCallbacks[msg.id];
+        return;
+      }
+      
+      // Handle events
+      if (msg.method) {
+        switch (msg.method) {
+          case 'Page.screencastFrame':
+            handleScreencastFrame(msg.params);
+            break;
+          case 'Page.loadEventFired':
+            browserLog('📄 Page loaded', 'success');
+            break;
+          case 'Page.frameNavigated':
+            if (msg.params.frame.url) {
+              document.getElementById('browserUrlBar').value = msg.params.frame.url;
+              browserLog(`🔗 Navigated to: ${msg.params.frame.url}`, 'url');
+            }
+            break;
+        }
+      }
+    }
+    
+    function startScreencast() {
+      if (screencastEnabled) return;
+      
+      sendCDPCommand('Page.startScreencast', {
+        format: 'jpeg',
+        quality: 60,
+        maxWidth: 1200,
+        maxHeight: 800,
+        everyNthFrame: 2
+      }).then(() => {
+        screencastEnabled = true;
+        browserLog('📺 Screencast started', 'success');
+      }).catch(err => {
+        browserLog(`⚠️ Screencast error: ${err.message}`, 'error');
+      });
+    }
+    
+    function handleScreencastFrame(params) {
+      const img = document.getElementById('browserScreenshot');
+      const placeholder = document.getElementById('browserPlaceholder');
+      
+      img.src = 'data:image/jpeg;base64,' + params.data;
+      img.style.display = 'block';
+      placeholder.style.display = 'none';
+      
+      // Acknowledge the frame
+      sendCDPCommand('Page.screencastFrameAck', {
+        sessionId: params.sessionId
+      });
+    }
+    
+    async function stopBrowserSession() {
+      browserLog('🛑 Stopping browser session...', 'action');
+      
+      if (screencastEnabled) {
+        await sendCDPCommand('Page.stopScreencast').catch(() => {});
+        screencastEnabled = false;
+      }
+      
+      if (browserWs) {
+        browserWs.close();
+        browserWs = null;
+      }
+      
+      // Tell backend to stop browser
+      try {
+        await fetch(`${API_BASE}/browser/stop`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch (e) {
+        console.error('Error stopping browser:', e);
+      }
+      
+      updateBrowserStatus(false, 'Stopped');
+      document.getElementById('browserScreenshot').style.display = 'none';
+      document.getElementById('browserPlaceholder').style.display = 'block';
+      document.getElementById('startBrowserBtn').style.display = 'inline-block';
+      document.getElementById('stopBrowserBtn').style.display = 'none';
+      browserLog('✅ Browser session stopped', 'success');
+    }
+    
+    async function browserNavigate() {
+      const url = document.getElementById('browserUrlBar').value.trim();
+      if (!url) return;
+      
+      // Add protocol if missing
+      const fullUrl = url.startsWith('http') ? url : 'https://' + url;
+      
+      browserLog(`🌐 Navigating to: ${fullUrl}`, 'action');
+      document.getElementById('browserLoading').style.display = 'block';
+      
+      try {
+        await sendCDPCommand('Page.navigate', { url: fullUrl });
+      } catch (error) {
+        browserLog(`❌ Navigation error: ${error.message}`, 'error');
+      }
+      
+      document.getElementById('browserLoading').style.display = 'none';
+    }
+    
+    async function browserBack() {
+      browserLog('← Going back', 'action');
+      try {
+        const history = await sendCDPCommand('Page.getNavigationHistory');
+        if (history.currentIndex > 0) {
+          await sendCDPCommand('Page.navigateToHistoryEntry', {
+            entryId: history.entries[history.currentIndex - 1].id
+          });
+        }
+      } catch (error) {
+        browserLog(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    async function browserForward() {
+      browserLog('→ Going forward', 'action');
+      try {
+        const history = await sendCDPCommand('Page.getNavigationHistory');
+        if (history.currentIndex < history.entries.length - 1) {
+          await sendCDPCommand('Page.navigateToHistoryEntry', {
+            entryId: history.entries[history.currentIndex + 1].id
+          });
+        }
+      } catch (error) {
+        browserLog(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    async function browserRefresh() {
+      browserLog('🔄 Refreshing page', 'action');
+      try {
+        await sendCDPCommand('Page.reload');
+      } catch (error) {
+        browserLog(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    async function browserSnapshot() {
+      browserLog('📸 Taking screenshot...', 'action');
+      try {
+        const result = await sendCDPCommand('Page.captureScreenshot', {
+          format: 'png',
+          quality: 100
+        });
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.href = 'data:image/png;base64,' + result.data;
+        link.download = `screenshot_${Date.now()}.png`;
+        link.click();
+        
+        browserLog('✅ Screenshot saved', 'success');
+      } catch (error) {
+        browserLog(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    async function browserExecuteJS() {
+      const js = prompt('Enter JavaScript to execute:');
+      if (!js) return;
+      
+      browserLog(`⚡ Executing: ${js.substring(0, 50)}...`, 'action');
+      try {
+        const result = await sendCDPCommand('Runtime.evaluate', {
+          expression: js,
+          returnByValue: true
+        });
+        
+        const value = result.result.value;
+        browserLog(`✅ Result: ${JSON.stringify(value).substring(0, 200)}`, 'success');
+        console.log('JS Result:', value);
+      } catch (error) {
+        browserLog(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    async function browserExtractDOM() {
+      browserLog('🔍 Extracting DOM structure...', 'action');
+      try {
+        const doc = await sendCDPCommand('DOM.getDocument', { depth: -1 });
+        
+        // Get outer HTML
+        const html = await sendCDPCommand('DOM.getOuterHTML', {
+          nodeId: doc.root.nodeId
+        });
+        
+        // Save to file via API
+        const response = await fetch(`${API_BASE}/browser/save-dom`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            html: html.outerHTML,
+            url: document.getElementById('browserUrlBar').value
+          })
+        });
+        
+        const data = await response.json();
+        browserLog(`✅ DOM saved to: ${data.path}`, 'success');
+      } catch (error) {
+        browserLog(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    // Close browser panel on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('browserPanel').classList.contains('visible')) {
+        closeBrowserPanel();
+      }
+    });
+    
+    // ============================================
+    // End Browser Preview Panel
+    // ============================================
     
     // Close settings on Escape
     document.addEventListener('keydown', (e) => {
@@ -1931,6 +2561,71 @@
     <div class="source-action-item view" onclick="viewSourceData()">
       <span class="icon">🌐</span>
       <span class="label">Visit Website</span>
+    </div>
+  </div>
+  
+  <!-- Browser Preview Panel (CDP) -->
+  <div id="browserPanel" class="browser-panel">
+    <div class="browser-header">
+      <h2>🌐 Browser Preview</h2>
+      <div class="browser-status">
+        <div class="browser-status-dot" id="browserStatusDot"></div>
+        <span id="browserStatusText">Disconnected</span>
+      </div>
+      <button class="browser-close" onclick="closeBrowserPanel()">×</button>
+    </div>
+    
+    <div class="browser-toolbar">
+      <button onclick="browserBack()" title="Back">←</button>
+      <button onclick="browserForward()" title="Forward">→</button>
+      <button onclick="browserRefresh()" title="Refresh">🔄</button>
+      <input type="text" class="browser-url-bar" id="browserUrlBar" placeholder="Enter URL..." onkeypress="if(event.key==='Enter')browserNavigate()">
+      <button onclick="browserNavigate()">Go</button>
+      <button onclick="browserSnapshot()" title="Take Snapshot">📸</button>
+    </div>
+    
+    <div class="browser-viewport">
+      <div class="browser-screenshot-container" id="browserScreenshotContainer">
+        <div class="browser-screenshot-placeholder" id="browserPlaceholder">
+          <div class="icon">🌐</div>
+          <div>Browser Preview</div>
+          <div style="margin-top: 12px; font-size: 12px;">
+            <button onclick="startBrowserSession()" style="padding: 8px 16px; background: var(--accent-cyan); border: none; border-radius: 6px; color: var(--bg-primary); cursor: pointer; font-weight: 600;">
+              🚀 Start Browser Session
+            </button>
+          </div>
+          <div style="margin-top: 8px; font-size: 11px; opacity: 0.7;">
+            Uses Chrome DevTools Protocol for live preview
+          </div>
+        </div>
+        <img id="browserScreenshot" class="browser-screenshot" style="display: none;" alt="Browser Screenshot">
+        <div id="browserLoading" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+          <div style="font-size: 24px; animation: pulse 1s infinite;">⏳</div>
+          <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">Loading...</div>
+        </div>
+      </div>
+      
+      <div class="browser-log" id="browserLog">
+        <div class="browser-log-entry">
+          <span class="browser-log-time">[--:--:--]</span>
+          <span>Browser panel ready. Click "Start Browser Session" to begin.</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="browser-controls">
+      <button onclick="browserExecuteJS()" title="Execute JavaScript">
+        ⚡ Execute JS
+      </button>
+      <button onclick="browserExtractDOM()" title="Extract DOM Structure">
+        🔍 Extract DOM
+      </button>
+      <button class="danger" onclick="stopBrowserSession()" id="stopBrowserBtn" style="display: none;">
+        ⏹️ Stop Session
+      </button>
+      <button class="primary" onclick="startBrowserSession()" id="startBrowserBtn">
+        🚀 Start Session
+      </button>
     </div>
   </div>
   

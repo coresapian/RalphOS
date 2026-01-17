@@ -31,6 +31,9 @@ scraper_process = None
 scraper_lock = threading.Lock()
 ralph_process = None
 ralph_lock = threading.Lock()
+browser_process = None
+browser_lock = threading.Lock()
+browser_cdp_port = 9222
 
 class DashboardHandler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
@@ -83,6 +86,12 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self.handle_analyze_domain(data)
         elif path == '/prd/generate-from-analysis':
             self.handle_generate_prd_from_analysis(data)
+        elif path == '/browser/start':
+            self.handle_browser_start(data)
+        elif path == '/browser/stop':
+            self.handle_browser_stop()
+        elif path == '/browser/save-dom':
+            self.handle_browser_save_dom(data)
         else:
             self.send_json({'error': 'Not found'}, 404)
     
@@ -1406,6 +1415,164 @@ START by navigating to the URL and taking a snapshot.
                 'pid': pid,
                 'prd': prd_info
             })
+    
+    # ============================================
+    # Browser Preview (CDP) Handlers
+    # ============================================
+    
+    def handle_browser_start(self, data):
+        """Start Chrome/Chromium with CDP debugging enabled"""
+        global browser_process, browser_cdp_port
+        
+        with browser_lock:
+            # Check if already running
+            if browser_process and browser_process.poll() is None:
+                self.send_json({
+                    'success': True,
+                    'message': 'Browser already running',
+                    'port': browser_cdp_port,
+                    'ws_url': self._get_cdp_ws_url()
+                })
+                return
+            
+            # Find Chrome/Chromium executable
+            chrome_paths = [
+                '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+                '/Applications/Chromium.app/Contents/MacOS/Chromium',
+                '/usr/bin/google-chrome',
+                '/usr/bin/chromium',
+                '/usr/bin/chromium-browser',
+            ]
+            
+            chrome_path = None
+            for path in chrome_paths:
+                if Path(path).exists():
+                    chrome_path = path
+                    break
+            
+            if not chrome_path:
+                self.send_json({'error': 'Chrome/Chromium not found'}, 500)
+                return
+            
+            # Start Chrome with remote debugging
+            user_data_dir = PROJECT_ROOT / "data" / ".chrome-profile"
+            user_data_dir.mkdir(parents=True, exist_ok=True)
+            
+            cmd = [
+                chrome_path,
+                f'--remote-debugging-port={browser_cdp_port}',
+                f'--user-data-dir={user_data_dir}',
+                '--no-first-run',
+                '--no-default-browser-check',
+                '--disable-background-networking',
+                '--disable-sync',
+                '--disable-translate',
+                '--metrics-recording-only',
+                '--safebrowsing-disable-auto-update',
+                '--window-size=1280,800',
+                '--disable-extensions',
+                'about:blank'
+            ]
+            
+            try:
+                browser_process = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE
+                )
+                
+                # Wait for CDP endpoint to be available
+                import time
+                ws_url = None
+                for _ in range(30):  # Wait up to 3 seconds
+                    time.sleep(0.1)
+                    ws_url = self._get_cdp_ws_url()
+                    if ws_url:
+                        break
+                
+                if ws_url:
+                    print(f"Browser started with CDP on port {browser_cdp_port}")
+                    self.send_json({
+                        'success': True,
+                        'port': browser_cdp_port,
+                        'ws_url': ws_url,
+                        'pid': browser_process.pid
+                    })
+                else:
+                    browser_process.kill()
+                    browser_process = None
+                    self.send_json({'error': 'Failed to get CDP WebSocket URL'}, 500)
+                    
+            except Exception as e:
+                self.send_json({'error': str(e)}, 500)
+    
+    def _get_cdp_ws_url(self):
+        """Get the WebSocket URL for CDP connection"""
+        import urllib.request
+        try:
+            with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json/version', timeout=1) as response:
+                data = json.loads(response.read().decode())
+                return data.get('webSocketDebuggerUrl')
+        except:
+            return None
+    
+    def handle_browser_stop(self):
+        """Stop the browser"""
+        global browser_process
+        
+        with browser_lock:
+            if browser_process and browser_process.poll() is None:
+                browser_process.terminate()
+                try:
+                    browser_process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    browser_process.kill()
+                browser_process = None
+                self.send_json({'success': True, 'message': 'Browser stopped'})
+            else:
+                # Try to kill any Chrome with our debugging port
+                try:
+                    subprocess.run(['pkill', '-f', f'--remote-debugging-port={browser_cdp_port}'], capture_output=True)
+                except:
+                    pass
+                browser_process = None
+                self.send_json({'success': True, 'message': 'Browser stopped'})
+    
+    def handle_browser_save_dom(self, data):
+        """Save DOM HTML to file"""
+        html = data.get('html', '')
+        url = data.get('url', 'unknown')
+        
+        if not html:
+            self.send_json({'error': 'No HTML provided'}, 400)
+            return
+        
+        # Generate filename from URL
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        domain = parsed.hostname or 'unknown'
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        
+        output_dir = PROJECT_ROOT / "data" / "browser_extracts"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        filename = f"{domain}_{timestamp}.html"
+        filepath = output_dir / filename
+        
+        try:
+            filepath.write_text(html)
+            self.send_json({
+                'success': True,
+                'path': str(filepath),
+                'size': len(html)
+            })
+            print(f"DOM saved to {filepath}")
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+    
+    # ============================================
+    # End Browser Preview Handlers
+    # ============================================
     
     def check_ralph_running(self):
         """Check if ralph.sh is currently running"""
