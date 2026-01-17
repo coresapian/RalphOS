@@ -1756,19 +1756,21 @@
       "name": "Car and Classic",
       "url": "https://carandclassic.com",
       "outputDir": "data/carandclassic",
-      "status": "pending",
+      "status": "blocked",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T17:26:00Z",
       "pipeline": {
         "expectedUrls": 9406,
         "urlsFound": 9406,
-        "htmlScraped": 81,
+        "htmlScraped": 52,
         "htmlFailed": 0,
-        "htmlBlocked": 0,
+        "htmlBlocked": 9353,
         "builds": null,
         "mods": null
-      }
+      },
+      "blockEvents": [{"timestamp": "2026-01-16T17:26:00Z", "type": "429", "afterUrls": 52}],
+      "notes": "BLOCKED: 429 after 52/9406 URLs. Previous scrape had corrupted HTML (not decompressed). Run: python scripts/tools/stealth_scraper.py --source carandclassic"
     },
     {
       "id": "audiocityusa",

@@ -1,39 +1,53 @@
 {
-  "projectName": "AudioCityUSA Build Extraction",
-  "sourceId": "audiocityusa",
+  "projectName": "Car and Classic HTML Scraping Continuation",
+  "sourceId": "carandclassic",
   "branchName": "main",
-  "targetUrl": "https://audiocityusa.com",
-  "outputDir": "data/audiocityusa",
-  "pipelineStage": 3,
+  "targetUrl": "https://carandclassic.com",
+  "outputDir": "data/carandclassic",
+  "pipelineStage": 2,
   "userStories": [
     {
-      "id": "BUILD-001",
-      "title": "Extract build data from HTML files",
+      "id": "HTML-001",
+      "title": "Create HTML scraper script with checkpoint support",
       "acceptanceCriteria": [
-        "Read schema/build_extraction_schema.json for output format",
-        "Extract year, make, model, submodel from HTML",
-        "Extract wheel/tire/suspension fitment data",
-        "Generate build_id using build_id_generator.py",
-        "Output builds.json with all extracted builds"
+        "Create scrape_html.py with retry logic and exponential backoff",
+        "Use existing checkpoint (aggressive_checkpoint.json) for resumption",
+        "Save HTML to {outputDir}/html/{car_id}.html format",
+        "Track progress in scrape_progress.json"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Completed: 3717/3731 builds extracted. 14 skipped (missing year/make/model). Top makes: Chevrolet (496), Ford (318), BMW (298)."
+      "notes": "Created scrape_html.py with proper brotli/gzip decompression. Fixed corrupted HTML issue from previous scraper."
     },
     {
-      "id": "MOD-001",
-      "title": "Extract modifications from build data",
+      "id": "HTML-002",
+      "title": "Execute HTML scraping for all URLs",
       "acceptanceCriteria": [
-        "Use category_detector.py for assigning categories",
-        "Extract wheels, tires, and suspension as modifications",
-        "Output mods.json with all modifications"
+        "Resume from checkpoint - skip already processed URLs",
+        "Scrape remaining URLs (9314 of 9406 remaining)",
+        "Handle 404s gracefully - mark as htmlFailed",
+        "If blocked (403/429) - STOP and mark source as blocked"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "Completed: 8049 mods extracted (3717 wheels, 3717 tires, 615 suspension). All builds have mods attached."
+      "notes": "BLOCKED after 52 URLs scraped successfully. Rate limited with 429. Source marked as blocked."
+    },
+    {
+      "id": "HTML-003",
+      "title": "Verify scraping completion and update sources.json",
+      "acceptanceCriteria": [
+        "Count HTML files in html/ directory",
+        "Update sources.json pipeline: htmlScraped, htmlFailed, htmlBlocked",
+        "Run test: python scripts/tools/test_scraper.py {outputDir}/scrape_html.py",
+        "Mark stories complete only if test passes"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Updated sources.json: status=blocked, htmlScraped=52, htmlBlocked=9353. Block event recorded."
     }
   ],
-  "createdAt": "2026-01-16T19:00:00Z",
+  "createdAt": "2026-01-16T19:35:00Z",
   "createdBy": "ralph",
-  "completedAt": "2026-01-16T19:30:00Z"
+  "completedAt": "2026-01-16T17:28:00Z",
+  "completionNotes": "Source BLOCKED by 429 rate limiting. Needs stealth scraper for continuation."
 }

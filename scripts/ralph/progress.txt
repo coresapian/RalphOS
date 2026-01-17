@@ -198,3 +198,46 @@ This file captures accumulated knowledge from Ralph iterations. Each entry docum
 
 ---
 
+### 2026-01-16 - Car and Classic HTML Scraping (Stage 2) - BLOCKED
+- **Source**: Car and Classic (carandclassic.com)
+- **Action**: HTML Scraping for Stage 2
+- **Files Created/Modified**:
+  - `data/carandclassic/scrape_html.py` - New scraper with proper brotli/gzip decompression
+  - `data/carandclassic/scrape_checkpoint.json` - Fresh checkpoint tracking
+  - `data/carandclassic/scrape_progress.jsonl` - Progress log
+  - `scripts/ralph/sources.json` - Updated status=blocked, htmlScraped=52, htmlBlocked=9353
+- **Pipeline Status**: BLOCKED (429 Rate Limited)
+  - expectedUrls=9406, urlsFound=9406
+  - htmlScraped=52, htmlFailed=0, htmlBlocked=9353
+- **Critical Issue Discovered**:
+  - Previous scraper saved compressed (brotli) response bodies without decompressing
+  - 92 existing HTML files were corrupted binary data (not valid HTML)
+  - Created new scraper that properly handles Content-Encoding headers
+- **Block Event**:
+  - Rate limited at URL 53 with HTTP 429 (Too Many Requests)
+  - Correctly stopped immediately to avoid permanent ban
+  - Block recorded in sources.json blockEvents array
+
+**Learnings:**
+1. **ALWAYS handle Content-Encoding** - Modern sites use brotli/gzip; use `brotli` library for decompression
+2. **Validate HTML after scraping** - Check for `<!doctype` to ensure proper HTML, not binary garbage
+3. Car and Classic has aggressive rate limiting (~50 requests before 429)
+4. Site requires stealth scraper for bulk operations
+5. Previous htmlScraped count (91) was invalid - those files were corrupted
+
+**Technical Fix Applied:**
+```python
+import brotli
+import gzip
+
+def decompress_response(response):
+    encoding = response.headers.get("content-encoding", "").lower()
+    if encoding == "br":
+        return brotli.decompress(response.content).decode("utf-8")
+    elif encoding == "gzip":
+        return gzip.decompress(response.content).decode("utf-8")
+    return response.text
+```
+
+---
+
