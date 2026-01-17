@@ -1373,12 +1373,33 @@ START by navigating to the URL and taking a snapshot.
             except Exception as e:
                 print(f"Error force killing {name}: {e}")
         
+        # Step 5: Reset any "in_progress" sources to "stopped" in sources.json
+        stopped_sources = []
+        try:
+            if SOURCES_FILE.exists():
+                data = json.loads(SOURCES_FILE.read_text())
+                sources = data.get('sources', [])
+                
+                for source in sources:
+                    if source.get('status') == 'in_progress':
+                        source['status'] = 'stopped'
+                        stopped_sources.append(source.get('name', source.get('id', 'unknown')))
+                
+                if stopped_sources:
+                    with open(SOURCES_FILE, 'w') as f:
+                        json.dump(data, f, indent=2)
+                    print(f"Reset {len(stopped_sources)} in_progress sources to stopped")
+        except Exception as e:
+            print(f"Error resetting source status: {e}")
+        
         # Build response message
         parts = []
         if graceful:
             parts.append(f"✓ Gracefully stopped: {', '.join(graceful)}")
         if forced:
             parts.append(f"⚡ Force killed: {', '.join(forced)}")
+        if stopped_sources:
+            parts.append(f"📋 Reset status: {', '.join(stopped_sources)}")
         
         if parts:
             message = ' | '.join(parts)
@@ -1389,7 +1410,8 @@ START by navigating to the URL and taking a snapshot.
             'success': True, 
             'message': message, 
             'graceful': graceful,
-            'forced': forced
+            'forced': forced,
+            'reset_sources': stopped_sources
         })
     
     def handle_ralph_status(self):
