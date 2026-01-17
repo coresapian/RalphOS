@@ -1,51 +1,50 @@
 {
-  "projectName": "Roush Performance Build Extraction",
+  "projectName": "Roush Performance Mod Extraction",
   "sourceId": "roushperformance",
   "branchName": "main",
   "targetUrl": "https://roushperformance.com",
   "outputDir": "data/roushperformance",
-  "pipelineStage": 3,
+  "pipelineStage": 4,
   "userStories": [
     {
-      "id": "BUILD-001",
-      "title": "Create build extraction script",
+      "id": "MOD-001",
+      "title": "Create mod extraction script",
       "acceptanceCriteria": [
-        "Create extract_builds.py that parses HTML files",
-        "Extract: year, make (always Ford), model, package from og:title",
-        "Extract: horsepower, torque from og:description",
-        "Generate build_id from URL using build_id_generator.py",
-        "Output to builds.json with schema compliance"
+        "Create extract_mods.py that reads builds.json",
+        "Extract modifications from each build",
+        "Use category_detector for categorization",
+        "Output to mods.json"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Created extract_builds.py with og:title parsing, package detection for Stage 1-3, NITEMARE, TRAKPAK, etc."
+      "notes": "Created extract_mods.py following Hennessey pattern."
     },
     {
-      "id": "BUILD-002",
-      "title": "Execute build extraction for all HTML files",
+      "id": "MOD-002",
+      "title": "Execute mod extraction",
       "acceptanceCriteria": [
-        "Extract builds from all 59 HTML files",
-        "Handle missing fields gracefully",
-        "Set source_type=gallery, build_source=roushperformance"
+        "Extract mods from all 59 builds",
+        "Validate categories using category_detector",
+        "Output mods.json with proper metadata"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "59/59 builds extracted. Models: Mustang (23), F-150 (20), Super Duty (8), Raptor (4), Ranger (3), Slingshot (1)."
+      "notes": "33 mods extracted (all Engine category - ROUSH packages). 33/59 builds have modifications."
     },
     {
-      "id": "BUILD-003",
-      "title": "Update sources.json and verify completion",
+      "id": "MOD-003",
+      "title": "Update sources.json and mark complete",
       "acceptanceCriteria": [
-        "Update sources.json with builds count",
-        "Validate builds.json against schema",
-        "Mark stage complete if all builds extracted"
+        "Update sources.json with mods count",
+        "Set status=completed",
+        "Update progress.txt with learnings"
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Updated sources.json: builds=59. Ready for Stage 4 (Mod Extraction)."
+      "notes": "Updated sources.json: mods=33, status=completed. SOURCE COMPLETE!"
     }
   ],
-  "createdAt": "2026-01-17T01:25:00Z",
+  "createdAt": "2026-01-17T01:35:00Z",
   "createdBy": "ralph",
-  "completedAt": "2026-01-17T01:35:00Z"
+  "completedAt": "2026-01-17T01:40:00Z"
 }

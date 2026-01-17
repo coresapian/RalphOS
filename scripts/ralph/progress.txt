@@ -275,3 +275,41 @@ def decompress_response(response):
 
 ---
 
+### 2026-01-17 - Roush Performance Full Pipeline (Stages 2-4) - SOURCE COMPLETE
+- **Source**: Roush Performance (roushperformance.com)
+- **Action**: HTML Scraping → Build Extraction → Mod Extraction
+- **Files Created/Modified**:
+  - `data/roushperformance/scrape_html.py` - HTML scraper with proxy clearing
+  - `data/roushperformance/extract_builds.py` - Build extractor with package detection
+  - `data/roushperformance/extract_mods.py` - Mod extractor from builds.json
+  - `data/roushperformance/builds.json` - 59 builds extracted
+  - `data/roushperformance/mods.json` - 33 mods extracted
+- **Pipeline Status**: COMPLETE ✓
+  - expectedUrls=59, urlsFound=59, htmlScraped=59 (100% success)
+  - builds=59, mods=33
+  - Zero failures, zero blocks - Shopify platform is scraper-friendly
+- **Key Technical Discoveries**:
+  1. **Proxy clearing for sandbox** - Must clear HTTP_PROXY/HTTPS_PROXY/ALL_PROXY env vars
+     - Without this: `ImportError: Using SOCKS proxy, but the 'socksio' package is not installed`
+     - Fix: `for var in ['HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY', ...]: os.environ.pop(var, None)`
+  2. **Roush package patterns** - Regex patterns for detecting packages:
+     - Stage packages: `r"STAGE\s*(\d+)"` → Stage 1, Stage 2, Stage 3
+     - Named packages: NITEMARE, JACKHAMMER, TRAKPAK, P-51, RS, SC, 450R, ROUSHCHARGED
+  3. **Polaris Slingshot exception** - Only non-Ford vehicle in catalog
+     - URL pattern: `/products/roush-polaris-slingshot`
+     - Make: Polaris, Model: Slingshot
+- **Data Summary**:
+  - Makes: Ford (58), Polaris (1)
+  - Models: Mustang (23), F-150 (20), Super Duty (8), Raptor (4), Ranger (3), Slingshot (1)
+  - Modifications: 33 Engine packages (56% of builds have ROUSH packages)
+  - Packages by type: Stage 1-3 (11), NITEMARE (5), SC (5), Stage 2 (4), TRAKPAK (2), etc.
+
+**Learnings:**
+1. Roush uses Shopify platform (like Hennessey) - consistent /products/ URL structure
+2. og:title contains `{Year} {Package?} {Model}` - package name is optional
+3. Most vehicles are Ford (only exception: Polaris Slingshot partnership)
+4. Clearing proxy env vars is essential when running scrapers in sandbox environments
+5. 56% package rate is lower than Hennessey (33%) because gallery includes stock model pages
+
+---
+
