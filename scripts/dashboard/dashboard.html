@@ -108,8 +108,13 @@
     
     .main-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: 0fr 1fr;
       gap: 24px;
+      transition: grid-template-columns 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .main-grid.logs-expanded {
+      grid-template-columns: 2fr 1fr;
     }
     
     .card {
@@ -117,6 +122,71 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       overflow: hidden;
+    }
+    
+    /* Log Card Collapsible */
+    .card.log-card {
+      min-width: 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: left center;
+    }
+    
+    .main-grid:not(.logs-expanded) .card.log-card {
+      width: 50px;
+      min-width: 50px;
+      max-width: 50px;
+      cursor: pointer;
+    }
+    
+    .main-grid:not(.logs-expanded) .card.log-card .card-header,
+    .main-grid:not(.logs-expanded) .card.log-card .card-body {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .main-grid:not(.logs-expanded) .card.log-card .log-collapsed-tab {
+      display: flex;
+    }
+    
+    .log-collapsed-tab {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .log-collapsed-tab:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+    
+    .log-collapsed-tab .log-expand-icon {
+      font-size: 18px;
+      animation: pulseRight 2s infinite;
+    }
+    
+    @keyframes pulseRight {
+      0%, 100% { transform: translateX(0); opacity: 0.6; }
+      50% { transform: translateX(3px); opacity: 1; }
+    }
+    
+    /* Sources Card Full Width */
+    .card.sources-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .card-header {
@@ -898,6 +968,24 @@
       margin-left: auto;
     }
     
+    .log-collapse-btn {
+      padding: 4px 10px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-left: 12px;
+    }
+    
+    .log-collapse-btn:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border-color: var(--accent-red);
+    }
+    
     .log-controls button {
       padding: 4px 8px;
       background: var(--bg-secondary);
@@ -1352,13 +1440,19 @@
     </button>
   </div>
   
-  <div class="main-grid">
-    <div class="card">
+  <div class="main-grid" id="mainGrid">
+    <div class="card log-card" id="logCard" style="position: relative;">
+      <div class="log-collapsed-tab" onclick="toggleLogPanel()">
+        <span class="log-expand-icon">→</span>
+        <span>📋 Live Log</span>
+        <span class="log-expand-icon">→</span>
+      </div>
       <div class="card-header">
         <div class="status-badge" style="padding: 6px 12px;">
           <div class="status-dot" id="statusDot"></div>
           <span id="statusText">Checking...</span>
         </div>
+        <button class="log-collapse-btn" onclick="toggleLogPanel()" title="Collapse log panel">✕</button>
         <div class="log-controls">
           <button onclick="refreshLogNow()" title="Refresh now">🔄</button>
           <button id="autoRefreshBtn" class="active" onclick="toggleAutoRefresh()" title="Toggle auto-refresh">Auto</button>
@@ -1373,7 +1467,7 @@
       </div>
     </div>
     
-    <div class="card">
+    <div class="card sources-card" id="sourcesCard">
       <div class="card-header" style="flex-direction: column; align-items: stretch; gap: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <h2 style="display: flex; align-items: center; gap: 16px;">
@@ -2247,6 +2341,25 @@
       }
     }
     
+    // Log panel expand/collapse
+    let logPanelExpanded = false; // Default to collapsed
+    
+    function toggleLogPanel() {
+      logPanelExpanded = !logPanelExpanded;
+      const mainGrid = document.getElementById('mainGrid');
+      mainGrid.classList.toggle('logs-expanded', logPanelExpanded);
+      
+      // Save preference
+      localStorage.setItem('logPanelExpanded', logPanelExpanded);
+    }
+    
+    // Restore log panel state on load
+    function initLogPanel() {
+      const saved = localStorage.getItem('logPanelExpanded');
+      logPanelExpanded = saved === 'true';
+      document.getElementById('mainGrid').classList.toggle('logs-expanded', logPanelExpanded);
+    }
+    
     // Log refresh controls
     let autoRefreshEnabled = true;
     let autoScrollEnabled = true;
@@ -2648,6 +2761,7 @@
     }
     
     // Initial load and start refresh
+    initLogPanel();
     updateDashboard();
     setInterval(updateDashboard, REFRESH_INTERVAL);
     
