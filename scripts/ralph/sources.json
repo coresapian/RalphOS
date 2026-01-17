@@ -1986,7 +1986,7 @@
       "status": "completed",
       "priority": 5,
       "attempted": 1,
-      "lastAttempted": "2026-01-17T08:00:00Z",
+      "lastAttempted": "2026-01-17T08:15:00Z",
       "pipeline": {
         "expectedUrls": 7,
         "urlsFound": 7,
@@ -1994,8 +1994,9 @@
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": 7,
-        "mods": 55
-      }
+        "mods": 77
+      },
+      "notes": "COMPLETE: 7 builds, 77 mods. UK performance tuner. Packages: GRAVITY WAVE (BMW M3), PREDATOR/PREDATOR II (Jaguar F-Type), BEAST (Land Rover Defender), KRAKEN (Mercedes A45), TYPHON (Range Rover SVR), KATANA FIRE (VW Golf R). Categories: Exhaust (22), Exterior (19), Engine (15)."
     },
     {
       "id": "manhart_automotive",
