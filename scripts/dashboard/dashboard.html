@@ -860,6 +860,29 @@
       color: var(--accent-cyan);
     }
     
+    .log-controls button.kill-btn {
+      background: rgba(248, 113, 113, 0.15);
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+      font-weight: 600;
+    }
+    
+    .log-controls button.kill-btn:hover {
+      background: rgba(248, 113, 113, 0.3);
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+    }
+    
+    .log-controls button.kill-btn.killing {
+      animation: pulse-red 0.5s infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes pulse-red {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
     .auto-scroll-indicator {
       font-size: 10px;
       color: var(--text-muted);
@@ -1026,6 +1049,7 @@
           <button onclick="refreshLogNow()" title="Refresh now">🔄</button>
           <button id="autoRefreshBtn" class="active" onclick="toggleAutoRefresh()" title="Toggle auto-refresh">Auto</button>
           <button onclick="clearLogDisplay()" title="Clear display">Clear</button>
+          <button id="killAllBtn" class="kill-btn" onclick="killAllRalphs()" title="Kill all Ralph processes">☠️ Kill All</button>
           <span class="auto-scroll-indicator" id="autoScrollIndicator">↓ Auto-scroll ON</span>
         </div>
         <span class="refresh-time" id="logRefresh">--</span>
@@ -1251,6 +1275,48 @@
     
     function clearLogDisplay() {
       document.getElementById('logOutput').innerHTML = '<span class="info">Log cleared. Waiting for new data...</span>';
+    }
+    
+    async function killAllRalphs() {
+      const btn = document.getElementById('killAllBtn');
+      const originalText = btn.innerHTML;
+      
+      if (!confirm('☠️ Kill ALL Ralph processes?\n\nThis will terminate:\n• All ralph.sh loops\n• All Claude CLI processes\n• All Python scrapers\n\nAre you sure?')) {
+        return;
+      }
+      
+      btn.classList.add('killing');
+      btn.innerHTML = '☠️ Killing...';
+      
+      try {
+        const response = await fetch(`${API_BASE}/ralph/kill-all`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          btn.innerHTML = '☠️ Killed!';
+          setTimeout(() => {
+            btn.classList.remove('killing');
+            btn.innerHTML = originalText;
+          }, 2000);
+          
+          // Add message to log
+          const logOutput = document.getElementById('logOutput');
+          const killMsg = document.createElement('div');
+          killMsg.innerHTML = `<span class="error">[${new Date().toLocaleTimeString()}] ☠️ KILL ALL: ${data.message}</span>`;
+          logOutput.appendChild(killMsg);
+          logOutput.scrollTop = logOutput.scrollHeight;
+        } else {
+          throw new Error(data.error || 'Unknown error');
+        }
+      } catch (error) {
+        console.error('Kill all failed:', error);
+        btn.classList.remove('killing');
+        btn.innerHTML = '❌ Failed';
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+      }
     }
     
     async function refreshLogNow() {

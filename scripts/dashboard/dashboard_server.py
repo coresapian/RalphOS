@@ -71,6 +71,8 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self.handle_start_ralph(data)
         elif path == '/ralph/stop':
             self.handle_stop_ralph()
+        elif path == '/ralph/kill-all':
+            self.handle_kill_all_ralphs()
         elif path == '/prd/generate':
             self.handle_generate_prd(data)
         elif path == '/prd/save':
@@ -1161,6 +1163,65 @@ START by navigating to the URL and taking a snapshot.
                     self.send_json({'success': True, 'message': 'Ralph processes terminated'})
                 except:
                     self.send_json({'success': True, 'message': 'No Ralph running'})
+    
+    def handle_kill_all_ralphs(self):
+        """Kill ALL Ralph-related processes aggressively"""
+        global ralph_process
+        killed = []
+        
+        with ralph_lock:
+            # 1. Kill our tracked process
+            if ralph_process and ralph_process.poll() is None:
+                ralph_process.kill()
+                killed.append('tracked ralph process')
+                ralph_process = None
+        
+        # 2. Kill ralph.sh bash loops
+        try:
+            result = subprocess.run(['pkill', '-9', '-f', 'ralph.sh'], capture_output=True)
+            if result.returncode == 0:
+                killed.append('ralph.sh loops')
+        except Exception as e:
+            print(f"Error killing ralph.sh: {e}")
+        
+        # 3. Kill Claude CLI processes
+        try:
+            result = subprocess.run(['pkill', '-9', '-f', 'claude.*--dangerously-skip-permissions'], capture_output=True)
+            if result.returncode == 0:
+                killed.append('claude CLI')
+        except Exception as e:
+            print(f"Error killing claude: {e}")
+        
+        # 4. Kill stealth scraper processes
+        try:
+            result = subprocess.run(['pkill', '-9', '-f', 'stealth_scraper.py'], capture_output=True)
+            if result.returncode == 0:
+                killed.append('stealth scrapers')
+        except Exception as e:
+            print(f"Error killing stealth scrapers: {e}")
+        
+        # 5. Kill aggressive stealth scraper
+        try:
+            result = subprocess.run(['pkill', '-9', '-f', 'aggressive_stealth_scraper.py'], capture_output=True)
+            if result.returncode == 0:
+                killed.append('aggressive scrapers')
+        except Exception as e:
+            print(f"Error killing aggressive scrapers: {e}")
+        
+        # 6. Kill any run_factory_ralph processes
+        try:
+            result = subprocess.run(['pkill', '-9', '-f', 'run_factory_ralph'], capture_output=True)
+            if result.returncode == 0:
+                killed.append('factory ralph')
+        except Exception as e:
+            print(f"Error killing factory ralph: {e}")
+        
+        if killed:
+            message = f"Killed: {', '.join(killed)}"
+        else:
+            message = "No Ralph processes found"
+        
+        self.send_json({'success': True, 'message': message, 'killed': killed})
     
     def handle_ralph_status(self):
         """Get Ralph status"""
