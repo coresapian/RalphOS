@@ -1,50 +1,51 @@
 {
-  "projectName": "Hennessey Performance HTML Scraping",
+  "projectName": "Hennessey Performance Build Extraction",
   "sourceId": "hennesseyperformance",
   "branchName": "main",
   "targetUrl": "https://hennesseyperformance.com",
   "outputDir": "data/hennesseyperformance",
-  "pipelineStage": 2,
+  "pipelineStage": 3,
   "userStories": [
     {
-      "id": "HTML-001",
-      "title": "Create HTML scraper script with checkpoint support",
+      "id": "BUILD-001",
+      "title": "Create build extraction script",
       "acceptanceCriteria": [
-        "Create scrape_html.py with retry logic and exponential backoff",
-        "Handle brotli/gzip Content-Encoding properly",
-        "Save HTML to {outputDir}/html/{build_id}.html format",
-        "Track progress in scrape_checkpoint.json and scrape_progress.jsonl"
+        "Create extract_builds.py that parses HTML files",
+        "Extract: year, make, model, color, VIN, price from titles/meta",
+        "Extract: modifications from og:description (packages, horsepower)",
+        "Generate build_id from URL using build_id_generator.py",
+        "Output to builds.json with schema compliance"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Created scrape_html.py with proper compression handling. Rate limit: 2.5-5 seconds between requests."
+      "notes": "Created extract_builds.py with URL slug parsing, og:description extraction, Unicode normalization for smart quotes."
     },
     {
-      "id": "HTML-002",
-      "title": "Execute HTML scraping for all URLs",
+      "id": "BUILD-002",
+      "title": "Execute build extraction for all HTML files",
       "acceptanceCriteria": [
-        "Scrape all 141 URLs discovered",
-        "Handle 404s gracefully - mark as htmlFailed",
-        "If blocked (403/429) - STOP and mark source as blocked"
+        "Extract builds from all 141 HTML files",
+        "Handle missing fields gracefully",
+        "Set source_type=dealer, build_source=hennesseyperformance"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "SUCCESS: 141/141 URLs scraped (100%). Zero failures, zero blocks. Site is scraper-friendly."
+      "notes": "141/141 builds extracted. 47 have Hennessey packages detected (H1000, VelociRaptor 500, MAMMOTH 1000, Venom, etc). 18 have VINs."
     },
     {
-      "id": "HTML-003",
-      "title": "Verify scraping completion and update sources.json",
+      "id": "BUILD-003",
+      "title": "Update sources.json and verify completion",
       "acceptanceCriteria": [
-        "Count HTML files in html/ directory",
-        "Update sources.json pipeline: htmlScraped, htmlFailed, htmlBlocked",
-        "Mark source complete or blocked based on results"
+        "Update sources.json with builds count",
+        "Validate builds.json against schema",
+        "Mark stage complete if all builds extracted"
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Verified 141 HTML files. Updated sources.json: status=in_progress, htmlScraped=141. Ready for Stage 3."
+      "notes": "Updated sources.json: builds=141. Ready for Stage 4 (Mod Extraction)."
     }
   ],
-  "createdAt": "2026-01-16T17:35:00Z",
+  "createdAt": "2026-01-16T18:00:00Z",
   "createdBy": "ralph",
-  "completedAt": "2026-01-16T17:42:00Z"
+  "completedAt": "2026-01-17T00:52:00Z"
 }

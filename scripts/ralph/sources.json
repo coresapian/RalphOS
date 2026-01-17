@@ -1800,17 +1800,17 @@
       "status": "in_progress",
       "priority": 5,
       "attempted": 1,
-      "lastAttempted": "2026-01-16T17:40:00Z",
+      "lastAttempted": "2026-01-17T00:50:00Z",
       "pipeline": {
         "expectedUrls": 141,
         "urlsFound": 141,
         "htmlScraped": 141,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": null,
+        "builds": 141,
         "mods": null
       },
-      "notes": "Stage 2 COMPLETE: 141/141 URLs scraped (100%). No blocks or failures. Ready for Stage 3 (Build Extraction)."
+      "notes": "Stage 3 COMPLETE: 141/141 builds extracted. 47 with Hennessey packages (H1000, VelociRaptor, MAMMOTH, etc). Ready for Stage 4 (Mod Extraction)."
     },
     {
       "id": "tunedbyanton",
