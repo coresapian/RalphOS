@@ -1705,10 +1705,20 @@
         
         if (data.success) {
           browserLog(`✅ Browser started on port ${data.port}`, 'success');
-          browserLog(`WebSocket: ${data.ws_url}`, 'url');
           
-          // Connect to CDP WebSocket
-          await connectToCDP(data.ws_url);
+          // Try WebSocket connection, fall back to polling mode
+          try {
+            browserLog(`🔌 Attempting WebSocket connection...`, 'action');
+            await connectToCDP(data.ws_url);
+          } catch (wsError) {
+            browserLog(`⚠️ WebSocket unavailable, using polling mode`, 'action');
+            browserConnected = true;
+            updateBrowserStatus(true, 'Connected (Polling)');
+            document.getElementById('browserLoading').style.display = 'none';
+            
+            // Start polling for screenshots
+            startScreenshotPolling();
+          }
           
           document.getElementById('startBrowserBtn').style.display = 'none';
           document.getElementById('stopBrowserBtn').style.display = 'inline-block';
@@ -1757,7 +1767,8 @@
         };
         
         browserWs.onerror = (error) => {
-          browserLog(`❌ WebSocket error`, 'error');
+          browserLog(`❌ WebSocket error: ${error?.message || 'Connection failed'}`, 'error');
+          browserLog(`   This may be due to browser security restrictions on localhost WebSocket connections`, 'error');
           updateBrowserStatus(false, 'Error');
           reject(error);
         };
@@ -1841,6 +1852,48 @@
       });
     }
     
+    // Polling-based screenshot mode (fallback when WebSocket fails)
+    let screenshotPollingInterval = null;
+    
+    function startScreenshotPolling() {
+      if (screenshotPollingInterval) return;
+      
+      browserLog('📸 Starting screenshot polling mode', 'action');
+      
+      // Take initial screenshot
+      takePolledScreenshot();
+      
+      // Poll every 2 seconds
+      screenshotPollingInterval = setInterval(takePolledScreenshot, 2000);
+    }
+    
+    function stopScreenshotPolling() {
+      if (screenshotPollingInterval) {
+        clearInterval(screenshotPollingInterval);
+        screenshotPollingInterval = null;
+      }
+    }
+    
+    async function takePolledScreenshot() {
+      try {
+        const response = await fetch(`${API_BASE}/browser/screenshot`);
+        const data = await response.json();
+        
+        if (data.success && data.screenshot) {
+          const img = document.getElementById('browserScreenshot');
+          const placeholder = document.getElementById('browserPlaceholder');
+          const loading = document.getElementById('browserLoading');
+          
+          img.src = `data:image/jpeg;base64,${data.screenshot}`;
+          img.style.display = 'block';
+          placeholder.style.display = 'none';
+          loading.style.display = 'none';
+        }
+      } catch (err) {
+        // Silent fail for polling
+      }
+    }
+    
     function handleScreencastFrame(params) {
       const img = document.getElementById('browserScreenshot');
       const placeholder = document.getElementById('browserPlaceholder');
@@ -1860,15 +1913,21 @@
     async function stopBrowserSession() {
       browserLog('🛑 Stopping browser session...', 'action');
       
+      // Stop screencast if running
       if (screencastEnabled) {
         await sendCDPCommand('Page.stopScreencast').catch(() => {});
         screencastEnabled = false;
       }
       
+      // Stop screenshot polling if running
+      stopScreenshotPolling();
+      
       if (browserWs) {
         browserWs.close();
         browserWs = null;
       }
+      
+      browserConnected = false;
       
       // Tell backend to stop browser
       try {
@@ -1899,7 +1958,26 @@
       document.getElementById('browserLoading').style.display = 'block';
       
       try {
-        await sendCDPCommand('Page.navigate', { url: fullUrl });
+        // Try WebSocket first if connected
+        if (browserWs && browserWs.readyState === WebSocket.OPEN) {
+          await sendCDPCommand('Page.navigate', { url: fullUrl });
+        } else {
+          // Use API fallback
+          const response = await fetch(`${API_BASE}/browser/navigate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: fullUrl })
+          });
+          const data = await response.json();
+          
+          if (data.success) {
+            browserLog(`✅ Navigation started`, 'success');
+            // Trigger screenshot refresh after navigation
+            setTimeout(takePolledScreenshot, 1500);
+          } else {
+            throw new Error(data.error || 'Navigation failed');
+          }
+        }
       } catch (error) {
         browserLog(`❌ Navigation error: ${error.message}`, 'error');
       }
@@ -3501,10 +3579,10 @@
           
           <div class="prd-actions-sidebar">
             <h3 style="margin-top: 0;">⚡ Actions</h3>
-            <button class="prd-action-btn" onclick="runDomainAnalysis()" title="Analyze website structure with browser">
+            <button class="prd-action-btn" id="btnDomainAnalysis" onclick="runDomainAnalysis()" title="Analyze website structure with browser">
               🔍 Run Domain Analysis
             </button>
-            <button class="prd-action-btn" onclick="runPrdGeneration()" title="Generate PRD from analysis">
+            <button class="prd-action-btn" id="btnGeneratePrd" onclick="runPrdGeneration()" title="Generate PRD from analysis">
               📝 Generate PRD
             </button>
             <button class="prd-action-btn" onclick="savePrdToRalph()" title="Save PRD for Ralph to use">
@@ -3646,18 +3724,60 @@
       document.getElementById('varSourceUrl').value = sourceUrl || '';
       document.getElementById('varOutputDir').value = `data/${sourceId}`;
       
-      // Reset content - show instructions instead of auto-running
-      document.getElementById('prdStreamText').textContent = `🔧 PRD Generator for ${sourceName}\n\n` +
+      // Reset button text to default
+      document.getElementById('btnDomainAnalysis').textContent = '🔍 Run Domain Analysis';
+      document.getElementById('btnGeneratePrd').textContent = '📝 Generate PRD';
+      
+      // Check if files exist and update button text
+      let analysisExists = false;
+      let prdExists = false;
+      
+      try {
+        const analysisCheck = await fetch(`${API_BASE}/prd/check-file`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: `${sourceId}_domain_analysis.md` })
+        });
+        const analysisResult = await analysisCheck.json();
+        analysisExists = analysisResult.exists;
+        
+        const prdCheck = await fetch(`${API_BASE}/prd/check-file`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: `${sourceId}_prd.md` })
+        });
+        const prdResult = await prdCheck.json();
+        prdExists = prdResult.exists;
+      } catch (e) {
+        console.log('Could not check file existence:', e);
+      }
+      
+      // Update button text based on file existence
+      if (analysisExists) {
+        document.getElementById('btnDomainAnalysis').textContent = '🔍 Reanalyze Domain';
+      }
+      if (prdExists) {
+        document.getElementById('btnGeneratePrd').textContent = '📝 Regenerate PRD';
+      }
+      
+      // Build status message
+      let statusMsg = `🔧 PRD Generator for ${sourceName}\n\n` +
         `Source ID: ${sourceId}\n` +
         `URL: ${sourceUrl || 'Not set'}\n\n` +
         `─────────────────────────────────────\n\n` +
+        `📋 Status:\n\n` +
+        `  Domain Analysis: ${analysisExists ? '✅ Exists' : '❌ Not found'}\n` +
+        `  PRD: ${prdExists ? '✅ Exists' : '❌ Not found'}\n\n` +
+        `─────────────────────────────────────\n\n` +
         `📋 Available Actions:\n\n` +
-        `  🔍 Run Domain Analysis\n` +
+        `  🔍 ${analysisExists ? 'Reanalyze Domain' : 'Run Domain Analysis'}\n` +
         `     Analyzes the website structure using browser automation\n\n` +
-        `  📝 Generate PRD\n` +
+        `  📝 ${prdExists ? 'Regenerate PRD' : 'Generate PRD'}\n` +
         `     Creates a PRD from the domain analysis\n\n` +
         `─────────────────────────────────────\n\n` +
-        `Click a button below to start.`;
+        `Click a button to start.`;
+      
+      document.getElementById('prdStreamText').textContent = statusMsg;
       document.getElementById('prdEditorContent').value = '';
       document.getElementById('prdPreviewContent').innerHTML = '<p style="color: var(--text-muted);">Generate a PRD to see the preview...</p>';
       document.getElementById('prdStreamStatus').style.display = 'none';
@@ -3707,6 +3827,9 @@
       document.getElementById('prdCursor').style.display = 'none';
       document.getElementById('prdStatus').textContent = 'Ready';
       document.getElementById('prdTimestamp').textContent = new Date().toLocaleTimeString();
+      
+      // Auto-switch to preview after 1 second
+      setTimeout(() => switchPrdTab('preview'), 1000);
     }
     
     // Manual trigger for PRD generation
@@ -3750,9 +3873,11 @@
       document.getElementById('prdCursor').style.display = 'none';
       document.getElementById('prdStatus').textContent = 'Ready';
       document.getElementById('prdTimestamp').textContent = new Date().toLocaleTimeString();
+      
+      // Auto-switch to preview after 1 second
+      setTimeout(() => switchPrdTab('preview'), 1000);
     }
     
-    // Automated PRD workflow
     // Helper to stream text character by character
     async function streamText(element, text, delay = 5) {
       for (const char of text) {

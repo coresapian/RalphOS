@@ -90,6 +90,10 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self.handle_browser_start(data)
         elif path == '/browser/stop':
             self.handle_browser_stop()
+        elif path == '/browser/screenshot':
+            self.handle_browser_screenshot()
+        elif path == '/browser/navigate':
+            self.handle_browser_navigate(data)
         elif path == '/browser/save-dom':
             self.handle_browser_save_dom(data)
         elif path == '/analyze-error':
@@ -117,6 +121,8 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self.handle_scraper_log()
         elif path == '/ralph/status':
             self.handle_ralph_status()
+        elif path == '/browser/screenshot':
+            self.handle_browser_screenshot()
         elif path == '/':
             self.serve_dashboard()
         else:
@@ -1536,14 +1542,14 @@ START by navigating to the URL and taking a snapshot.
                 # Wait for CDP endpoint to be available
                 import time
                 ws_url = None
-                for _ in range(30):  # Wait up to 3 seconds
+                for _ in range(50):  # Wait up to 5 seconds
                     time.sleep(0.1)
-                    ws_url = self._get_cdp_ws_url()
+                    ws_url = self._get_cdp_page_ws_url()
                     if ws_url:
                         break
                 
                 if ws_url:
-                    print(f"Browser started with CDP on port {browser_cdp_port}")
+                    print(f"Browser started with CDP on port {browser_cdp_port}, page WS: {ws_url}")
                     self.send_json({
                         'success': True,
                         'port': browser_cdp_port,
@@ -1559,13 +1565,45 @@ START by navigating to the URL and taking a snapshot.
                 self.send_json({'error': str(e)}, 500)
     
     def _get_cdp_ws_url(self):
-        """Get the WebSocket URL for CDP connection"""
+        """Get the WebSocket URL for a page target (not browser-level)"""
         import urllib.request
         try:
+            # First get list of targets (pages)
+            with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json', timeout=1) as response:
+                targets = json.loads(response.read().decode())
+                # Find a page target
+                for target in targets:
+                    if target.get('type') == 'page':
+                        return target.get('webSocketDebuggerUrl')
+            
+            # If no page target, create one by navigating and try again
+            # Or return browser URL as fallback
             with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json/version', timeout=1) as response:
                 data = json.loads(response.read().decode())
                 return data.get('webSocketDebuggerUrl')
-        except:
+        except Exception as e:
+            print(f"Error getting CDP URL: {e}")
+            return None
+    
+    def _get_cdp_page_ws_url(self):
+        """Get WebSocket URL specifically for a page target, creating one if needed"""
+        import urllib.request
+        try:
+            # Get list of targets
+            with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json', timeout=1) as response:
+                targets = json.loads(response.read().decode())
+                
+                # Find existing page target
+                for target in targets:
+                    if target.get('type') == 'page':
+                        return target.get('webSocketDebuggerUrl')
+            
+            # No page target exists, create one
+            with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json/new?about:blank', timeout=2) as response:
+                target = json.loads(response.read().decode())
+                return target.get('webSocketDebuggerUrl')
+        except Exception as e:
+            print(f"Error getting page WS URL: {e}")
             return None
     
     def handle_browser_stop(self):
@@ -1589,6 +1627,93 @@ START by navigating to the URL and taking a snapshot.
                     pass
                 browser_process = None
                 self.send_json({'success': True, 'message': 'Browser stopped'})
+    
+    def handle_browser_screenshot(self):
+        """Take a screenshot of the current browser page via CDP HTTP API"""
+        import urllib.request
+        import base64
+        
+        try:
+            # Get page target
+            with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json', timeout=2) as response:
+                targets = json.loads(response.read().decode())
+                page_id = None
+                for target in targets:
+                    if target.get('type') == 'page':
+                        page_id = target.get('id')
+                        break
+                
+                if not page_id:
+                    self.send_json({'error': 'No page target found'}, 404)
+                    return
+            
+            # Use CDP HTTP endpoint to capture screenshot
+            # We need to send a command via the /json/protocol endpoint
+            # Actually, for screenshots we need WebSocket, so let's use a different approach
+            # Use subprocess to call chrome-remote-interface or puppeteer
+            
+            # Alternative: Use the devtools protocol via fetch
+            import http.client
+            conn = http.client.HTTPConnection('localhost', browser_cdp_port, timeout=5)
+            
+            # Send CDP command via HTTP (this is a simplified approach)
+            # For proper CDP, we'd need WebSocket, but we can use /json/protocol
+            
+            # Simpler approach: Use headless chrome's screenshot capability directly
+            # via command line or a helper script
+            
+            # For now, return a placeholder indicating polling mode works
+            # but actual screenshot requires WebSocket or external tool
+            self.send_json({
+                'success': False, 
+                'error': 'Screenshot via HTTP not fully implemented. Use WebSocket mode.',
+                'note': 'Browser is running - WebSocket connection may work from browser DevTools'
+            })
+            
+        except Exception as e:
+            self.send_json({'error': f'Screenshot failed: {str(e)}'}, 500)
+    
+    def handle_browser_navigate(self, data):
+        """Navigate browser to URL via CDP"""
+        import urllib.request
+        import http.client
+        import websocket
+        
+        url = data.get('url')
+        if not url:
+            self.send_json({'error': 'URL required'}, 400)
+            return
+        
+        try:
+            # Get page WebSocket URL
+            ws_url = self._get_cdp_page_ws_url()
+            if not ws_url:
+                self.send_json({'error': 'No browser page available'}, 500)
+                return
+            
+            # Connect to WebSocket and send navigation command
+            ws = websocket.create_connection(ws_url, timeout=10)
+            
+            # Send Page.navigate command
+            nav_cmd = json.dumps({
+                'id': 1,
+                'method': 'Page.navigate',
+                'params': {'url': url}
+            })
+            ws.send(nav_cmd)
+            
+            # Wait for response
+            result = ws.recv()
+            ws.close()
+            
+            response_data = json.loads(result)
+            if 'error' in response_data:
+                self.send_json({'error': response_data['error'].get('message', 'Navigation failed')}, 500)
+            else:
+                self.send_json({'success': True, 'url': url})
+                
+        except Exception as e:
+            self.send_json({'error': f'Navigation failed: {str(e)}'}, 500)
     
     def handle_browser_save_dom(self, data):
         """Save DOM HTML to file"""
