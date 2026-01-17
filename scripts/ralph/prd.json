@@ -1,39 +1,50 @@
 {
-  "projectName": "Hennessey Performance Mod Extraction",
-  "sourceId": "hennesseyperformance",
+  "projectName": "Roush Performance HTML Scraping",
+  "sourceId": "roushperformance",
   "branchName": "main",
-  "targetUrl": "https://hennesseyperformance.com",
-  "outputDir": "data/hennesseyperformance",
-  "pipelineStage": 4,
+  "targetUrl": "https://roushperformance.com",
+  "outputDir": "data/roushperformance",
+  "pipelineStage": 2,
   "userStories": [
     {
-      "id": "MOD-001",
-      "title": "Create mod extraction script",
+      "id": "HTML-001",
+      "title": "Create HTML scraper script with checkpoint support",
       "acceptanceCriteria": [
-        "Create extract_mods.py that reads builds.json",
-        "Extract modifications array from each build",
-        "Use category_detector.py for categorization if needed",
-        "Output to mods.json with build_id reference"
+        "Create scrape_html.py with retry logic and exponential backoff",
+        "Handle brotli/gzip Content-Encoding properly",
+        "Save HTML to {outputDir}/html/{build_id}.html format",
+        "Track progress in scrape_checkpoint.json and scrape_progress.jsonl"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Created extract_mods.py that reads builds.json and extracts mods with build_id references."
+      "notes": "Created scrape_html.py adapted from Hennessey template. Added proxy env var clearing."
     },
     {
-      "id": "MOD-002",
-      "title": "Execute mod extraction and update sources.json",
+      "id": "HTML-002",
+      "title": "Execute HTML scraping for all URLs",
       "acceptanceCriteria": [
-        "Extract mods from all 141 builds",
-        "Count total modifications",
-        "Update sources.json with mods count",
-        "Mark source as completed"
+        "Scrape all 59 URLs discovered",
+        "Handle 404s gracefully - mark as htmlFailed",
+        "If blocked (403/429) - STOP and mark source as blocked"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "47 mods extracted (all Engine category - Hennessey packages). Source marked COMPLETED."
+      "notes": "SUCCESS: 59/59 URLs scraped (100%). Zero failures, zero blocks. Shopify platform is scraper-friendly."
+    },
+    {
+      "id": "HTML-003",
+      "title": "Verify scraping completion and update sources.json",
+      "acceptanceCriteria": [
+        "Count HTML files in html/ directory",
+        "Update sources.json pipeline: htmlScraped, htmlFailed, htmlBlocked",
+        "Mark source in_progress or blocked based on results"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Verified 59 HTML files. Updated sources.json: status=in_progress, htmlScraped=59. Ready for Stage 3."
     }
   ],
-  "createdAt": "2026-01-17T00:55:00Z",
+  "createdAt": "2026-01-17T01:05:00Z",
   "createdBy": "ralph",
-  "completedAt": "2026-01-17T01:00:00Z"
+  "completedAt": "2026-01-17T01:20:00Z"
 }

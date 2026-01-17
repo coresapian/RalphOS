@@ -1893,19 +1893,20 @@
       "name": "Roush Performance",
       "url": "https://roushperformance.com",
       "outputDir": "data/roushperformance",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T01:15:00Z",
       "pipeline": {
         "expectedUrls": 59,
         "urlsFound": 59,
-        "htmlScraped": 0,
+        "htmlScraped": 59,
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": null,
         "mods": null
-      }
+      },
+      "notes": "Stage 2 COMPLETE: 59/59 URLs scraped (100%). No blocks. Shopify-based site. Ready for Stage 3."
     },
     {
       "id": "amc_ebay",
