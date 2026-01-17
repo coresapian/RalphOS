@@ -519,7 +519,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         self.send_json({'exists': False})
     
     def handle_analyze_domain(self, data):
-        """Run domain analysis for a source using LLM"""
+        """Run domain analysis for a source using Claude CLI with browser automation"""
         source_id = data.get('sourceId')
         source_name = data.get('sourceName')
         source_url = data.get('sourceUrl')
@@ -528,118 +528,252 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self.send_json({'error': 'sourceId is required'}, 400)
             return
         
+        if not source_url:
+            self.send_json({'error': 'sourceUrl is required for browser analysis'}, 400)
+            return
+        
         # Create output directory
         output_dir = PROJECT_ROOT / "data" / source_id
         output_dir.mkdir(parents=True, exist_ok=True)
         analysis_file = output_dir / f"{source_id}_domain_analysis.md"
         
-        # Create analysis prompt
-        analysis_prompt = f"""# Domain Analysis: {source_name or source_id}
-
-## Target Information
-- **Source ID**: {source_id}
-- **Source Name**: {source_name or 'Unknown'}
-- **URL**: {source_url or 'No URL provided'}
-
-## Analysis Tasks
-
-Please analyze this automotive website and document:
-
-### 1. Site Structure
-- What type of content does this site have? (vehicle listings, build threads, gallery, forum, etc.)
-- How is the content organized? (categories, makes/models, pagination)
-- What is the URL pattern for individual vehicle/build pages?
-
-### 2. Content Discovery
-- How can all vehicle/build URLs be discovered?
-- Is there pagination? Infinite scroll? Category pages?
-- Are there any sitemap files available?
-- Estimated number of vehicles/builds on the site
-
-### 3. Data Available
-- What vehicle data fields are available? (year, make, model, trim, VIN, etc.)
-- Are modifications/parts listed?
-- Are there images? How many per build?
-- Is there a build story or description?
-
-### 4. Technical Considerations
-- Does the site use JavaScript rendering?
-- Are there anti-bot protections? (Cloudflare, rate limiting, CAPTCHAs)
-- What scraping approach is recommended? (httpx, Camoufox stealth, etc.)
-- Recommended rate limiting delays
-
-### 5. Scraping Strategy
-Based on the analysis, recommend:
-- Best approach for URL discovery
-- Best approach for HTML scraping
-- Key selectors/patterns for data extraction
-- Any special considerations
-
----
-
-*Analysis generated: {datetime.now().isoformat()}*
-"""
-
+        # Try Claude CLI with browser first, fallback to Gemini
         try:
-            # Try to use Gemini API for analysis if available
+            analysis_content = self._run_claude_browser_analysis(source_id, source_name, source_url, output_dir)
+            
+            if analysis_content:
+                analysis_file.write_text(analysis_content)
+                self.send_json({
+                    'success': True,
+                    'analysis': analysis_content,
+                    'path': str(analysis_file),
+                    'method': 'claude-browser'
+                })
+                return
+            
+            # Fallback to Gemini
             import os
             gemini_key = os.environ.get('GEMINI_API_KEY')
-            
-            if gemini_key and source_url:
-                # Use Gemini to analyze the site
+            if gemini_key:
                 analysis_content = self._run_gemini_analysis(source_id, source_name, source_url, gemini_key)
                 if analysis_content:
-                    # Save analysis
-                    full_content = analysis_prompt + "\n\n---\n\n## LLM Analysis Results\n\n" + analysis_content
-                    analysis_file.write_text(full_content)
+                    analysis_file.write_text(analysis_content)
                     self.send_json({
                         'success': True,
                         'analysis': analysis_content,
-                        'path': str(analysis_file)
+                        'path': str(analysis_file),
+                        'method': 'gemini'
                     })
                     return
             
-            # Fallback: Create template analysis
-            template_analysis = f"""
-## Automated Template Analysis
-
-Since no LLM API is available or URL is missing, here's a template:
-
-### Site Type
-- Likely automotive content based on source name
-
-### Recommended Approach
-1. **URL Discovery**: Use sitemap or crawl category pages
-2. **HTML Scraping**: 
-   - If protected: Use `aggressive_stealth_scraper.py`
-   - If standard: Use `httpx` with rate limiting
-3. **Data Extraction**: Create custom extractor in `src/scrapers/core/extractors/`
-
-### Next Steps
-1. Manually visit {source_url or 'the site'} to understand structure
-2. Check for sitemap at `/sitemap.xml`
-3. Identify URL patterns for builds
-4. Test for anti-bot protection
-
----
-
-*Template generated - manual review recommended*
-"""
-            full_content = analysis_prompt + template_analysis
-            analysis_file.write_text(full_content)
-            
+            # Final fallback: template
+            template = self._create_analysis_template(source_id, source_name, source_url)
+            analysis_file.write_text(template)
             self.send_json({
                 'success': True,
-                'analysis': template_analysis,
+                'analysis': template,
                 'path': str(analysis_file),
-                'note': 'Template analysis - manual review recommended'
+                'method': 'template',
+                'note': 'Claude CLI unavailable - template generated'
             })
             
         except Exception as e:
             self.send_json({'error': str(e)}, 500)
     
+    def _run_claude_browser_analysis(self, source_id, source_name, source_url, output_dir):
+        """Run domain analysis using Claude CLI with browser automation"""
+        try:
+            # Create prompt file for Claude
+            prompt_file = output_dir / "analysis_prompt.md"
+            screenshot_path = output_dir / f"{source_id}_screenshot.png"
+            
+            prompt_content = f"""# Domain Analysis Task: {source_name or source_id}
+
+You are analyzing an automotive website for a web scraping project.
+
+## Target
+- **URL**: {source_url}
+- **Source ID**: {source_id}
+- **Output Directory**: {output_dir}
+
+## Instructions
+
+1. **Navigate to the site** using browser tools:
+   - Use `mcp_cursor-ide-browser_browser_navigate` to go to {source_url}
+   - Wait for the page to load
+
+2. **Take a snapshot** to understand the page structure:
+   - Use `mcp_cursor-ide-browser_browser_snapshot` to get the accessibility tree
+   - This shows all interactive elements and content structure
+
+3. **Take a screenshot** for visual reference:
+   - Use `mcp_cursor-ide-browser_browser_take_screenshot` and save to {screenshot_path}
+
+4. **Analyze and document** the following in Markdown format:
+
+### Site Analysis Report
+
+#### 1. Site Type & Content
+- What type of automotive content is this? (vehicle listings, builds, forum, gallery, auction)
+- What's the primary focus? (sales, community, builds showcase)
+- Estimated content volume
+
+#### 2. URL Structure
+- Homepage layout and navigation
+- URL patterns for vehicle/build pages (e.g., `/vehicle/123`, `/builds/slug`)
+- Category/make/model organization
+- Pagination style (numbered pages, infinite scroll, load more)
+
+#### 3. Data Fields Available
+Based on what you can see:
+- Vehicle info: year, make, model, trim, VIN
+- Modifications/parts lists
+- Images (count, quality)
+- Build story/description
+- Seller/owner info
+- Price/auction data
+
+#### 4. Technical Assessment
+- JavaScript rendering: Heavy SPA or server-rendered?
+- Anti-bot indicators: Cloudflare, CAPTCHAs, rate limiting warnings
+- Page load behavior: lazy loading, dynamic content
+- Recommended approach: httpx (simple) or Camoufox (stealth)
+
+#### 5. Key Selectors (from snapshot)
+- Main content container
+- Vehicle/build card selectors
+- Pagination controls
+- Image gallery selectors
+
+#### 6. Scraping Strategy Recommendation
+- URL discovery approach
+- HTML scraping method
+- Rate limiting (recommended delay between requests)
+- Special considerations
+
+5. **Output** the complete analysis as a Markdown document.
+
+IMPORTANT: Actually visit the site with the browser tools - don't just describe what you would do.
+"""
+            prompt_file.write_text(prompt_content)
+            
+            # Run Claude CLI with browser access
+            cmd = [
+                'claude',
+                '--print',
+                '--dangerously-skip-permissions',
+                '-p', str(prompt_file),
+                '--output-format', 'text'
+            ]
+            
+            print(f"Running Claude browser analysis for {source_id}...")
+            
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=180,  # 3 minute timeout
+                cwd=str(PROJECT_ROOT)
+            )
+            
+            if result.returncode == 0 and result.stdout:
+                output = result.stdout.strip()
+                
+                # Add header and metadata
+                analysis = f"""# Domain Analysis: {source_name or source_id}
+
+**URL**: {source_url}  
+**Generated**: {datetime.now().isoformat()}  
+**Method**: Claude CLI with Browser Automation
+
+---
+
+{output}
+
+---
+
+*Screenshot saved to: {screenshot_path}*
+"""
+                # Clean up prompt file
+                prompt_file.unlink(missing_ok=True)
+                
+                return analysis
+            else:
+                print(f"Claude CLI failed: {result.stderr}")
+                return None
+                
+        except subprocess.TimeoutExpired:
+            print(f"Claude analysis timed out for {source_id}")
+            return None
+        except FileNotFoundError:
+            print("Claude CLI not found - install with: npm install -g @anthropic-ai/claude-code")
+            return None
+        except Exception as e:
+            print(f"Claude browser analysis failed: {e}")
+            return None
+    
+    def _create_analysis_template(self, source_id, source_name, source_url):
+        """Create a template analysis when automated analysis fails"""
+        return f"""# Domain Analysis: {source_name or source_id}
+
+**URL**: {source_url}  
+**Generated**: {datetime.now().isoformat()}  
+**Method**: Template (automated analysis unavailable)
+
+---
+
+## ⚠️ Manual Analysis Required
+
+Automated browser analysis was not available. Please manually analyze the site.
+
+### Quick Checklist
+
+1. **Visit the site**: {source_url}
+
+2. **Check sitemap**: {source_url}/sitemap.xml
+
+3. **Identify content type**:
+   - [ ] Vehicle listings / sales
+   - [ ] Build threads / project cars
+   - [ ] Forum discussions
+   - [ ] Gallery / showcase
+   - [ ] Auction house
+
+4. **Note URL patterns**:
+   - Individual build/vehicle URLs
+   - Category/make/model pages
+   - Pagination format
+
+5. **Check for anti-bot**:
+   - [ ] Cloudflare challenge
+   - [ ] CAPTCHA on entry
+   - [ ] Rate limiting warnings
+   - [ ] JavaScript required
+
+6. **Recommended scraping approach**:
+   - Simple sites: `httpx` with 2-3 second delays
+   - Protected sites: `aggressive_stealth_scraper.py`
+
+### Commands to Test
+
+```bash
+# Check sitemap
+curl -s "{source_url}/sitemap.xml" | head -50
+
+# Test basic fetch
+curl -s -o /dev/null -w "%{{http_code}}" "{source_url}"
+
+# Run stealth scraper test
+python scripts/tools/aggressive_stealth_scraper.py --source {source_id} --limit 5
+```
+
+---
+
+*Complete this analysis manually, then generate PRD*
+"""
+    
     def _run_gemini_analysis(self, source_id, source_name, source_url, api_key):
-        """Run analysis using Gemini API"""
+        """Run analysis using Gemini API (fallback)"""
         try:
             import google.generativeai as genai
             
@@ -680,7 +814,16 @@ Please provide a detailed analysis covering:
 Be specific and actionable. This analysis will guide automated scraping."""
 
             response = model.generate_content(prompt)
-            return response.text
+            return f"""# Domain Analysis: {source_name or source_id}
+
+**URL**: {source_url}  
+**Generated**: {datetime.now().isoformat()}  
+**Method**: Gemini API Analysis
+
+---
+
+{response.text}
+"""
             
         except Exception as e:
             print(f"Gemini analysis failed: {e}")
