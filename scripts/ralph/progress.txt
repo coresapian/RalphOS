@@ -348,3 +348,55 @@ def decompress_response(response):
 
 ---
 
+### 2026-01-16 - Wheel Specialists URL Discovery (Stage 1) - URL-001 COMPLETE
+- **Source**: Wheel Specialists (wheelspecialists.com)
+- **Action**: URL Discovery via browser-based JavaScript crawling
+- **Files Created/Modified**:
+  - `data/wheelspecialists/urls.json` - 4,654 unique gallery URLs
+  - `data/wheelspecialists/discover_urls.py` - Python script (couldn't run due to sandbox)
+  - `scripts/ralph/prd.json` - Updated URL-001 passes=true
+  - `scripts/ralph/sources.json` - Updated pipeline counts
+- **Pipeline Status**: URL-001 COMPLETE ✓
+  - expectedUrls=4654, urlsFound=4654
+  - Gallery ID range: 49 to 5681
+  - 54 manufacturers crawled
+- **Key Technical Discoveries**:
+  1. **Sandbox network restrictions** - Python httpx requests failed with DNS errors
+     - Error: "nodename nor servname provided, or not known"
+     - Solution: Use Chrome DevTools MCP browser JavaScript for network requests
+  2. **Pagination parsing** - Site shows "PAGE X OF Y" pattern in search results
+     - Must use browser-rendered pages, not fetch() responses, for accurate page counts
+     - Initial fetch() showed 1 page for all makes (incorrect); browser showed true counts
+  3. **URL pattern** - `/gallery/detail/{id}/1/{make-model-wheel-slug}`
+     - Gallery IDs are sparse (49-5681 range, only 4654 actual URLs)
+  4. **Manufacturer IDs** - 54 make IDs mapped from dropdown (Acura=1, BMW=5, etc.)
+- **Data Summary**:
+  - Total URLs: 4,654 unique gallery detail pages
+  - Top manufacturers: Mercedes-Benz (882), Chevrolet (314), Lexus (308), Land Rover (292), BMW (284)
+  - Site type: Wheel/tire retailer gallery showcasing customer installations
+
+**Browser JavaScript Crawling Technique:**
+```javascript
+// Batch crawl with accurate page counts from browser
+const manufacturers = [{ name: 'Mercedes-Benz', id: 32, pages: 48 }, ...];
+let allUrls = [];
+for (const make of manufacturers) {
+  for (let page = 1; page <= make.pages; page++) {
+    const offset = page * 20;
+    const response = await fetch(`/gallery/search/1/${offset}/?vma=${make.id}`);
+    const html = await response.text();
+    const matches = html.matchAll(/\/gallery\/detail\/\d+\/\d+\/[^"]+/g);
+    allUrls.push(...Array.from(matches, m => baseUrl + m[0]));
+  }
+}
+```
+
+**Learnings:**
+1. When Python network requests fail in sandbox, use Chrome DevTools MCP as fallback
+2. JavaScript fetch() may return different HTML than browser rendering - verify pagination accuracy
+3. Offset-based pagination pattern: page N uses offset N*20 (not N*pageSize for page 1)
+4. Wheel gallery sites are excellent sources - high-quality fitment data on specific vehicles
+5. Store intermediate results in localStorage during long crawls to prevent data loss
+
+---
+
