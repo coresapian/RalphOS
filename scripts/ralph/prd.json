@@ -1,161 +1,83 @@
 {
-  "projectName": "Wheel Specialists Scraping",
-  "sourceId": "wheelspecialists",
+  "projectName": "650Scom Scraping",
+  "sourceId": "650scom",
   "branchName": "main",
-  "targetUrl": "https://www.wheelspecialists.com",
-  "outputDir": "data/wheelspecialists",
+  "targetUrl": "https://650sforum.com",
+  "outputDir": "data/650scom",
+  "pipelineStage": 4,
   "userStories": [
     {
       "id": "URL-001",
-      "title": "Discover all vehicle gallery URLs via make-based pagination",
+      "title": "Discover all build/vehicle URLs on the site",
       "acceptanceCriteria": [
-        "Extract all make IDs from /gallery page (50+ makes identified)",
-        "Paginate through each make's gallery using /gallery/search/{page}/{offset}/?vma={make_id}",
-        "Parse pagination info ('PAGE X OF Y') to determine total pages per make",
-        "Output unique detail URLs in format /gallery/detail/{id}/{page}/{slug}",
-        "Generate urls.json with all discovered URLs",
-        "Include gallery ID range and count statistics"
+        "urls.json contains all discoverable URLs",
+        "URLs are deduplicated and normalized"
       ],
       "priority": 1,
-      "passes": true,
-      "notes": "Discovered 4,654 unique URLs across 54 manufacturers using browser-based JavaScript crawling. Gallery IDs range from 49 to 5681. Top sources: Mercedes-Benz (882), Chevrolet (314), Lexus (308), Land Rover (292), BMW (284)."
+      "passes": true
     },
     {
       "id": "HTML-001",
-      "title": "Scrape HTML from all discovered gallery detail pages",
+      "title": "Create HTML scraping script with retry logic",
       "acceptanceCriteria": [
-        "Read URLs from urls.jsonl",
-        "Fetch HTML for each detail page using httpx (no browser needed)",
-        "Save HTML files to html/ directory named by build ID",
-        "Implement 2-3 second delays between requests",
-        "Track progress in scrape_progress.jsonl",
-        "Handle 404s gracefully (some IDs may have gaps)"
+        "scrape_html.py exists with proper error handling",
+        "Progress tracking via scrape_progress.json"
+      ],
+      "priority": 1,
+      "passes": true
+    },
+    {
+      "id": "HTML-002",
+      "title": "Execute full HTML scrape with progress tracking",
+      "acceptanceCriteria": [
+        "All 288 URLs scraped to html/ directory",
+        "Progress >= 95% of URLs"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": "Site serves static HTML, no JavaScript rendering required. Use httpx scraper template. Respect rate limits even though no anti-bot detected."
+      "passes": true
     },
     {
       "id": "BUILD-001",
-      "title": "Extract structured build data from HTML files",
+      "title": "Create build extraction script for forum threads",
       "acceptanceCriteria": [
-        "Parse year, make, model from page title (format: 'YYYY Make Model with...')",
-        "Extract wheel brand and model from breadcrumb/title",
-        "Extract wheel size from page content (e.g., '22\" ANRKY XR-301')",
-        "Extract trim/variant info if present (e.g., 'TARGA 4 GTS')",
-        "Extract wheel specs if available (e.g., '21x9.5 22X12' for staggered setups)",
-        "Extract main image URL from gallery/VehicleImage path",
-        "Generate deterministic build_id from source URL",
-        "Output to builds.jsonl following schema"
+        "extract_builds.py parses XenForo thread HTML",
+        "Extracts: year, make, model, build_title, build_story, images"
       ],
-      "priority": 3,
-      "passes": false,
-      "notes": "Title format is 'YYYY Make Model with SIZE\" Brand Wheel-Model in Finish'. Detail pages have trim info in body. Wheel link provides additional specs."
+      "priority": 1,
+      "passes": true
+    },
+    {
+      "id": "BUILD-002",
+      "title": "Execute build extraction on scraped HTML",
+      "acceptanceCriteria": [
+        "builds.jsonl contains extracted builds",
+        "Valid build_id for each record"
+      ],
+      "priority": 2,
+      "passes": true
     },
     {
       "id": "MOD-001",
-      "title": "Extract wheel/tire modifications from builds",
+      "title": "Create mod extraction script for forum builds",
       "acceptanceCriteria": [
-        "Extract wheel brand, model, size, and finish as modifications",
-        "Categorize as 'Wheels/Tires' modification type",
-        "Link to wheel detail page when available",
-        "Include front/rear sizes for staggered setups",
-        "Output to mods.jsonl with build_id reference"
+        "extract_mods.py extracts modifications from build_story text",
+        "Uses category_detector for classification"
       ],
-      "priority": 4,
-      "passes": false,
-      "notes": "This is a wheel/tire focused site - each build typically has 1-2 modifications (wheels and optional tires). Wheel detail link format: /wheel/detail/{wheel_id}/{page}"
+      "priority": 1,
+      "passes": true
+    },
+    {
+      "id": "MOD-002",
+      "title": "Execute mod extraction on builds.jsonl",
+      "acceptanceCriteria": [
+        "mods.json contains extracted modifications",
+        "Category breakdown documented"
+      ],
+      "priority": 2,
+      "passes": true
     }
   ],
-  "siteAnalysis": {
-    "contentType": "wheel_tire_gallery",
-    "siteDescription": "Wheel Specialists Inc (WSI) is a wheel and tire retailer in Tempe, AZ with a gallery of customer vehicle photos showcasing their wheel/tire installations",
-    "paginationType": "offset_based",
-    "paginationDetails": {
-      "format": "/gallery/search/{page}/{offset}/?vma={make_id}&vmo={model_id}&wb={wheel_brand}&wm={wheel_model}",
-      "pageSize": 20,
-      "offsetIncrement": 20,
-      "example": "page 1 = /1/20/, page 2 = /1/40/, page 3 = /1/60/"
-    },
-    "antiBot": "none_detected",
-    "scrapingMethod": "httpx",
-    "estimatedBuilds": "5000+",
-    "dataFields": [
-      "year",
-      "make",
-      "model",
-      "trim",
-      "wheel_brand",
-      "wheel_model",
-      "wheel_size",
-      "wheel_finish",
-      "wheel_specs",
-      "gallery_images"
-    ],
-    "urlPatterns": {
-      "gallery_home": "https://www.wheelspecialists.com/gallery",
-      "make_search": "https://www.wheelspecialists.com/gallery/search/1/20/?vma={make_id}",
-      "model_search": "https://www.wheelspecialists.com/gallery/search/1/20/?vmo={model_id}",
-      "detail_page": "https://www.wheelspecialists.com/gallery/detail/{id}/{page}/{slug}",
-      "wheel_detail": "https://www.wheelspecialists.com/wheel/detail/{wheel_id}/{page}"
-    },
-    "makeIds": {
-      "Acura": 1,
-      "Alfa Romeo": 65,
-      "Aston Martin": 2,
-      "Audi": 3,
-      "Bentley": 4,
-      "BMW": 5,
-      "Bugatti": 63,
-      "Buick": 55,
-      "Cadillac": 7,
-      "Chevrolet": 8,
-      "Chrysler": 9,
-      "Dodge": 11,
-      "Ferrari": 13,
-      "Fisker": 58,
-      "Ford": 14,
-      "Genesis": 61,
-      "GMC": 16,
-      "Honda": 17,
-      "Hummer": 18,
-      "Hyundai": 19,
-      "Ineos": 69,
-      "Infiniti": 20,
-      "Jaguar": 22,
-      "Jeep": 23,
-      "Kia": 54,
-      "Lamborghini": 25,
-      "Land Rover": 26,
-      "Lexus": 27,
-      "Lincoln": 28,
-      "Lotus": 29,
-      "Lucid": 68,
-      "Maserati": 30,
-      "Mazda": 31,
-      "McLaren": 64,
-      "Mercedes-Benz": 32,
-      "Mini": 34,
-      "Mitsubishi": 35,
-      "Nissan": 36,
-      "Pontiac": 40,
-      "Porsche": 41,
-      "Ram": 66,
-      "Rivian": 67,
-      "Rolls-Royce": 42,
-      "Saturn": 44,
-      "Scion": 45,
-      "Smart": 52,
-      "Subaru": 62,
-      "Suzuki": 56,
-      "Tesla": 59,
-      "Toyota": 48,
-      "Volkswagen": 49,
-      "Volvo": 50
-    }
-  },
-  "createdAt": "2026-01-16T18:40:01.152245",
-  "updatedAt": "2026-01-16T19:15:00.000000",
+  "createdAt": "2026-01-16T18:53:47.272170",
   "createdBy": "dashboard",
-  "analyzedBy": "claude-browser-analysis"
+  "updatedAt": "2026-01-16T19:30:00Z"
 }

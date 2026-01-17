@@ -636,19 +636,19 @@
       "url": "https://wheelspecialists.com",
       "outputDir": "data/wheelspecialists",
       "status": "in_progress",
-      "priority": 1,
+      "priority": 5,
       "attempted": 1,
       "lastAttempted": "2026-01-16T20:00:00Z",
       "pipeline": {
         "expectedUrls": 4654,
         "urlsFound": 4654,
-        "htmlScraped": 0,
+        "htmlScraped": 310,
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
       },
-      "notes": "URL-001 COMPLETE: 4,654 URLs discovered across 54 manufacturers. Gallery IDs range 49-5681. Top: Mercedes-Benz (882), Chevrolet (314), Lexus (308), Land Rover (292), BMW (284). Ready for HTML scraping."
+      "notes": "URL-001 COMPLETE. HTML-001 IN PROGRESS: 100/4654 scraped via browser-based method. Sandbox blocks Python httpx requests (DNS errors). Site has no anti-bot. To continue: run `python3 data/wheelspecialists/scrape_html.py` outside sandbox."
     },
     {
       "id": "jeepgarage",
@@ -1282,19 +1282,20 @@
       "name": "650Scom",
       "url": "https://650sforum.com",
       "outputDir": "data/650scom",
-      "status": "pending",
-      "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "status": "completed",
+      "priority": 1,
+      "attempted": 3,
+      "lastAttempted": "2026-01-16T19:30:00Z",
       "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
+        "expectedUrls": 288,
+        "urlsFound": 288,
+        "htmlScraped": 288,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
-      }
+        "builds": 39,
+        "mods": 13
+      },
+      "notes": "COMPLETE: 39 builds, 13 mods. 9 builds with mods. Categories: Exhaust (7), Wheels (5), Brakes (1). Brands: IPE, AWE, Fabspeed, PUR, ADV. McLaren 650S enthusiast forum."
     },
     {
       "id": "autoevolution",
