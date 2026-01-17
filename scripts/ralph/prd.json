@@ -1,9 +1,9 @@
 {
-  "projectName": "Car and Classic HTML Scraping Continuation",
-  "sourceId": "carandclassic",
+  "projectName": "Hennessey Performance HTML Scraping",
+  "sourceId": "hennesseyperformance",
   "branchName": "main",
-  "targetUrl": "https://carandclassic.com",
-  "outputDir": "data/carandclassic",
+  "targetUrl": "https://hennesseyperformance.com",
+  "outputDir": "data/hennesseyperformance",
   "pipelineStage": 2,
   "userStories": [
     {
@@ -11,26 +11,25 @@
       "title": "Create HTML scraper script with checkpoint support",
       "acceptanceCriteria": [
         "Create scrape_html.py with retry logic and exponential backoff",
-        "Use existing checkpoint (aggressive_checkpoint.json) for resumption",
-        "Save HTML to {outputDir}/html/{car_id}.html format",
-        "Track progress in scrape_progress.json"
+        "Handle brotli/gzip Content-Encoding properly",
+        "Save HTML to {outputDir}/html/{build_id}.html format",
+        "Track progress in scrape_checkpoint.json and scrape_progress.jsonl"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Created scrape_html.py with proper brotli/gzip decompression. Fixed corrupted HTML issue from previous scraper."
+      "notes": "Created scrape_html.py with proper compression handling. Rate limit: 2.5-5 seconds between requests."
     },
     {
       "id": "HTML-002",
       "title": "Execute HTML scraping for all URLs",
       "acceptanceCriteria": [
-        "Resume from checkpoint - skip already processed URLs",
-        "Scrape remaining URLs (9314 of 9406 remaining)",
+        "Scrape all 141 URLs discovered",
         "Handle 404s gracefully - mark as htmlFailed",
         "If blocked (403/429) - STOP and mark source as blocked"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "BLOCKED after 52 URLs scraped successfully. Rate limited with 429. Source marked as blocked."
+      "notes": "SUCCESS: 141/141 URLs scraped (100%). Zero failures, zero blocks. Site is scraper-friendly."
     },
     {
       "id": "HTML-003",
@@ -38,16 +37,14 @@
       "acceptanceCriteria": [
         "Count HTML files in html/ directory",
         "Update sources.json pipeline: htmlScraped, htmlFailed, htmlBlocked",
-        "Run test: python scripts/tools/test_scraper.py {outputDir}/scrape_html.py",
-        "Mark stories complete only if test passes"
+        "Mark source complete or blocked based on results"
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Updated sources.json: status=blocked, htmlScraped=52, htmlBlocked=9353. Block event recorded."
+      "notes": "Verified 141 HTML files. Updated sources.json: status=in_progress, htmlScraped=141. Ready for Stage 3."
     }
   ],
-  "createdAt": "2026-01-16T19:35:00Z",
+  "createdAt": "2026-01-16T17:35:00Z",
   "createdBy": "ralph",
-  "completedAt": "2026-01-16T17:28:00Z",
-  "completionNotes": "Source BLOCKED by 429 rate limiting. Needs stealth scraper for continuation."
+  "completedAt": "2026-01-16T17:42:00Z"
 }
