@@ -1,51 +1,39 @@
 {
-  "projectName": "Hennessey Performance Build Extraction",
+  "projectName": "Hennessey Performance Mod Extraction",
   "sourceId": "hennesseyperformance",
   "branchName": "main",
   "targetUrl": "https://hennesseyperformance.com",
   "outputDir": "data/hennesseyperformance",
-  "pipelineStage": 3,
+  "pipelineStage": 4,
   "userStories": [
     {
-      "id": "BUILD-001",
-      "title": "Create build extraction script",
+      "id": "MOD-001",
+      "title": "Create mod extraction script",
       "acceptanceCriteria": [
-        "Create extract_builds.py that parses HTML files",
-        "Extract: year, make, model, color, VIN, price from titles/meta",
-        "Extract: modifications from og:description (packages, horsepower)",
-        "Generate build_id from URL using build_id_generator.py",
-        "Output to builds.json with schema compliance"
+        "Create extract_mods.py that reads builds.json",
+        "Extract modifications array from each build",
+        "Use category_detector.py for categorization if needed",
+        "Output to mods.json with build_id reference"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Created extract_builds.py with URL slug parsing, og:description extraction, Unicode normalization for smart quotes."
+      "notes": "Created extract_mods.py that reads builds.json and extracts mods with build_id references."
     },
     {
-      "id": "BUILD-002",
-      "title": "Execute build extraction for all HTML files",
+      "id": "MOD-002",
+      "title": "Execute mod extraction and update sources.json",
       "acceptanceCriteria": [
-        "Extract builds from all 141 HTML files",
-        "Handle missing fields gracefully",
-        "Set source_type=dealer, build_source=hennesseyperformance"
+        "Extract mods from all 141 builds",
+        "Count total modifications",
+        "Update sources.json with mods count",
+        "Mark source as completed"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "141/141 builds extracted. 47 have Hennessey packages detected (H1000, VelociRaptor 500, MAMMOTH 1000, Venom, etc). 18 have VINs."
-    },
-    {
-      "id": "BUILD-003",
-      "title": "Update sources.json and verify completion",
-      "acceptanceCriteria": [
-        "Update sources.json with builds count",
-        "Validate builds.json against schema",
-        "Mark stage complete if all builds extracted"
-      ],
-      "priority": 3,
-      "passes": true,
-      "notes": "Updated sources.json: builds=141. Ready for Stage 4 (Mod Extraction)."
+      "notes": "47 mods extracted (all Engine category - Hennessey packages). Source marked COMPLETED."
     }
   ],
-  "createdAt": "2026-01-16T18:00:00Z",
+  "createdAt": "2026-01-17T00:55:00Z",
   "createdBy": "ralph",
-  "completedAt": "2026-01-17T00:52:00Z"
+  "completedAt": "2026-01-17T01:00:00Z"
 }

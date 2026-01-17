@@ -1797,10 +1797,10 @@
       "name": "Hennessey Performance",
       "url": "https://hennesseyperformance.com",
       "outputDir": "data/hennesseyperformance",
-      "status": "in_progress",
+      "status": "completed",
       "priority": 5,
       "attempted": 1,
-      "lastAttempted": "2026-01-17T00:50:00Z",
+      "lastAttempted": "2026-01-17T01:00:00Z",
       "pipeline": {
         "expectedUrls": 141,
         "urlsFound": 141,
@@ -1808,9 +1808,9 @@
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": 141,
-        "mods": null
+        "mods": 47
       },
-      "notes": "Stage 3 COMPLETE: 141/141 builds extracted. 47 with Hennessey packages (H1000, VelociRaptor, MAMMOTH, etc). Ready for Stage 4 (Mod Extraction)."
+      "notes": "COMPLETE: 141 builds, 47 mods. Hennessey packages: H1000, H850, VelociRaptor 500/600, MAMMOTH 1000, Venom 800/850/1000, GOLIATH 650, HPE1000."
     },
     {
       "id": "tunedbyanton",

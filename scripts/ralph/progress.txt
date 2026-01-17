@@ -241,3 +241,37 @@ def decompress_response(response):
 
 ---
 
+### 2026-01-17 - Hennessey Performance Full Pipeline (Stages 2-4) - SOURCE COMPLETE
+- **Source**: Hennessey Performance (hennesseyperformance.com)
+- **Action**: HTML Scraping → Build Extraction → Mod Extraction
+- **Files Created/Modified**:
+  - `data/hennesseyperformance/scrape_html.py` - HTML scraper with compression handling
+  - `data/hennesseyperformance/extract_builds.py` - Build extractor with URL slug parsing
+  - `data/hennesseyperformance/extract_mods.py` - Mod extractor from builds.json
+  - `data/hennesseyperformance/builds.json` - 141 builds extracted
+  - `data/hennesseyperformance/mods.json` - 47 mods extracted
+- **Pipeline Status**: COMPLETE ✓
+  - expectedUrls=141, urlsFound=141, htmlScraped=141 (100% success)
+  - builds=141, mods=47
+  - Zero failures, zero blocks - site is scraper-friendly
+- **Key Technical Discoveries**:
+  1. **Unicode curly quotes in og:description** - WordPress/rich text editors use U+2018 (') and U+2019 (') instead of ASCII 39
+     - Must normalize using `\u2018` and `\u2019` escapes, not literal characters
+     - Pattern that worked: `description.replace("\u2018", "'").replace("\u2019", "'")`
+  2. **URL slug parsing** - `/for-sale/{year}-{color?}-{make}-{model}-for-sale{-vin?}/`
+     - VIN at end: 17-character alphanumeric suffix
+     - Make sometimes missing - infer from model (Mustang→Ford, Corvette→Chevrolet)
+  3. **Package names** - Hennessey uses: H1000, H850, H700, H600, VelociRaptor 500/600, MAMMOTH 1000, Venom 775/800/850/1000, GOLIATH 650, HPE1000
+- **Data Summary**:
+  - Makes: Ford (81), RAM (19), Chevrolet (14), Cadillac (10), Dodge (10), GMC (5)
+  - Modifications: 47 Engine packages (33% of builds have Hennessey upgrades)
+  - VINs: 18 builds have VINs in URL slugs
+
+**Learnings:**
+1. Unicode normalization is essential for text from WordPress/CMS systems
+2. Model-to-make inference fills gaps when make isn't in URL (Charger→Dodge, Corvette→Chevrolet)
+3. Tuner/dealer sites often embed mod info in og:description meta tags
+4. Single Engine category dominates for tuner-focused sources
+
+---
+
