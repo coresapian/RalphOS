@@ -73,6 +73,14 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self.handle_stop_ralph()
         elif path == '/prd/generate':
             self.handle_generate_prd(data)
+        elif path == '/prd/save':
+            self.handle_save_prd(data)
+        elif path == '/prd/check-file':
+            self.handle_check_prd_file(data)
+        elif path == '/prd/analyze-domain':
+            self.handle_analyze_domain(data)
+        elif path == '/prd/generate-from-analysis':
+            self.handle_generate_prd_from_analysis(data)
         else:
             self.send_json({'error': 'Not found'}, 404)
     
@@ -439,6 +447,578 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         
         print(f"Created PRD for {source.get('id')} with {len(stories)} stories")
     
+    def handle_save_prd(self, data):
+        """Save PRD to file"""
+        prd = data.get('prd')
+        if not prd:
+            self.send_json({'error': 'PRD content is required'}, 400)
+            return
+        
+        try:
+            # Ensure it's valid JSON
+            if isinstance(prd, str):
+                prd = json.loads(prd)
+            
+            # Write to prd.json
+            with open(PRD_FILE, 'w') as f:
+                json.dump(prd, f, indent=2)
+            
+            self.send_json({
+                'success': True,
+                'message': 'PRD saved successfully',
+                'path': str(PRD_FILE)
+            })
+            
+            print(f"PRD saved for {prd.get('sourceId', 'unknown')}")
+            
+        except json.JSONDecodeError as e:
+            self.send_json({'error': f'Invalid JSON: {str(e)}'}, 400)
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+    
+    def handle_check_prd_file(self, data):
+        """Check if a PRD-related file exists and return its content"""
+        filename = data.get('filename')
+        if not filename:
+            self.send_json({'error': 'filename is required'}, 400)
+            return
+        
+        # Security: Only allow specific file patterns
+        if not filename.endswith(('_domain_analysis.md', '_prd.md', '_prd.json')):
+            self.send_json({'error': 'Invalid filename pattern'}, 400)
+            return
+        
+        # Check in multiple locations
+        search_paths = [
+            PROJECT_ROOT / "scripts" / "ralph" / filename,
+            PROJECT_ROOT / "data" / filename,
+            PROJECT_ROOT / filename,
+        ]
+        
+        # Also check in source-specific data directories
+        source_id = filename.split('_')[0] if '_' in filename else None
+        if source_id:
+            search_paths.insert(0, PROJECT_ROOT / "data" / source_id / filename)
+        
+        for file_path in search_paths:
+            if file_path.exists():
+                try:
+                    content = file_path.read_text()
+                    self.send_json({
+                        'exists': True,
+                        'path': str(file_path),
+                        'content': content[:10000]  # Limit content size
+                    })
+                    return
+                except Exception as e:
+                    self.send_json({'exists': True, 'path': str(file_path), 'error': str(e)})
+                    return
+        
+        self.send_json({'exists': False})
+    
+    def handle_analyze_domain(self, data):
+        """Run domain analysis for a source using LLM"""
+        source_id = data.get('sourceId')
+        source_name = data.get('sourceName')
+        source_url = data.get('sourceUrl')
+        
+        if not source_id:
+            self.send_json({'error': 'sourceId is required'}, 400)
+            return
+        
+        # Create output directory
+        output_dir = PROJECT_ROOT / "data" / source_id
+        output_dir.mkdir(parents=True, exist_ok=True)
+        analysis_file = output_dir / f"{source_id}_domain_analysis.md"
+        
+        # Create analysis prompt
+        analysis_prompt = f"""# Domain Analysis: {source_name or source_id}
+
+## Target Information
+- **Source ID**: {source_id}
+- **Source Name**: {source_name or 'Unknown'}
+- **URL**: {source_url or 'No URL provided'}
+
+## Analysis Tasks
+
+Please analyze this automotive website and document:
+
+### 1. Site Structure
+- What type of content does this site have? (vehicle listings, build threads, gallery, forum, etc.)
+- How is the content organized? (categories, makes/models, pagination)
+- What is the URL pattern for individual vehicle/build pages?
+
+### 2. Content Discovery
+- How can all vehicle/build URLs be discovered?
+- Is there pagination? Infinite scroll? Category pages?
+- Are there any sitemap files available?
+- Estimated number of vehicles/builds on the site
+
+### 3. Data Available
+- What vehicle data fields are available? (year, make, model, trim, VIN, etc.)
+- Are modifications/parts listed?
+- Are there images? How many per build?
+- Is there a build story or description?
+
+### 4. Technical Considerations
+- Does the site use JavaScript rendering?
+- Are there anti-bot protections? (Cloudflare, rate limiting, CAPTCHAs)
+- What scraping approach is recommended? (httpx, Camoufox stealth, etc.)
+- Recommended rate limiting delays
+
+### 5. Scraping Strategy
+Based on the analysis, recommend:
+- Best approach for URL discovery
+- Best approach for HTML scraping
+- Key selectors/patterns for data extraction
+- Any special considerations
+
+---
+
+*Analysis generated: {datetime.now().isoformat()}*
+"""
+
+        try:
+            # Try to use Gemini API for analysis if available
+            import os
+            gemini_key = os.environ.get('GEMINI_API_KEY')
+            
+            if gemini_key and source_url:
+                # Use Gemini to analyze the site
+                analysis_content = self._run_gemini_analysis(source_id, source_name, source_url, gemini_key)
+                if analysis_content:
+                    # Save analysis
+                    full_content = analysis_prompt + "\n\n---\n\n## LLM Analysis Results\n\n" + analysis_content
+                    analysis_file.write_text(full_content)
+                    self.send_json({
+                        'success': True,
+                        'analysis': analysis_content,
+                        'path': str(analysis_file)
+                    })
+                    return
+            
+            # Fallback: Create template analysis
+            template_analysis = f"""
+## Automated Template Analysis
+
+Since no LLM API is available or URL is missing, here's a template:
+
+### Site Type
+- Likely automotive content based on source name
+
+### Recommended Approach
+1. **URL Discovery**: Use sitemap or crawl category pages
+2. **HTML Scraping**: 
+   - If protected: Use `aggressive_stealth_scraper.py`
+   - If standard: Use `httpx` with rate limiting
+3. **Data Extraction**: Create custom extractor in `src/scrapers/core/extractors/`
+
+### Next Steps
+1. Manually visit {source_url or 'the site'} to understand structure
+2. Check for sitemap at `/sitemap.xml`
+3. Identify URL patterns for builds
+4. Test for anti-bot protection
+
+---
+
+*Template generated - manual review recommended*
+"""
+            full_content = analysis_prompt + template_analysis
+            analysis_file.write_text(full_content)
+            
+            self.send_json({
+                'success': True,
+                'analysis': template_analysis,
+                'path': str(analysis_file),
+                'note': 'Template analysis - manual review recommended'
+            })
+            
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+    
+    def _run_gemini_analysis(self, source_id, source_name, source_url, api_key):
+        """Run analysis using Gemini API"""
+        try:
+            import google.generativeai as genai
+            
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            
+            prompt = f"""You are an expert web scraping analyst. Analyze this automotive website for a scraping project.
+
+Website: {source_name or source_id}
+URL: {source_url}
+
+Please provide a detailed analysis covering:
+
+1. **Site Type**: What kind of automotive content is this? (listings, builds, forum, gallery)
+
+2. **URL Discovery Strategy**: 
+   - How to find all vehicle/build URLs
+   - Pagination approach (pages, infinite scroll, load more)
+   - Category/make/model organization
+
+3. **Data Fields Available**:
+   - Vehicle info (year, make, model, trim)
+   - Modifications/parts
+   - Images
+   - Build story/description
+
+4. **Technical Assessment**:
+   - JavaScript rendering requirements
+   - Anti-bot protection (Cloudflare, rate limits)
+   - Recommended scraping tool (httpx for simple, Camoufox for protected)
+   - Rate limiting recommendations
+
+5. **Extraction Strategy**:
+   - Key HTML selectors or patterns
+   - API endpoints if any
+   - Special considerations
+
+Be specific and actionable. This analysis will guide automated scraping."""
+
+            response = model.generate_content(prompt)
+            return response.text
+            
+        except Exception as e:
+            print(f"Gemini analysis failed: {e}")
+            return None
+    
+    def handle_generate_prd_from_analysis(self, data):
+        """Generate PRD from domain analysis using LLM"""
+        source_id = data.get('sourceId')
+        source_name = data.get('sourceName')
+        source_url = data.get('sourceUrl')
+        
+        if not source_id:
+            self.send_json({'error': 'sourceId is required'}, 400)
+            return
+        
+        # Find and read domain analysis
+        analysis_file = PROJECT_ROOT / "data" / source_id / f"{source_id}_domain_analysis.md"
+        analysis_content = ""
+        
+        if analysis_file.exists():
+            analysis_content = analysis_file.read_text()
+        
+        # Output files
+        output_dir = PROJECT_ROOT / "data" / source_id
+        output_dir.mkdir(parents=True, exist_ok=True)
+        prd_md_file = output_dir / f"{source_id}_prd.md"
+        
+        try:
+            import os
+            gemini_key = os.environ.get('GEMINI_API_KEY')
+            
+            if gemini_key and analysis_content:
+                prd_content = self._generate_prd_with_gemini(
+                    source_id, source_name, source_url, 
+                    analysis_content, gemini_key
+                )
+                if prd_content:
+                    # Save PRD markdown
+                    prd_md_file.write_text(prd_content)
+                    
+                    # Also create JSON PRD for Ralph
+                    prd_json = self._convert_prd_to_json(source_id, source_name, source_url, prd_content)
+                    if prd_json:
+                        # Save to main PRD file for Ralph
+                        with open(PRD_FILE, 'w') as f:
+                            json.dump(prd_json, f, indent=2)
+                    
+                    self.send_json({
+                        'success': True,
+                        'prd': prd_content,
+                        'path': str(prd_md_file),
+                        'json_path': str(PRD_FILE)
+                    })
+                    return
+            
+            # Fallback: Generate template PRD
+            prd_content = self._generate_template_prd(source_id, source_name, source_url, analysis_content)
+            prd_md_file.write_text(prd_content)
+            
+            # Create JSON PRD
+            prd_json = self._convert_prd_to_json(source_id, source_name, source_url, prd_content)
+            if prd_json:
+                with open(PRD_FILE, 'w') as f:
+                    json.dump(prd_json, f, indent=2)
+            
+            self.send_json({
+                'success': True,
+                'prd': prd_content,
+                'path': str(prd_md_file),
+                'note': 'Template PRD - customize user stories as needed'
+            })
+            
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+    
+    def _generate_prd_with_gemini(self, source_id, source_name, source_url, analysis, api_key):
+        """Generate PRD using Gemini based on domain analysis"""
+        try:
+            import google.generativeai as genai
+            
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            
+            prompt = f"""Based on this domain analysis, create a detailed PRD (Product Requirements Document) for scraping this automotive website.
+
+## Domain Analysis:
+{analysis}
+
+## Source Info:
+- Source ID: {source_id}
+- Source Name: {source_name or source_id}
+- URL: {source_url or 'Unknown'}
+
+## Create a PRD with:
+
+### Project Overview
+Brief description of what we're scraping and why.
+
+### User Stories
+
+Create 3-5 specific, actionable user stories following this format:
+
+#### US-001: URL Discovery
+**Goal**: [What we want to achieve]
+**Acceptance Criteria**:
+- [ ] Specific, measurable criterion 1
+- [ ] Specific, measurable criterion 2
+
+**Implementation Notes**:
+- Specific technical guidance based on the analysis
+- Tools to use (sitemap crawler, pagination handler, etc.)
+
+#### US-002: HTML Scraping  
+**Goal**: [What we want to achieve]
+**Acceptance Criteria**:
+- [ ] Specific criterion
+
+**Implementation Notes**:
+- Whether to use httpx or Camoufox stealth
+- Rate limiting requirements
+- Session handling needs
+
+#### US-003: Data Extraction
+**Goal**: [What we want to achieve]  
+**Acceptance Criteria**:
+- [ ] Fields to extract
+- [ ] Data quality requirements
+
+**Implementation Notes**:
+- Key selectors/patterns
+- Data normalization needs
+
+### Technical Requirements
+- Scraping mode (standard/stealth)
+- Rate limits
+- Error handling approach
+
+### Success Metrics
+- Expected number of builds
+- Data completeness targets
+
+Be specific and base recommendations on the domain analysis provided."""
+
+            response = model.generate_content(prompt)
+            return response.text
+            
+        except Exception as e:
+            print(f"Gemini PRD generation failed: {e}")
+            return None
+    
+    def _generate_template_prd(self, source_id, source_name, source_url, analysis):
+        """Generate template PRD when LLM is not available"""
+        has_analysis = bool(analysis and len(analysis) > 100)
+        
+        return f"""# PRD: {source_name or source_id} Scraping Project
+
+## Project Overview
+Scrape vehicle build data from {source_name or source_id} ({source_url or 'URL TBD'}).
+
+## Source Information
+- **Source ID**: {source_id}
+- **Source Name**: {source_name or source_id}
+- **URL**: {source_url or 'Not specified'}
+- **Analysis Available**: {'Yes' if has_analysis else 'No - manual review needed'}
+
+---
+
+## User Stories
+
+### US-001: URL Discovery
+**Goal**: Discover all vehicle/build URLs on the site
+
+**Acceptance Criteria**:
+- [ ] urls.jsonl contains all discoverable URLs
+- [ ] URLs are deduplicated and normalized
+- [ ] Pagination/infinite scroll handled
+
+**Implementation Notes**:
+- Check for sitemap at /sitemap.xml
+- Identify category/listing pages
+- Handle pagination or infinite scroll
+
+---
+
+### US-002: HTML Scraping
+**Goal**: Scrape HTML for all discovered URLs
+
+**Acceptance Criteria**:
+- [ ] HTML files saved for each URL
+- [ ] Success rate > 95%
+- [ ] Respectful rate limiting applied
+
+**Implementation Notes**:
+- Use `aggressive_stealth_scraper.py` if anti-bot detected
+- Otherwise use standard httpx scraper
+- Rate limit: 2-5 second delays minimum
+
+---
+
+### US-003: Build Data Extraction
+**Goal**: Extract structured build data from HTML
+
+**Acceptance Criteria**:
+- [ ] builds.jsonl contains vehicle data
+- [ ] Required fields: build_id, year, make, model, source_url
+- [ ] Images extracted to gallery_images array
+
+**Implementation Notes**:
+- Create extractor in src/scrapers/core/extractors/{source_id}.py
+- Follow BaseExtractor pattern
+- Register with @register_extractor decorator
+
+---
+
+### US-004: Modification Extraction
+**Goal**: Extract parts/modifications from builds
+
+**Acceptance Criteria**:
+- [ ] mods.jsonl contains modification data
+- [ ] Categories assigned (Engine, Suspension, etc.)
+- [ ] Brand/part names extracted where visible
+
+**Implementation Notes**:
+- Use LLM extraction pipeline if build_story available
+- Otherwise extract from structured mod lists
+
+---
+
+## Technical Requirements
+
+| Setting | Value |
+|---------|-------|
+| Scrape Mode | {'Stealth (Camoufox)' if 'protected' in analysis.lower() or 'cloudflare' in analysis.lower() else 'Standard (httpx)'} |
+| Min Delay | 2 seconds |
+| Max Delay | 5 seconds |
+| Concurrency | 1-2 |
+| Daily Limit | 500 |
+
+---
+
+## Success Metrics
+- URLs discovered: TBD after US-001
+- HTML scraped: 95%+ success rate
+- Builds extracted: Match HTML count
+- Data quality: All required fields populated
+
+---
+
+*PRD generated: {datetime.now().isoformat()}*
+*Review and customize user stories based on actual site structure*
+"""
+    
+    def _convert_prd_to_json(self, source_id, source_name, source_url, prd_markdown):
+        """Convert markdown PRD to JSON format for Ralph"""
+        try:
+            # Parse user stories from markdown
+            stories = []
+            
+            # Look for US-XXX patterns
+            import re
+            story_pattern = r'###\s+US-(\d+):\s*(.+?)(?=\n)'
+            matches = re.findall(story_pattern, prd_markdown)
+            
+            for i, (story_num, title) in enumerate(matches):
+                story_id = f"US-{story_num.zfill(3)}"
+                
+                # Determine acceptance criteria
+                criteria = []
+                if 'url' in title.lower() or 'discover' in title.lower():
+                    criteria = [
+                        "urls.jsonl contains all discoverable URLs",
+                        "URLs are deduplicated and normalized"
+                    ]
+                elif 'html' in title.lower() or 'scrap' in title.lower():
+                    criteria = [
+                        "HTML files saved for each URL",
+                        "Success rate > 95%"
+                    ]
+                elif 'build' in title.lower() or 'extract' in title.lower():
+                    criteria = [
+                        "builds.jsonl contains vehicle data",
+                        "Required fields populated"
+                    ]
+                elif 'mod' in title.lower():
+                    criteria = [
+                        "mods.jsonl contains modification data",
+                        "Categories assigned correctly"
+                    ]
+                else:
+                    criteria = ["Task completed successfully"]
+                
+                stories.append({
+                    "id": story_id,
+                    "title": title.strip(),
+                    "acceptanceCriteria": criteria,
+                    "priority": i + 1,
+                    "passes": False
+                })
+            
+            # Default stories if none found
+            if not stories:
+                stories = [
+                    {
+                        "id": "URL-001",
+                        "title": "Discover all build/vehicle URLs",
+                        "acceptanceCriteria": ["urls.jsonl populated"],
+                        "priority": 1,
+                        "passes": False
+                    },
+                    {
+                        "id": "HTML-001", 
+                        "title": "Scrape HTML for all URLs",
+                        "acceptanceCriteria": ["HTML files saved"],
+                        "priority": 2,
+                        "passes": False
+                    },
+                    {
+                        "id": "BUILD-001",
+                        "title": "Extract build data",
+                        "acceptanceCriteria": ["builds.jsonl populated"],
+                        "priority": 3,
+                        "passes": False
+                    }
+                ]
+            
+            return {
+                "projectName": f"{source_name or source_id} Scraping",
+                "sourceId": source_id,
+                "branchName": "main",
+                "targetUrl": source_url or "",
+                "outputDir": f"data/{source_id}",
+                "userStories": stories,
+                "createdAt": datetime.now().isoformat(),
+                "createdBy": "dashboard-prd-generator"
+            }
+            
+        except Exception as e:
+            print(f"Error converting PRD to JSON: {e}")
+            return None
+
     def handle_generate_prd(self, data):
         """Generate PRD using browser analysis"""
         source_id = data.get('sourceId')
@@ -645,10 +1225,29 @@ START by navigating to the URL and taking a snapshot.
             'pending': 0,
             'blocked': 0
         }
+        
+        # Get current source from PRD to mark as in_progress
+        current_source_id = None
+        try:
+            if PRD_FILE.exists():
+                prd = json.loads(PRD_FILE.read_text())
+                current_source_id = prd.get('sourceId') or prd.get('outputDir', '').split('/')[-1]
+        except:
+            pass
+        
+        ralph_running = self.check_ralph_running()
+        
         for source in sources:
+            source_id = source.get('id')
             status = source.get('status', 'pending')
+            
+            # If Ralph is running and this is the current source, mark as in_progress
+            if ralph_running and current_source_id and source_id == current_source_id:
+                status = 'in_progress'
+            
             if status in summary:
                 summary[status] += 1
+        
         return summary
     
     def get_current_source(self):
@@ -685,13 +1284,36 @@ START by navigating to the URL and taking a snapshot.
     def get_all_sources(self):
         """Get all sources with their pipeline data"""
         sources = self.load_sources()
-        return [{
-            'id': s.get('id'),
-            'name': s.get('name'),
-            'url': s.get('url'),
-            'status': s.get('status'),
-            'pipeline': s.get('pipeline', {})
-        } for s in sources]
+        
+        # Get current source from PRD to mark as in_progress
+        current_source_id = None
+        try:
+            if PRD_FILE.exists():
+                prd = json.loads(PRD_FILE.read_text())
+                current_source_id = prd.get('sourceId') or prd.get('outputDir', '').split('/')[-1]
+        except:
+            pass
+        
+        ralph_running = self.check_ralph_running()
+        
+        result = []
+        for s in sources:
+            source_id = s.get('id')
+            status = s.get('status', 'pending')
+            
+            # If Ralph is running and this is the current source, mark as in_progress
+            if ralph_running and current_source_id and source_id == current_source_id:
+                status = 'in_progress'
+            
+            result.append({
+                'id': source_id,
+                'name': s.get('name'),
+                'url': s.get('url'),
+                'status': status,
+                'pipeline': s.get('pipeline', {})
+            })
+        
+        return result
     
     def load_sources(self):
         """Load sources from sources.json"""

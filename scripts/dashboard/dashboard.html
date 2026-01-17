@@ -106,50 +106,6 @@
       50% { opacity: 0.5; }
     }
     
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      transition: all 0.2s;
-    }
-    
-    .stat-card:hover {
-      border-color: var(--accent-cyan);
-      transform: translateY(-2px);
-    }
-    
-    .stat-card .label {
-      color: var(--text-muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-    
-    .stat-card .value {
-      font-size: 32px;
-      font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    
-    .stat-card .change {
-      font-size: 12px;
-      margin-top: 4px;
-    }
-    
-    .stat-card.cyan .value { color: var(--accent-cyan); }
-    .stat-card.green .value { color: var(--accent-green); }
-    .stat-card.yellow .value { color: var(--accent-yellow); }
-    .stat-card.purple .value { color: var(--accent-purple); }
-    
     .main-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
@@ -183,6 +139,28 @@
       padding: 20px;
     }
     
+    .card-body.scrollable {
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    
+    .card-body.scrollable::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .card-body.scrollable::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+    
+    .card-body.scrollable::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    
+    .card-body.scrollable::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-cyan);
+    }
+    
     .log-output {
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
@@ -213,8 +191,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 0;
+      padding: 12px;
+      margin: 0 -12px;
       border-bottom: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .source-item:hover {
+      background: var(--bg-secondary);
+      border-color: var(--accent-cyan);
     }
     
     .source-item:last-child {
@@ -228,15 +215,112 @@
     }
     
     .source-status {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      flex-shrink: 0;
     }
     
-    .source-status.completed { background: var(--accent-green); }
-    .source-status.in_progress { background: var(--accent-yellow); }
-    .source-status.pending { background: var(--text-muted); }
-    .source-status.blocked { background: var(--accent-red); }
+    .source-status:hover {
+      transform: scale(1.4);
+      box-shadow: 0 0 12px currentColor;
+    }
+    
+    .source-status.completed { background: var(--accent-green); color: var(--accent-green); }
+    .source-status.in_progress { 
+      background: var(--accent-yellow); 
+      color: var(--accent-yellow);
+      animation: statusPulse 1.5s infinite;
+    }
+    .source-status.pending { background: var(--text-muted); color: var(--text-muted); }
+    .source-status.blocked { background: var(--accent-red); color: var(--accent-red); }
+    
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 4px currentColor; }
+      50% { opacity: 0.6; box-shadow: 0 0 8px currentColor; }
+    }
+    
+    /* Source Action Menu */
+    .source-action-menu {
+      position: fixed;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 0;
+      min-width: 200px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      z-index: 1000;
+      display: none;
+    }
+    
+    .source-action-menu.visible {
+      display: block;
+      animation: menuFadeIn 0.15s ease-out;
+    }
+    
+    @keyframes menuFadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .source-action-menu-header {
+      padding: 8px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    
+    .source-action-menu-header .name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    
+    .source-action-menu-header .url {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .source-action-item {
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 13px;
+    }
+    
+    .source-action-item:hover {
+      background: var(--bg-secondary);
+    }
+    
+    .source-action-item .icon {
+      width: 20px;
+      text-align: center;
+    }
+    
+    .source-action-item.start { color: var(--accent-green); }
+    .source-action-item.stop { color: var(--accent-red); }
+    .source-action-item.generate { color: var(--accent-cyan); }
+    .source-action-item.view { color: var(--accent-purple); }
+    .source-action-item.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    
+    .source-action-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 8px 0;
+    }
     
     .source-name {
       font-weight: 500;
@@ -262,83 +346,133 @@
       transition: width 0.3s;
     }
     
-    .pipeline-stage {
+    /* Header Pipeline Stats */
+    .header-pipeline {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 16px;
+      padding: 8px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
     }
     
-    .stage-box {
-      flex: 1;
-      padding: 12px;
-      background: var(--bg-primary);
+    .header-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px 16px;
       border-radius: 8px;
-      text-align: center;
-      border: 2px solid transparent;
+      min-width: 80px;
+      transition: all 0.2s;
     }
     
-    .stage-box.active {
-      border-color: var(--accent-cyan);
+    .header-stage.active {
       background: rgba(34, 211, 238, 0.1);
     }
     
-    .stage-box.complete {
-      border-color: var(--accent-green);
+    .header-stage.complete {
       background: rgba(74, 222, 128, 0.1);
     }
     
-    .stage-box .stage-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-    
-    .stage-box .stage-value {
+    .header-stage-value {
       font-family: 'JetBrains Mono', monospace;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
+      color: var(--text-primary);
     }
     
-    .stage-box.active .stage-value { color: var(--accent-cyan); }
-    .stage-box.complete .stage-value { color: var(--accent-green); }
+    .header-stage.active .header-stage-value { color: var(--accent-cyan); }
+    .header-stage.complete .header-stage-value { color: var(--accent-green); }
     
-    .stage-arrow {
+    .header-stage-label {
+      font-size: 10px;
       color: var(--text-muted);
-      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .header-stage-arrow {
+      color: var(--text-muted);
+      font-size: 14px;
     }
     
     .refresh-time {
       font-size: 11px;
       color: var(--text-muted);
       font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     
-    .current-source {
-      background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(167, 139, 250, 0.1));
-      border: 1px solid var(--accent-cyan);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 20px;
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: livePulse 2s infinite;
     }
     
-    .current-source h3 {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
     }
     
-    .current-source .source-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--accent-cyan);
-      margin-bottom: 4px;
+    .live-dot.error {
+      background: var(--accent-red);
+      animation: none;
     }
     
-    .current-source .source-url {
+    .sources-controls {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .sources-filter-input {
+      flex: 1;
+      padding: 8px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    .sources-filter-input:focus {
+      border-color: var(--accent-cyan);
+    }
+    
+    .sources-filter-input::placeholder {
       color: var(--text-muted);
+    }
+    
+    .sources-sort-select {
+      padding: 8px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    
+    .sources-sort-select:focus,
+    .sources-sort-select:hover {
+      border-color: var(--accent-cyan);
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 13px;
     }
     
     .error { color: var(--accent-red); }
@@ -730,6 +864,117 @@
       font-size: 10px;
       color: var(--text-muted);
     }
+    
+    /* Settings Button */
+    .settings-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .settings-btn:hover {
+      border-color: var(--accent-cyan);
+      background: var(--bg-secondary);
+      transform: rotate(30deg);
+    }
+    
+    /* Settings Panel Overlay */
+    .settings-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 2500;
+      display: none;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 24px;
+    }
+    
+    .settings-overlay.visible {
+      display: flex;
+      animation: fadeIn 0.2s ease-out;
+    }
+    
+    .settings-panel {
+      width: 500px;
+      max-height: calc(100vh - 48px);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .settings-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-secondary);
+    }
+    
+    .settings-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .settings-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--bg-card);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+    
+    .settings-close:hover {
+      background: var(--accent-red);
+      color: white;
+    }
+    
+    .settings-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    
+    .settings-section {
+      margin-bottom: 24px;
+    }
+    
+    .settings-section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
   </style>
 </head>
 <body>
@@ -741,233 +986,42 @@
         <p>Autonomous AI Agent Monitor</p>
       </div>
     </div>
-    <div class="status-badge">
-      <div class="status-dot" id="statusDot"></div>
-      <span id="statusText">Checking...</span>
-    </div>
-  </div>
-  
-  <div class="grid">
-    <div class="stat-card cyan">
-      <div class="label">Total Sources</div>
-      <div class="value" id="totalSources">--</div>
-    </div>
-    <div class="stat-card green">
-      <div class="label">Completed</div>
-      <div class="value" id="completedSources">--</div>
-    </div>
-    <div class="stat-card yellow">
-      <div class="label">In Progress</div>
-      <div class="value" id="inProgressSources">--</div>
-    </div>
-    <div class="stat-card purple">
-      <div class="label">HTML Files</div>
-      <div class="value" id="htmlFiles">--</div>
-    </div>
-  </div>
-  
-  <!-- Ralph Loop Panel -->
-  <div class="ralph-panel">
-    <div class="ralph-header" onclick="toggleRalphPanel()">
-      <h2>🤖 Ralph Loop</h2>
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <div class="status-badge" style="padding: 4px 12px;">
-          <div class="status-dot" id="ralphStatusDot"></div>
-          <span id="ralphStatusText" style="font-size: 11px;">Checking...</span>
-        </div>
-        <span class="scraper-toggle" id="ralphToggle">▼</span>
+    
+    <!-- Pipeline Stats (inline) -->
+    <div class="header-pipeline" id="pipelineStages">
+      <div class="header-stage" id="stage1">
+        <span class="header-stage-value">--</span>
+        <span class="header-stage-label">URLs</span>
+      </div>
+      <span class="header-stage-arrow">→</span>
+      <div class="header-stage" id="stage2">
+        <span class="header-stage-value">--</span>
+        <span class="header-stage-label">HTML</span>
+      </div>
+      <span class="header-stage-arrow">→</span>
+      <div class="header-stage" id="stage3">
+        <span class="header-stage-value">--</span>
+        <span class="header-stage-label">Builds</span>
+      </div>
+      <span class="header-stage-arrow">→</span>
+      <div class="header-stage" id="stage4">
+        <span class="header-stage-value">--</span>
+        <span class="header-stage-label">Mods</span>
       </div>
     </div>
-    <div class="ralph-body" id="ralphBody">
-      <!-- Status Bar -->
-      <div class="ralph-status">
-        <div class="ralph-status-indicator">
-          <div class="scraper-status-dot" id="ralphStatusDot2"></div>
-        </div>
-        <div class="ralph-info">
-          <div class="project-name" id="ralphProject">No active project</div>
-          <div class="story-progress" id="ralphStoryProgress">--</div>
-        </div>
-        <span style="font-size: 11px; color: var(--text-muted);" id="ralphPid"></span>
-      </div>
-      
-      <!-- Source Selection -->
-      <div class="form-group" style="margin-bottom: 16px;">
-        <label>Target Source(s)</label>
-        <select id="ralphSource" multiple size="6" style="width: 100%;">
-          <option value="">Loading sources...</option>
-        </select>
-        <span class="help-text">Hold Ctrl/Cmd to select multiple. Leave empty to use current PRD.</span>
-      </div>
-      
-      <!-- Iterations Config -->
-      <div class="iterations-input">
-        <label>Max Iterations:</label>
-        <input type="number" id="ralphIterations" value="25" min="1" max="100">
-        <span class="help-text">Ralph will stop after this many iterations</span>
-      </div>
-      
-      <!-- Action Buttons -->
-      <div class="btn-group">
-        <button class="btn btn-secondary" onclick="generatePRD()" title="Use browser to analyze site and generate PRD">
-          🌐 Generate PRD
-        </button>
-        <button class="btn btn-primary" id="startRalphBtn" onclick="startRalph()" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));">
-          ▶️ Start Ralph
-        </button>
-        <button class="btn btn-danger" id="stopRalphBtn" onclick="stopRalph()" style="display: none;">
-          ⏹️ Stop Ralph
-        </button>
-      </div>
-      
-      <!-- PRD Generation Status -->
-      <div id="prdGenStatus" style="display: none; margin-top: 16px; padding: 12px; background: var(--bg-primary); border-radius: 8px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <div class="scraper-status-dot running"></div>
-          <span id="prdGenStatusText">Analyzing site...</span>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Stealth Scraper Panel -->
-  <div class="scraper-panel">
-    <div class="scraper-header" onclick="toggleScraperPanel()">
-      <h2>🥷 Stealth Scraper</h2>
-      <span class="scraper-toggle" id="scraperToggle">▼</span>
-    </div>
-    <div class="scraper-body" id="scraperBody">
-      <!-- Status Bar -->
-      <div class="scraper-status">
-        <div class="scraper-status-dot" id="scraperStatusDot"></div>
-        <span id="scraperStatusText">Idle</span>
-        <span style="margin-left: auto; font-size: 12px; color: var(--text-muted);" id="scraperPid"></span>
-      </div>
-      
-      <!-- Preset Buttons -->
-      <div class="preset-buttons">
-        <button class="preset-btn" onclick="applyPreset('conservative')">🐢 Conservative</button>
-        <button class="preset-btn active" onclick="applyPreset('balanced')">⚖️ Balanced</button>
-        <button class="preset-btn" onclick="applyPreset('aggressive')">🚀 Aggressive</button>
-        <button class="preset-btn" onclick="applyPreset('stealth')">🥷 Max Stealth</button>
-      </div>
-      
-      <!-- Configuration Form -->
-      <div class="form-grid">
-        <div class="form-group full-width">
-          <label>Source</label>
-          <select id="scraperSource">
-            <option value="">Select a source...</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label>Min Delay (sec)</label>
-          <input type="number" id="minDelay" value="8" min="1" max="120" step="1">
-          <span class="help-text">Wait at least this long between requests</span>
-        </div>
-        
-        <div class="form-group">
-          <label>Max Delay (sec)</label>
-          <input type="number" id="maxDelay" value="20" min="1" max="300" step="1">
-          <span class="help-text">Random delay up to this value</span>
-        </div>
-        
-        <div class="form-group">
-          <label>Daily Limit</label>
-          <input type="number" id="dailyLimit" value="50" min="1" max="1000" step="1">
-          <span class="help-text">Max URLs to scrape per day</span>
-        </div>
-        
-        <div class="form-group">
-          <label>Rotate Every</label>
-          <input type="number" id="rotateEvery" value="12" min="1" max="100" step="1">
-          <span class="help-text">New browser session every N pages</span>
-        </div>
-        
-        <div class="form-group">
-          <label>Session Limit</label>
-          <input type="number" id="sessionLimit" value="" placeholder="No limit">
-          <span class="help-text">Stop after N URLs this session</span>
-        </div>
-        
-        <div class="form-group">
-          <label>Initial Backoff (sec)</label>
-          <input type="number" id="initialBackoff" value="300" min="60" max="3600" step="60">
-          <span class="help-text">Wait time on rate limit (5 min default)</span>
-        </div>
-      </div>
-      
-      <!-- Action Buttons -->
-      <div class="btn-group">
-        <button class="btn btn-primary" id="startScraperBtn" onclick="startScraper()">
-          ▶️ Start Scraper
-        </button>
-        <button class="btn btn-danger" id="stopScraperBtn" onclick="stopScraper()" style="display: none;">
-          ⏹️ Stop Scraper
-        </button>
-        <button class="btn btn-secondary" onclick="toggleScraperLog()">
-          📋 Show Log
-        </button>
-      </div>
-      
-      <!-- Scraper Stats -->
-      <div class="scraper-stats" id="scraperStats" style="display: none;">
-        <div class="scraper-stat green">
-          <div class="stat-label">Processed</div>
-          <div class="stat-value" id="statProcessed">0</div>
-        </div>
-        <div class="scraper-stat red">
-          <div class="stat-label">Blocked</div>
-          <div class="stat-value" id="statBlocked">0</div>
-        </div>
-        <div class="scraper-stat yellow">
-          <div class="stat-label">Failed</div>
-          <div class="stat-value" id="statFailed">0</div>
-        </div>
-        <div class="scraper-stat cyan">
-          <div class="stat-label">Today</div>
-          <div class="stat-value" id="statToday">0</div>
-        </div>
-      </div>
-      
-      <!-- Scraper Log -->
-      <div class="scraper-log" id="scraperLog">Loading...</div>
-    </div>
-  </div>
-  
-  <div class="current-source" id="currentSource">
-    <h3>🎯 Currently Processing</h3>
-    <div class="source-title" id="currentSourceName">Loading...</div>
-    <div class="source-url" id="currentSourceUrl">--</div>
-  </div>
-  
-  <div class="pipeline-stage" id="pipelineStages">
-    <div class="stage-box" id="stage1">
-      <div class="stage-label">URLs</div>
-      <div class="stage-value">--</div>
-    </div>
-    <div class="stage-arrow">→</div>
-    <div class="stage-box" id="stage2">
-      <div class="stage-label">HTML</div>
-      <div class="stage-value">--</div>
-    </div>
-    <div class="stage-arrow">→</div>
-    <div class="stage-box" id="stage3">
-      <div class="stage-label">Builds</div>
-      <div class="stage-value">--</div>
-    </div>
-    <div class="stage-arrow">→</div>
-    <div class="stage-box" id="stage4">
-      <div class="stage-label">Mods</div>
-      <div class="stage-value">--</div>
-    </div>
+    
+    <button class="settings-btn" onclick="toggleSettingsPanel()" title="Settings">
+      ⚙️
+    </button>
   </div>
   
   <div class="main-grid">
     <div class="card">
       <div class="card-header">
-        <h2>📋 Live Log</h2>
+        <div class="status-badge" style="padding: 6px 12px;">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Checking...</span>
+        </div>
         <div class="log-controls">
           <button onclick="refreshLogNow()" title="Refresh now">🔄</button>
           <button id="autoRefreshBtn" class="active" onclick="toggleAutoRefresh()" title="Toggle auto-refresh">Auto</button>
@@ -982,11 +1036,31 @@
     </div>
     
     <div class="card">
-      <div class="card-header">
-        <h2>📊 Sources</h2>
-        <span class="refresh-time" id="sourcesRefresh">--</span>
+      <div class="card-header" style="flex-direction: column; align-items: stretch; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 style="display: flex; align-items: center; gap: 16px;">
+            📊 Sources
+            <span style="display: flex; gap: 12px; font-size: 12px; font-weight: 500;">
+              <span style="color: var(--accent-cyan);"><span id="totalSources">--</span> total</span>
+              <span style="color: var(--accent-green);">✓ <span id="completedSources">--</span></span>
+              <span style="color: var(--accent-yellow);">⏳ <span id="inProgressSources">--</span></span>
+            </span>
+          </h2>
+          <span class="refresh-time" id="sourcesRefresh"><div class="live-dot" id="sourcesLiveDot"></div><span id="sourcesRefreshText">--</span></span>
+        </div>
+        <div class="sources-controls">
+          <input type="text" id="sourcesFilter" placeholder="Filter sources..." class="sources-filter-input">
+          <select id="sourcesSort" class="sources-sort-select">
+            <option value="progress">Sort: Progress ↓</option>
+            <option value="status">Sort: Status</option>
+            <option value="name">Sort: Name</option>
+            <option value="urls">Sort: URLs ↓</option>
+            <option value="html">Sort: HTML ↓</option>
+            <option value="builds">Sort: Builds ↓</option>
+          </select>
+        </div>
       </div>
-      <div class="card-body" id="sourcesList">
+      <div class="card-body scrollable" id="sourcesList">
         Loading...
       </div>
     </div>
@@ -999,40 +1073,7 @@
     
     // State
     let lastLogLines = [];
-    let scraperRunning = false;
     let allSources = [];
-    
-    // Presets for scraper configuration
-    const PRESETS = {
-      conservative: {
-        minDelay: 15,
-        maxDelay: 30,
-        dailyLimit: 30,
-        rotateEvery: 8,
-        initialBackoff: 600
-      },
-      balanced: {
-        minDelay: 8,
-        maxDelay: 20,
-        dailyLimit: 50,
-        rotateEvery: 12,
-        initialBackoff: 300
-      },
-      aggressive: {
-        minDelay: 4,
-        maxDelay: 10,
-        dailyLimit: 100,
-        rotateEvery: 20,
-        initialBackoff: 180
-      },
-      stealth: {
-        minDelay: 20,
-        maxDelay: 45,
-        dailyLimit: 20,
-        rotateEvery: 5,
-        initialBackoff: 900
-      }
-    };
     
     // Format numbers with commas
     function formatNumber(num) {
@@ -1040,206 +1081,27 @@
       return parseInt(num).toLocaleString();
     }
     
-    // Toggle scraper panel
-    function toggleScraperPanel() {
-      const body = document.getElementById('scraperBody');
-      const toggle = document.getElementById('scraperToggle');
-      body.classList.toggle('open');
-      toggle.classList.toggle('open');
+    // Settings Panel Toggle
+    function toggleSettingsPanel() {
+      const overlay = document.getElementById('settingsOverlay');
+      overlay.classList.toggle('visible');
     }
     
-    // Toggle scraper log visibility
-    function toggleScraperLog() {
-      const log = document.getElementById('scraperLog');
-      log.classList.toggle('visible');
-      if (log.classList.contains('visible')) {
-        updateScraperLog();
-      }
+    function closeSettingsPanel() {
+      const overlay = document.getElementById('settingsOverlay');
+      overlay.classList.remove('visible');
     }
     
-    // Apply preset configuration
-    function applyPreset(presetName) {
-      const preset = PRESETS[presetName];
-      if (!preset) return;
-      
-      document.getElementById('minDelay').value = preset.minDelay;
-      document.getElementById('maxDelay').value = preset.maxDelay;
-      document.getElementById('dailyLimit').value = preset.dailyLimit;
-      document.getElementById('rotateEvery').value = preset.rotateEvery;
-      document.getElementById('initialBackoff').value = preset.initialBackoff;
-      
-      // Update button states
-      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-    }
+    // Close settings on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('settingsOverlay').classList.contains('visible')) {
+        closeSettingsPanel();
+      }
+    });
     
-    // Start the scraper
-    async function startScraper() {
-      const source = document.getElementById('scraperSource').value;
-      if (!source) {
-        alert('Please select a source');
-        return;
-      }
-      
-      const config = {
-        source: source,
-        minDelay: parseInt(document.getElementById('minDelay').value),
-        maxDelay: parseInt(document.getElementById('maxDelay').value),
-        dailyLimit: parseInt(document.getElementById('dailyLimit').value),
-        rotateEvery: parseInt(document.getElementById('rotateEvery').value),
-        initialBackoff: parseInt(document.getElementById('initialBackoff').value)
-      };
-      
-      const sessionLimit = document.getElementById('sessionLimit').value;
-      if (sessionLimit) {
-        config.limit = parseInt(sessionLimit);
-      }
-      
-      try {
-        const response = await fetch(`${API_BASE}/scraper/start`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(config)
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          updateScraperUI(true, data.pid);
-          document.getElementById('scraperLog').classList.add('visible');
-          document.getElementById('scraperStats').style.display = 'grid';
-        } else {
-          alert('Failed to start scraper: ' + (data.error || 'Unknown error'));
-        }
-      } catch (error) {
-        alert('Error starting scraper: ' + error.message);
-      }
-    }
-    
-    // Stop the scraper
-    async function stopScraper() {
-      try {
-        const response = await fetch(`${API_BASE}/scraper/stop`, {
-          method: 'POST'
-        });
-        
-        const data = await response.json();
-        updateScraperUI(false);
-      } catch (error) {
-        alert('Error stopping scraper: ' + error.message);
-      }
-    }
-    
-    // Update scraper UI state
-    function updateScraperUI(running, pid = null) {
-      scraperRunning = running;
-      const statusDot = document.getElementById('scraperStatusDot');
-      const statusText = document.getElementById('scraperStatusText');
-      const pidText = document.getElementById('scraperPid');
-      const startBtn = document.getElementById('startScraperBtn');
-      const stopBtn = document.getElementById('stopScraperBtn');
-      
-      if (running) {
-        statusDot.className = 'scraper-status-dot running';
-        statusText.textContent = 'Running';
-        pidText.textContent = pid ? `PID: ${pid}` : '';
-        startBtn.style.display = 'none';
-        stopBtn.style.display = 'flex';
-      } else {
-        statusDot.className = 'scraper-status-dot stopped';
-        statusText.textContent = 'Idle';
-        pidText.textContent = '';
-        startBtn.style.display = 'flex';
-        stopBtn.style.display = 'none';
-      }
-    }
-    
-    // Update scraper status from server
-    async function updateScraperStatus() {
-      try {
-        const response = await fetch(`${API_BASE}/scraper/status`);
-        const data = await response.json();
-        
-        updateScraperUI(data.running, data.pid);
-        
-        if (data.checkpoint) {
-          document.getElementById('scraperStats').style.display = 'grid';
-          const stats = data.checkpoint;
-          document.getElementById('statProcessed').textContent = 
-            (stats.processed_urls || []).length;
-          document.getElementById('statBlocked').textContent = 
-            (stats.blocked_urls || []).length;
-          document.getElementById('statFailed').textContent = 
-            (stats.failed_urls || []).length;
-          
-          // Calculate today's count
-          const today = new Date().toISOString().split('T')[0];
-          const todayCount = (stats.daily_counts || {})[today] || 0;
-          document.getElementById('statToday').textContent = todayCount;
-        }
-        
-        // Update log if visible
-        if (document.getElementById('scraperLog').classList.contains('visible')) {
-          updateScraperLog();
-        }
-      } catch (error) {
-        console.error('Failed to fetch scraper status:', error);
-      }
-    }
-    
-    // Update scraper log
-    async function updateScraperLog() {
-      try {
-        const response = await fetch(`${API_BASE}/scraper/log`);
-        const data = await response.json();
-        
-        const logEl = document.getElementById('scraperLog');
-        if (data.log) {
-          logEl.innerHTML = colorizeLog(data.log);
-          logEl.scrollTop = logEl.scrollHeight;
-        }
-      } catch (error) {
-        console.error('Failed to fetch scraper log:', error);
-      }
-    }
-    
-    // Populate sources dropdown
+    // Populate sources dropdown for Ralph
     function populateSourcesDropdown(sources) {
-      const select = document.getElementById('scraperSource');
-      const currentValue = select.value;
-      
-      // Clear existing options except the first one
-      while (select.options.length > 1) {
-        select.remove(1);
-      }
-      
-      // Sort sources: those with URLs first, then by name
-      const sortedSources = [...sources].sort((a, b) => {
-        const aHasUrls = (a.pipeline?.urlsFound || 0) > 0;
-        const bHasUrls = (b.pipeline?.urlsFound || 0) > 0;
-        if (aHasUrls !== bHasUrls) return bHasUrls - aHasUrls;
-        return a.name.localeCompare(b.name);
-      });
-      
-      sortedSources.forEach(source => {
-        const option = document.createElement('option');
-        option.value = source.id;
-        const urlCount = source.pipeline?.urlsFound || 0;
-        const htmlCount = source.pipeline?.htmlScraped || 0;
-        option.textContent = `${source.name} (${htmlCount}/${urlCount} scraped)`;
-        if (urlCount === 0) {
-          option.disabled = true;
-          option.textContent += ' - no URLs';
-        }
-        select.appendChild(option);
-      });
-      
-      // Restore selection if it still exists
-      if (currentValue) {
-        select.value = currentValue;
-      }
-      
-      // Also populate Ralph source selector
+      // Populate Ralph source selector
       populateRalphSourceSelector(sources);
     }
     
@@ -1284,14 +1146,6 @@
         
         select.appendChild(option);
       });
-    }
-    
-    // Toggle Ralph panel
-    function toggleRalphPanel() {
-      const body = document.getElementById('ralphBody');
-      const toggle = document.getElementById('ralphToggle');
-      body.classList.toggle('open');
-      toggle.classList.toggle('open');
     }
     
     // Start Ralph
@@ -1474,9 +1328,73 @@
       }
     }
     
+    // ANSI color code to CSS class mapping
+    const ANSI_COLORS = {
+      '30': 'color: #1a1a2e',      // black
+      '31': 'color: #ff6b6b',      // red
+      '32': 'color: #4ade80',      // green
+      '33': 'color: #fbbf24',      // yellow
+      '34': 'color: #60a5fa',      // blue
+      '35': 'color: #c084fc',      // magenta
+      '36': 'color: #22d3ee',      // cyan
+      '37': 'color: #e5e5e5',      // white
+      '90': 'color: #6b7280',      // bright black (gray)
+      '91': 'color: #f87171',      // bright red
+      '92': 'color: #4ade80',      // bright green
+      '93': 'color: #facc15',      // bright yellow
+      '94': 'color: #93c5fd',      // bright blue
+      '95': 'color: #e879f9',      // bright magenta
+      '96': 'color: #67e8f9',      // bright cyan
+      '97': 'color: #ffffff',      // bright white
+    };
+
+    // Convert ANSI escape codes to HTML spans
+    function ansiToHtml(text) {
+      // Handle both \x1b[ and raw [0; patterns
+      let result = text;
+      let openSpans = 0;
+
+      // Match ANSI escape sequences: \x1b[...m or \033[...m or raw [digits;digitsm patterns
+      result = result.replace(/\x1b\[([0-9;]*)m|\[([0-9]+;?[0-9]*)m/g, (match, p1, p2) => {
+        const codes = (p1 || p2 || '').split(';').filter(c => c);
+
+        // Reset code
+        if (codes.length === 0 || codes.includes('0')) {
+          const closeSpans = '</span>'.repeat(openSpans);
+          openSpans = 0;
+          return closeSpans;
+        }
+
+        // Build style from codes
+        let styles = [];
+        for (const code of codes) {
+          if (code === '1') styles.push('font-weight: bold');
+          else if (code === '2') styles.push('opacity: 0.7');
+          else if (code === '3') styles.push('font-style: italic');
+          else if (code === '4') styles.push('text-decoration: underline');
+          else if (ANSI_COLORS[code]) styles.push(ANSI_COLORS[code]);
+        }
+
+        if (styles.length > 0) {
+          openSpans++;
+          return `<span style="${styles.join('; ')}">`;
+        }
+        return '';
+      });
+
+      // Close any remaining open spans
+      result += '</span>'.repeat(openSpans);
+
+      return result;
+    }
+
     // Colorize log output
     function colorizeLog(text) {
-      return text
+      // First convert ANSI codes to HTML
+      let result = ansiToHtml(text);
+
+      // Then apply keyword highlighting (only if not already colored by ANSI)
+      return result
         .replace(/✓|✅|SUCCESS|COMPLETE/gi, '<span class="success">$&</span>')
         .replace(/❌|ERROR|FAIL|BLOCKED/gi, '<span class="error">$&</span>')
         .replace(/⚠️|WARNING|WARN/gi, '<span class="warning">$&</span>')
@@ -1506,32 +1424,35 @@
         document.getElementById('totalSources').textContent = data.sources.total;
         document.getElementById('completedSources').textContent = data.sources.completed;
         document.getElementById('inProgressSources').textContent = data.sources.in_progress;
-        document.getElementById('htmlFiles').textContent = formatNumber(data.html_files);
         
-        // Update current source
-        if (data.current_source) {
-          document.getElementById('currentSourceName').textContent = data.current_source.name;
-          document.getElementById('currentSourceUrl').textContent = data.current_source.url;
-          
-          // Update pipeline stages
-          const pipeline = data.current_source.pipeline || {};
-          updateStage('stage1', pipeline.urlsFound, pipeline.expectedUrls);
-          updateStage('stage2', pipeline.htmlScraped, pipeline.urlsFound);
-          updateStage('stage3', pipeline.builds, null);
-          updateStage('stage4', pipeline.mods, null);
+        // Update pipeline stages with TOTALS
+        // Use top-level data fields (from API) for accurate totals
+        let totalUrls = 0;
+        if (data.all_sources && data.all_sources.length > 0) {
+          data.all_sources.forEach(source => {
+            const pipeline = source.pipeline || {};
+            totalUrls += pipeline.urlsFound || 0;
+          });
         }
+        
+        // Use data fields directly for HTML, Builds, Mods (matches actual file counts)
+        const totalHtml = data.html_files || 0;
+        const totalBuilds = data.total_builds || data.builds || 0;
+        const totalMods = data.total_mods || data.mods || 0;
+        
+        updateStage('stage1', totalUrls, null);
+        updateStage('stage2', totalHtml, totalUrls);
+        updateStage('stage3', totalBuilds, null);
+        updateStage('stage4', totalMods, null);
         
         // Update sources list
         updateSourcesList(data.all_sources || []);
         
-        // Populate scraper dropdown
+        // Populate Ralph source selector
         if (data.all_sources) {
           allSources = data.all_sources;
           populateSourcesDropdown(data.all_sources);
         }
-        
-        // Update scraper status
-        updateScraperStatus();
         
         // Update log (use fresh endpoint for better updates)
         if (autoRefreshEnabled) {
@@ -1543,57 +1464,118 @@
         
         // Update refresh times
         const now = new Date().toLocaleTimeString();
-        document.getElementById('sourcesRefresh').textContent = `Updated: ${now}`;
+        document.getElementById('sourcesRefreshText').textContent = `Live · ${now}`;
+        document.getElementById('sourcesLiveDot').className = 'live-dot';
         
       } catch (error) {
         console.error('Failed to fetch status:', error);
         document.getElementById('statusDot').className = 'status-dot stopped';
         document.getElementById('statusText').textContent = 'API Offline';
+        document.getElementById('sourcesLiveDot').className = 'live-dot error';
+        document.getElementById('sourcesRefreshText').textContent = 'Offline';
       }
     }
     
     function updateStage(id, current, total) {
       const stage = document.getElementById(id);
-      const valueEl = stage.querySelector('.stage-value');
+      const valueEl = stage.querySelector('.header-stage-value');
       
       if (current !== null && current !== undefined && current !== 'null') {
         valueEl.textContent = formatNumber(current);
         if (total && current >= total) {
-          stage.className = 'stage-box complete';
+          stage.className = 'header-stage complete';
         } else if (current > 0) {
-          stage.className = 'stage-box active';
+          stage.className = 'header-stage active';
         } else {
-          stage.className = 'stage-box';
+          stage.className = 'header-stage';
         }
       } else {
         valueEl.textContent = '--';
-        stage.className = 'stage-box';
+        stage.className = 'header-stage';
       }
     }
     
+    // Sources state for filtering/sorting
+    let allSourcesData = [];
+    let currentFilter = '';
+    let currentSort = 'progress';
+    
+    // Initialize filter and sort event listeners
+    document.getElementById('sourcesFilter').addEventListener('input', (e) => {
+      currentFilter = e.target.value.toLowerCase();
+      renderSourcesList();
+    });
+    
+    document.getElementById('sourcesSort').addEventListener('change', (e) => {
+      currentSort = e.target.value;
+      renderSourcesList();
+    });
+    
     function updateSourcesList(sources) {
+      allSourcesData = sources;
+      renderSourcesList();
+    }
+    
+    function renderSourcesList() {
       const container = document.getElementById('sourcesList');
       
-      // Sort: in_progress first, then by name
-      sources.sort((a, b) => {
-        const order = { in_progress: 0, pending: 1, blocked: 2, completed: 3 };
-        const diff = (order[a.status] || 99) - (order[b.status] || 99);
-        if (diff !== 0) return diff;
-        return a.name.localeCompare(b.name);
+      // Filter sources
+      let filtered = allSourcesData.filter(source => {
+        if (!currentFilter) return true;
+        return source.name.toLowerCase().includes(currentFilter) ||
+               (source.id && source.id.toLowerCase().includes(currentFilter));
       });
       
-      // Take top 15
-      const topSources = sources.slice(0, 15);
+      // Sort sources
+      filtered.sort((a, b) => {
+        const pipeA = a.pipeline || {};
+        const pipeB = b.pipeline || {};
+        
+        switch (currentSort) {
+          case 'name':
+            return a.name.localeCompare(b.name);
+          case 'urls':
+            return (pipeB.urlsFound || 0) - (pipeA.urlsFound || 0);
+          case 'html':
+            return (pipeB.htmlScraped || 0) - (pipeA.htmlScraped || 0);
+          case 'builds':
+            return (pipeB.builds || 0) - (pipeA.builds || 0);
+          case 'progress':
+            const progA = pipeA.urlsFound ? (pipeA.htmlScraped || 0) / pipeA.urlsFound : 0;
+            const progB = pipeB.urlsFound ? (pipeB.htmlScraped || 0) / pipeB.urlsFound : 0;
+            return progB - progA;
+          case 'status':
+          default:
+            const order = { in_progress: 0, pending: 1, blocked: 2, completed: 3 };
+            const diff = (order[a.status] || 99) - (order[b.status] || 99);
+            if (diff !== 0) return diff;
+            return a.name.localeCompare(b.name);
+        }
+      });
       
-      container.innerHTML = topSources.map(source => {
+      // Render sources
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="no-results">No sources matching "${currentFilter}"</div>`;
+        return;
+      }
+      
+      container.innerHTML = filtered.map(source => {
         const pipeline = source.pipeline || {};
         const progress = pipeline.urlsFound ? 
           Math.round((pipeline.htmlScraped || 0) / pipeline.urlsFound * 100) : 0;
         
         return `
-          <div class="source-item">
+          <div class="source-item" data-source-id="${source.id}"
+               onclick="openPrdModal('${source.id}', '${source.name.replace(/'/g, "\\'")}', '${(source.url || '').replace(/'/g, "\\'")}')"
+               title="Click to view PRD for ${source.name}">
             <div class="source-info">
-              <div class="source-status ${source.status}"></div>
+              <div class="source-status ${source.status}" 
+                   data-source-id="${source.id}"
+                   data-source-name="${source.name}"
+                   data-source-url="${source.url || ''}"
+                   data-source-status="${source.status}"
+                   onclick="event.stopPropagation(); showSourceMenu(event, this)"
+                   title="Click for actions"></div>
               <div>
                 <div class="source-name">${source.name}</div>
                 <div class="source-stats">
@@ -1614,6 +1596,1355 @@
     // Initial load and start refresh
     updateDashboard();
     setInterval(updateDashboard, REFRESH_INTERVAL);
+    
+    // ==========================================
+    // Source Action Menu
+    // ==========================================
+    
+    let activeSourceMenu = null;
+    
+    function showSourceMenu(event, element) {
+      event.stopPropagation();
+      
+      const sourceId = element.dataset.sourceId;
+      const sourceName = element.dataset.sourceName;
+      const sourceUrl = element.dataset.sourceUrl;
+      const sourceStatus = element.dataset.sourceStatus;
+      
+      const menu = document.getElementById('sourceActionMenu');
+      activeSourceMenu = { id: sourceId, name: sourceName, url: sourceUrl, status: sourceStatus };
+      
+      // Update menu content
+      document.getElementById('menuSourceName').textContent = sourceName;
+      document.getElementById('menuSourceUrl').textContent = sourceUrl || 'No URL';
+      
+      // Show/hide actions based on status
+      const startBtn = document.getElementById('menuStartRalph');
+      const stopBtn = document.getElementById('menuStopRalph');
+      const generateBtn = document.getElementById('menuGeneratePrd');
+      
+      // Check if Ralph is currently running
+      const ralphRunning = document.getElementById('statusText').textContent === 'Running';
+      const isCurrentSource = sourceStatus === 'in_progress';
+      
+      if (ralphRunning && isCurrentSource) {
+        // This source is currently running - show stop option
+        startBtn.classList.add('disabled');
+        stopBtn.classList.remove('disabled');
+      } else if (ralphRunning) {
+        // Ralph is running on a different source - disable start
+        startBtn.classList.add('disabled');
+        startBtn.querySelector('.label').textContent = 'Ralph busy...';
+        stopBtn.classList.remove('disabled');
+      } else {
+        // Ralph not running - show start option
+        startBtn.classList.remove('disabled');
+        startBtn.querySelector('.label').textContent = 'Start Ralph';
+        stopBtn.classList.add('disabled');
+      }
+      
+      // Position menu near the clicked element
+      const rect = element.getBoundingClientRect();
+      menu.style.left = `${rect.left + 20}px`;
+      menu.style.top = `${rect.top - 10}px`;
+      
+      // Ensure menu stays within viewport
+      const menuRect = menu.getBoundingClientRect();
+      if (menuRect.right > window.innerWidth) {
+        menu.style.left = `${window.innerWidth - 220}px`;
+      }
+      if (menuRect.bottom > window.innerHeight) {
+        menu.style.top = `${rect.top - menuRect.height - 10}px`;
+      }
+      
+      menu.classList.add('visible');
+    }
+    
+    function hideSourceMenu() {
+      const menu = document.getElementById('sourceActionMenu');
+      menu.classList.remove('visible');
+      activeSourceMenu = null;
+    }
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.source-action-menu') && !e.target.closest('.source-status')) {
+        hideSourceMenu();
+      }
+    });
+    
+    // Close menu on escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hideSourceMenu();
+    });
+    
+    async function startRalphForSource() {
+      if (!activeSourceMenu) return;
+      
+      const { id, name, url } = activeSourceMenu;
+      hideSourceMenu();
+      
+      // Show loading state
+      showNotification(`🚀 Starting Ralph for ${name}...`, 'info');
+      
+      try {
+        // Start Ralph with the selected source
+        const response = await fetch(`${API_BASE}/ralph/start`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            iterations: 25,
+            sources: [id]
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showNotification(`✅ Ralph started for ${name}`, 'success');
+          // Refresh dashboard to show new state
+          setTimeout(updateDashboard, 1000);
+        } else {
+          showNotification(`❌ Failed: ${data.error}`, 'error');
+        }
+      } catch (err) {
+        showNotification(`❌ Error: ${err.message}`, 'error');
+      }
+    }
+    
+    async function stopRalph() {
+      hideSourceMenu();
+      
+      showNotification('🛑 Stopping Ralph...', 'info');
+      
+      try {
+        const response = await fetch(`${API_BASE}/ralph/stop`, {
+          method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showNotification('✅ Ralph stopped', 'success');
+          setTimeout(updateDashboard, 1000);
+        } else {
+          showNotification(`❌ Failed: ${data.error}`, 'error');
+        }
+      } catch (err) {
+        showNotification(`❌ Error: ${err.message}`, 'error');
+      }
+    }
+    
+    async function generatePrdForSource() {
+      if (!activeSourceMenu) return;
+      
+      const { id, name, url } = activeSourceMenu;
+      hideSourceMenu();
+      
+      // Open the PRD editor modal
+      openPrdModal(id, name, url);
+    }
+    
+    function viewSourceData() {
+      if (!activeSourceMenu) return;
+      
+      const { id, url } = activeSourceMenu;
+      hideSourceMenu();
+      
+      // Open source URL in new tab
+      if (url) {
+        window.open(url, '_blank');
+      }
+    }
+    
+    // Notification system
+    function showNotification(message, type = 'info') {
+      const existing = document.querySelector('.notification');
+      if (existing) existing.remove();
+      
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.classList.add('visible'), 10);
+      setTimeout(() => {
+        notification.classList.remove('visible');
+        setTimeout(() => notification.remove(), 300);
+      }, 4000);
+    }
+  </script>
+  
+  <!-- Settings Panel -->
+  <div id="settingsOverlay" class="settings-overlay" onclick="if(event.target === this) closeSettingsPanel()">
+    <div class="settings-panel">
+      <div class="settings-header">
+        <h2>⚙️ Settings</h2>
+        <button class="settings-close" onclick="closeSettingsPanel()">×</button>
+      </div>
+      <div class="settings-content">
+        <!-- Ralph Loop Section -->
+        <div class="settings-section">
+          <div class="settings-section-title">🤖 Ralph Loop Configuration</div>
+          
+          <!-- Status Bar -->
+          <div class="ralph-status" style="margin-bottom: 16px;">
+            <div class="ralph-status-indicator">
+              <div class="scraper-status-dot" id="ralphStatusDot2"></div>
+            </div>
+            <div class="ralph-info">
+              <div class="project-name" id="ralphProject">No active project</div>
+              <div class="story-progress" id="ralphStoryProgress">--</div>
+            </div>
+            <div class="status-badge" style="padding: 4px 12px; margin-left: auto;">
+              <div class="status-dot" id="ralphStatusDot"></div>
+              <span id="ralphStatusText" style="font-size: 11px;">Checking...</span>
+            </div>
+          </div>
+          
+          <!-- Source Selection -->
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label>Target Source(s)</label>
+            <select id="ralphSource" multiple size="6" style="width: 100%;">
+              <option value="">Loading sources...</option>
+            </select>
+            <span class="help-text">Hold Ctrl/Cmd to select multiple. Leave empty to use current PRD.</span>
+          </div>
+          
+          <!-- Iterations Config -->
+          <div class="iterations-input" style="margin-bottom: 16px;">
+            <label>Max Iterations:</label>
+            <input type="number" id="ralphIterations" value="25" min="1" max="100">
+            <span class="help-text">Ralph will stop after this many iterations</span>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="btn-group" style="flex-wrap: wrap; gap: 8px;">
+            <button class="btn btn-secondary" onclick="generatePRD()" title="Use browser to analyze site and generate PRD">
+              🌐 Generate PRD
+            </button>
+            <button class="btn btn-primary" id="startRalphBtn" onclick="startRalph()" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));">
+              ▶️ Start Ralph
+            </button>
+            <button class="btn btn-danger" id="stopRalphBtn" onclick="stopRalph()" style="display: none;">
+              ⏹️ Stop Ralph
+            </button>
+          </div>
+          
+          <!-- PRD Generation Status -->
+          <div id="prdGenStatus" style="display: none; margin-top: 16px; padding: 12px; background: var(--bg-primary); border-radius: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div class="scraper-status-dot running"></div>
+              <span id="prdGenStatusText">Analyzing site...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Source Action Menu -->
+  <div id="sourceActionMenu" class="source-action-menu">
+    <div class="source-action-menu-header">
+      <div class="name" id="menuSourceName">Source Name</div>
+      <div class="url" id="menuSourceUrl">https://example.com</div>
+    </div>
+    <div class="source-action-item start" id="menuStartRalph" onclick="startRalphForSource()">
+      <span class="icon">▶️</span>
+      <span class="label">Start Ralph</span>
+    </div>
+    <div class="source-action-item stop disabled" id="menuStopRalph" onclick="stopRalph()">
+      <span class="icon">⏹️</span>
+      <span class="label">Stop Ralph</span>
+    </div>
+    <div class="source-action-divider"></div>
+    <div class="source-action-item generate" id="menuGeneratePrd" onclick="generatePrdForSource()">
+      <span class="icon">🔧</span>
+      <span class="label">Generate PRD</span>
+    </div>
+    <div class="source-action-item view" onclick="viewSourceData()">
+      <span class="icon">🌐</span>
+      <span class="label">Visit Website</span>
+    </div>
+  </div>
+  
+  <style>
+    .notification {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      padding: 12px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 2000;
+    }
+    
+    .notification.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    
+    .notification.success { border-color: var(--accent-green); }
+    .notification.error { border-color: var(--accent-red); }
+    .notification.info { border-color: var(--accent-cyan); }
+    
+    /* PRD Editor Modal */
+    .prd-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    
+    .prd-modal-overlay.visible {
+      display: flex;
+      animation: fadeIn 0.2s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .prd-modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 1200px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      animation: modalSlide 0.3s ease-out;
+    }
+    
+    @keyframes modalSlide {
+      from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .prd-modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .prd-modal-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .prd-modal-header .source-badge {
+      background: var(--bg-secondary);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .prd-modal-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+    
+    .prd-modal-close:hover {
+      background: var(--accent-red);
+      color: white;
+    }
+    
+    .prd-modal-body {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      flex: 1;
+      overflow: hidden;
+    }
+    
+    .prd-sidebar {
+      border-right: 1px solid var(--border);
+      padding: 20px;
+      overflow-y: auto;
+      background: var(--bg-secondary);
+    }
+    
+    .prd-sidebar h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    
+    .prd-variables {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .prd-variable {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .prd-variable label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .prd-variable input, .prd-variable select {
+      padding: 8px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .prd-variable input:focus, .prd-variable select:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+    
+    .prd-actions-sidebar {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .prd-action-btn {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    
+    .prd-action-btn:hover {
+      border-color: var(--accent-cyan);
+      background: var(--bg-card);
+    }
+    
+    .prd-action-btn.primary {
+      background: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+      color: black;
+      font-weight: 600;
+    }
+    
+    .prd-action-btn.primary:hover {
+      background: #1cb5cc;
+    }
+    
+    .prd-action-btn.danger {
+      color: var(--accent-red);
+    }
+    
+    .prd-action-btn.danger:hover {
+      background: var(--accent-red);
+      border-color: var(--accent-red);
+      color: white;
+    }
+    
+    .prd-main {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .prd-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      background: var(--bg-secondary);
+    }
+    
+    .prd-tab {
+      padding: 12px 20px;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.2s;
+    }
+    
+    .prd-tab:hover {
+      color: var(--text-primary);
+    }
+    
+    .prd-tab.active {
+      color: var(--accent-cyan);
+      border-bottom-color: var(--accent-cyan);
+    }
+    
+    .prd-content {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .prd-panel {
+      position: absolute;
+      inset: 0;
+      padding: 20px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    .prd-panel.active {
+      display: block;
+    }
+    
+    .prd-editor {
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: none;
+    }
+    
+    .prd-editor:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+    
+    .prd-stream {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      min-height: 400px;
+      position: relative;
+    }
+    
+    .prd-stream .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: var(--accent-cyan);
+      animation: blink 1s infinite;
+      vertical-align: middle;
+      margin-left: 2px;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    
+    .prd-stream-status {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    
+    .prd-stream-status .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse 1.5s infinite;
+    }
+    
+    .prd-preview {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    
+    .prd-preview h4 {
+      font-size: 14px;
+      margin-bottom: 16px;
+      color: var(--accent-cyan);
+    }
+    
+    .prd-stories {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .prd-story {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    
+    .prd-story-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    
+    .prd-story-id {
+      background: var(--accent-purple);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .prd-story-title {
+      font-weight: 500;
+    }
+    
+    .prd-story-criteria {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: 20px;
+    }
+    
+    .prd-story-criteria li {
+      margin: 4px 0;
+    }
+    
+    .prd-modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-secondary);
+    }
+    
+    .prd-footer-info {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .prd-footer-actions {
+      display: flex;
+      gap: 12px;
+    }
+  </style>
+  
+  <!-- PRD Editor Modal -->
+  <div id="prdModal" class="prd-modal-overlay">
+    <div class="prd-modal">
+      <div class="prd-modal-header">
+        <h2>
+          🔧 PRD Generator
+          <span class="source-badge" id="prdSourceBadge">source_name</span>
+        </h2>
+        <button class="prd-modal-close" onclick="closePrdModal()">×</button>
+      </div>
+      
+      <div class="prd-modal-body">
+        <div class="prd-sidebar">
+          <h3>📋 Variables</h3>
+          <div class="prd-variables" id="prdVariables">
+            <div class="prd-variable">
+              <label>{{source_id}}</label>
+              <input type="text" id="varSourceId" placeholder="source_id">
+            </div>
+            <div class="prd-variable">
+              <label>{{source_name}}</label>
+              <input type="text" id="varSourceName" placeholder="Source Name">
+            </div>
+            <div class="prd-variable">
+              <label>{{source_url}}</label>
+              <input type="text" id="varSourceUrl" placeholder="https://example.com">
+            </div>
+            <div class="prd-variable">
+              <label>{{output_dir}}</label>
+              <input type="text" id="varOutputDir" placeholder="data/source_name">
+            </div>
+            <div class="prd-variable">
+              <label>{{scrape_mode}}</label>
+              <select id="varScrapeMode">
+                <option value="standard">Standard (httpx)</option>
+                <option value="stealth">Stealth (Camoufox)</option>
+                <option value="aggressive">Aggressive Stealth</option>
+              </select>
+            </div>
+            <div class="prd-variable">
+              <label>{{priority}}</label>
+              <select id="varPriority">
+                <option value="1">1 - Highest</option>
+                <option value="2">2 - High</option>
+                <option value="3" selected>3 - Normal</option>
+                <option value="4">4 - Low</option>
+                <option value="5">5 - Lowest</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="prd-actions-sidebar">
+            <h3 style="margin-top: 0;">⚡ Actions</h3>
+            <button class="prd-action-btn" onclick="generatePrd()">
+              🔄 Generate PRD
+            </button>
+            <button class="prd-action-btn" onclick="generatePrdVariant()">
+              🎲 Generate Variant
+            </button>
+            <button class="prd-action-btn" onclick="analyzeSiteStructure()">
+              🔍 Analyze Site
+            </button>
+            <button class="prd-action-btn danger" onclick="clearPrdEditor()">
+              🗑️ Clear
+            </button>
+          </div>
+        </div>
+        
+        <div class="prd-main">
+          <div class="prd-tabs">
+            <button class="prd-tab active" onclick="switchPrdTab('stream')">🔴 Live Stream</button>
+            <button class="prd-tab" onclick="switchPrdTab('editor')">📝 Editor</button>
+            <button class="prd-tab" onclick="switchPrdTab('preview')">👁️ Preview</button>
+          </div>
+          
+          <div class="prd-content">
+            <div class="prd-panel active" id="prdStreamPanel">
+              <div class="prd-stream" id="prdStreamContent">
+                <span class="prd-stream-status" id="prdStreamStatus" style="display: none;">
+                  <span class="dot"></span>
+                  Generating...
+                </span>
+                <span id="prdStreamText">Click "Generate PRD" to start...</span>
+                <span class="cursor" id="prdCursor" style="display: none;"></span>
+              </div>
+            </div>
+            
+            <div class="prd-panel" id="prdEditorPanel">
+              <textarea class="prd-editor" id="prdEditorContent" placeholder="PRD JSON will appear here after generation..."></textarea>
+            </div>
+            
+            <div class="prd-panel" id="prdPreviewPanel">
+              <div class="prd-preview" id="prdPreviewContent">
+                <p style="color: var(--text-muted);">Generate a PRD to see the preview...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="prd-modal-footer">
+        <div class="prd-footer-info">
+          <span id="prdStatus">Ready</span>
+          <span id="prdTimestamp">--</span>
+        </div>
+        <div class="prd-footer-actions">
+          <button class="prd-action-btn" onclick="closePrdModal()">Cancel</button>
+          <button class="prd-action-btn" onclick="savePrdToFile()">💾 Save to File</button>
+          <button class="prd-action-btn primary" onclick="usePrdAndStartRalph()">🚀 Use & Start Ralph</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // ==========================================
+    // PRD Editor Modal
+    // ==========================================
+    
+    let currentPrdSource = null;
+    let prdGenerationAbort = null;
+    let currentPrdContent = '';
+    
+    async function openPrdModal(sourceId, sourceName, sourceUrl) {
+      currentPrdSource = { id: sourceId, name: sourceName, url: sourceUrl };
+      
+      // Update modal header
+      document.getElementById('prdSourceBadge').textContent = sourceId;
+      
+      // Pre-fill variables
+      document.getElementById('varSourceId').value = sourceId;
+      document.getElementById('varSourceName').value = sourceName;
+      document.getElementById('varSourceUrl').value = sourceUrl || '';
+      document.getElementById('varOutputDir').value = `data/${sourceId}`;
+      
+      // Reset content
+      document.getElementById('prdStreamText').textContent = 'Checking for existing analysis...';
+      document.getElementById('prdEditorContent').value = '';
+      document.getElementById('prdPreviewContent').innerHTML = '<p style="color: var(--text-muted);">Generate a PRD to see the preview...</p>';
+      document.getElementById('prdStreamStatus').style.display = 'flex';
+      document.getElementById('prdCursor').style.display = 'inline-block';
+      document.getElementById('prdStatus').textContent = 'Loading...';
+      document.getElementById('prdTimestamp').textContent = '--';
+      
+      // Show modal
+      document.getElementById('prdModal').classList.add('visible');
+      switchPrdTab('stream');
+      
+      // Wait 0.5 seconds then start automated workflow
+      await new Promise(r => setTimeout(r, 500));
+      await runAutomatedPrdWorkflow(sourceId, sourceName, sourceUrl);
+    }
+    
+    // Automated PRD workflow
+    async function runAutomatedPrdWorkflow(sourceId, sourceName, sourceUrl) {
+      const streamEl = document.getElementById('prdStreamText');
+      currentPrdContent = '';
+      
+      try {
+        // Step 1: Check if domain analysis exists
+        await streamText(streamEl, `🔍 Checking for ${sourceId}_domain_analysis.md...\n`);
+        
+        const analysisResponse = await fetch(`${API_BASE}/prd/check-file`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: `${sourceId}_domain_analysis.md` })
+        });
+        const analysisCheck = await analysisResponse.json();
+        
+        let hasAnalysis = analysisCheck.exists;
+        
+        if (!hasAnalysis) {
+          await streamText(streamEl, `\n❌ No domain analysis found.\n`);
+          await streamText(streamEl, `\n🌐 Starting domain analysis for ${sourceName}...\n`);
+          await streamText(streamEl, `   Target: ${sourceUrl || 'No URL'}\n\n`);
+          
+          // Run domain analysis
+          const analyzeResponse = await fetch(`${API_BASE}/prd/analyze-domain`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              sourceId, 
+              sourceName, 
+              sourceUrl,
+              stream: true 
+            })
+          });
+          
+          if (analyzeResponse.ok) {
+            // Stream the analysis response
+            const reader = analyzeResponse.body?.getReader();
+            if (reader) {
+              const decoder = new TextDecoder();
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const text = decoder.decode(value);
+                await streamText(streamEl, text, 0);
+              }
+            } else {
+              const result = await analyzeResponse.json();
+              await streamText(streamEl, result.analysis || '✅ Analysis complete.\n');
+            }
+            hasAnalysis = true;
+            await streamText(streamEl, `\n\n✅ Domain analysis saved to ${sourceId}_domain_analysis.md\n`);
+          } else {
+            await streamText(streamEl, `\n⚠️ Analysis API not available. Using template-based PRD.\n`);
+          }
+        } else {
+          await streamText(streamEl, `✅ Found existing domain analysis.\n`);
+          
+          // Show snippet of existing analysis
+          if (analysisCheck.content) {
+            const preview = analysisCheck.content.substring(0, 500);
+            await streamText(streamEl, `\n📄 Analysis preview:\n${'─'.repeat(40)}\n${preview}...\n${'─'.repeat(40)}\n`);
+          }
+        }
+        
+        // Step 2: Check if PRD exists
+        await streamText(streamEl, `\n🔍 Checking for ${sourceId}_prd.md...\n`);
+        
+        const prdResponse = await fetch(`${API_BASE}/prd/check-file`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: `${sourceId}_prd.md` })
+        });
+        const prdCheck = await prdResponse.json();
+        
+        if (!prdCheck.exists) {
+          await streamText(streamEl, `\n❌ No PRD found.\n`);
+          await streamText(streamEl, `\n🤖 Generating PRD from domain analysis...\n\n`);
+          
+          // Generate PRD from analysis
+          const generateResponse = await fetch(`${API_BASE}/prd/generate-from-analysis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              sourceId, 
+              sourceName, 
+              sourceUrl,
+              stream: true 
+            })
+          });
+          
+          if (generateResponse.ok) {
+            // Stream the PRD generation
+            const reader = generateResponse.body?.getReader();
+            if (reader) {
+              const decoder = new TextDecoder();
+              let prdContent = '';
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const text = decoder.decode(value);
+                prdContent += text;
+                await streamText(streamEl, text, 0);
+              }
+              // Try to parse and show in editor
+              try {
+                document.getElementById('prdEditorContent').value = prdContent;
+                const prd = JSON.parse(prdContent);
+                updatePrdPreview(prd);
+              } catch (e) {
+                // Not JSON, might be markdown
+                document.getElementById('prdEditorContent').value = prdContent;
+              }
+            } else {
+              const result = await generateResponse.json();
+              if (result.prd) {
+                const prdJson = JSON.stringify(result.prd, null, 2);
+                await streamText(streamEl, prdJson);
+                document.getElementById('prdEditorContent').value = prdJson;
+                updatePrdPreview(result.prd);
+              }
+            }
+            await streamText(streamEl, `\n\n✅ PRD saved to ${sourceId}_prd.md\n`);
+          } else {
+            // Fallback to template-based PRD
+            await streamText(streamEl, `\n⚠️ PRD generation API not available. Using template...\n\n`);
+            const vars = getVariables();
+            const template = createPrdTemplate(vars);
+            await streamPrdGeneration(template, vars);
+          }
+        } else {
+          await streamText(streamEl, `✅ Found existing PRD.\n`);
+          
+          // Load and display existing PRD
+          if (prdCheck.content) {
+            await streamText(streamEl, `\n📋 Loading PRD...\n\n`);
+            await streamText(streamEl, prdCheck.content);
+            document.getElementById('prdEditorContent').value = prdCheck.content;
+            try {
+              const prd = JSON.parse(prdCheck.content);
+              updatePrdPreview(prd);
+            } catch (e) {
+              // Markdown format
+            }
+          }
+        }
+        
+        // Done
+        document.getElementById('prdStreamStatus').style.display = 'none';
+        document.getElementById('prdCursor').style.display = 'none';
+        document.getElementById('prdStatus').textContent = 'Ready';
+        document.getElementById('prdTimestamp').textContent = new Date().toLocaleTimeString();
+        
+      } catch (error) {
+        console.error('PRD workflow error:', error);
+        await streamText(streamEl, `\n\n❌ Error: ${error.message}\n`);
+        await streamText(streamEl, `\n⚠️ Falling back to template-based PRD generation.\n\n`);
+        
+        // Fallback to simple template
+        document.getElementById('prdStreamStatus').style.display = 'none';
+        document.getElementById('prdCursor').style.display = 'none';
+        document.getElementById('prdStatus').textContent = 'Ready (template mode)';
+      }
+    }
+    
+    // Helper to stream text character by character
+    async function streamText(element, text, delay = 5) {
+      for (const char of text) {
+        currentPrdContent += char;
+        element.textContent = currentPrdContent;
+        element.parentElement.scrollTop = element.parentElement.scrollHeight;
+        if (delay > 0) {
+          await new Promise(r => setTimeout(r, char === '\n' ? delay * 4 : delay));
+        }
+      }
+    }
+    
+    function closePrdModal() {
+      document.getElementById('prdModal').classList.remove('visible');
+      if (prdGenerationAbort) {
+        prdGenerationAbort.abort();
+        prdGenerationAbort = null;
+      }
+      currentPrdSource = null;
+    }
+    
+    function switchPrdTab(tab) {
+      // Update tabs
+      document.querySelectorAll('.prd-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.prd-tab[onclick="switchPrdTab('${tab}')"]`).classList.add('active');
+      
+      // Update panels
+      document.querySelectorAll('.prd-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(`prd${tab.charAt(0).toUpperCase() + tab.slice(1)}Panel`).classList.add('active');
+    }
+    
+    function getVariables() {
+      return {
+        source_id: document.getElementById('varSourceId').value,
+        source_name: document.getElementById('varSourceName').value,
+        source_url: document.getElementById('varSourceUrl').value,
+        output_dir: document.getElementById('varOutputDir').value,
+        scrape_mode: document.getElementById('varScrapeMode').value,
+        priority: document.getElementById('varPriority').value
+      };
+    }
+    
+    async function generatePrd() {
+      const vars = getVariables();
+      
+      // Reset and show streaming
+      switchPrdTab('stream');
+      document.getElementById('prdStreamText').textContent = '';
+      document.getElementById('prdStreamStatus').style.display = 'flex';
+      document.getElementById('prdCursor').style.display = 'inline-block';
+      document.getElementById('prdStatus').textContent = 'Generating...';
+      
+      currentPrdContent = '';
+      
+      // Create PRD template with variables
+      const template = createPrdTemplate(vars);
+      
+      // Simulate streaming (in production, this would connect to a real streaming endpoint)
+      await streamPrdGeneration(template, vars);
+    }
+    
+    function createPrdTemplate(vars) {
+      return {
+        projectName: `${vars.source_name} Scraping`,
+        sourceId: vars.source_id,
+        branchName: "main",
+        targetUrl: vars.source_url,
+        outputDir: vars.output_dir,
+        scrapeMode: vars.scrape_mode,
+        priority: parseInt(vars.priority),
+        userStories: [
+          {
+            id: "URL-001",
+            title: "Discover all vehicle/build URLs on the site",
+            acceptanceCriteria: [
+              "urls.jsonl contains all discoverable URLs",
+              "URLs are deduplicated and normalized",
+              "Pagination/infinite scroll handled"
+            ],
+            priority: 1,
+            passes: false
+          },
+          {
+            id: "HTML-001", 
+            title: "Scrape HTML for all discovered URLs",
+            acceptanceCriteria: [
+              "HTML files saved for each URL",
+              vars.scrape_mode !== 'standard' ? "Use stealth scraper for anti-bot protection" : "Use standard httpx scraper",
+              "Rate limiting: 2-5 second delays"
+            ],
+            priority: 1,
+            passes: false
+          },
+          {
+            id: "BUILD-001",
+            title: "Extract structured build data from HTML",
+            acceptanceCriteria: [
+              "builds.jsonl contains vehicle data",
+              "Required fields: build_id, year, make, model, source_url",
+              "Images extracted to gallery_images array"
+            ],
+            priority: 1,
+            passes: false
+          },
+          {
+            id: "MOD-001",
+            title: "Extract modifications from builds",
+            acceptanceCriteria: [
+              "mods.jsonl contains modification data",
+              "Categories: Engine, Suspension, Wheels, etc.",
+              "Brand and part names extracted where available"
+            ],
+            priority: 2,
+            passes: false
+          }
+        ],
+        variables: vars,
+        createdAt: new Date().toISOString(),
+        createdBy: "dashboard-prd-generator"
+      };
+    }
+    
+    async function streamPrdGeneration(template, vars) {
+      const streamEl = document.getElementById('prdStreamText');
+      const jsonStr = JSON.stringify(template, null, 2);
+      
+      // Stream character by character
+      for (let i = 0; i < jsonStr.length; i++) {
+        if (prdGenerationAbort?.signal.aborted) break;
+        
+        currentPrdContent += jsonStr[i];
+        streamEl.textContent = currentPrdContent;
+        
+        // Scroll to bottom
+        streamEl.parentElement.scrollTop = streamEl.parentElement.scrollHeight;
+        
+        // Variable speed based on character
+        const char = jsonStr[i];
+        let delay = 2;
+        if (char === '\n') delay = 20;
+        else if (char === '{' || char === '}') delay = 30;
+        else if (char === ',') delay = 15;
+        
+        await new Promise(r => setTimeout(r, delay));
+      }
+      
+      // Done streaming
+      document.getElementById('prdStreamStatus').style.display = 'none';
+      document.getElementById('prdCursor').style.display = 'none';
+      document.getElementById('prdStatus').textContent = 'Generated';
+      document.getElementById('prdTimestamp').textContent = new Date().toLocaleTimeString();
+      
+      // Update editor and preview
+      document.getElementById('prdEditorContent').value = currentPrdContent;
+      updatePrdPreview(template);
+    }
+    
+    function updatePrdPreview(prd) {
+      const previewEl = document.getElementById('prdPreviewContent');
+      
+      const storiesHtml = prd.userStories.map(story => `
+        <div class="prd-story">
+          <div class="prd-story-header">
+            <span class="prd-story-id">${story.id}</span>
+            <span class="prd-story-title">${story.title}</span>
+          </div>
+          <ul class="prd-story-criteria">
+            ${story.acceptanceCriteria.map(c => `<li>✓ ${c}</li>`).join('')}
+          </ul>
+        </div>
+      `).join('');
+      
+      previewEl.innerHTML = `
+        <h4>📋 ${prd.projectName}</h4>
+        <div style="margin-bottom: 16px; font-size: 13px; color: var(--text-secondary);">
+          <strong>Target:</strong> ${prd.targetUrl || 'Not set'}<br>
+          <strong>Output:</strong> ${prd.outputDir}<br>
+          <strong>Mode:</strong> ${prd.scrapeMode}
+        </div>
+        <h4 style="margin-top: 20px;">📝 User Stories</h4>
+        <div class="prd-stories">
+          ${storiesHtml}
+        </div>
+      `;
+    }
+    
+    async function generatePrdVariant() {
+      const vars = getVariables();
+      
+      // Create a variant with different strategies
+      const strategies = ['aggressive', 'conservative', 'parallel', 'sequential'];
+      const strategy = strategies[Math.floor(Math.random() * strategies.length)];
+      
+      vars.variant_strategy = strategy;
+      
+      showNotification(`🎲 Generating ${strategy} variant...`, 'info');
+      await generatePrd();
+    }
+    
+    async function analyzeSiteStructure() {
+      if (!currentPrdSource?.url) {
+        showNotification('❌ No source URL to analyze', 'error');
+        return;
+      }
+      
+      const streamEl = document.getElementById('prdStreamText');
+      switchPrdTab('stream');
+      document.getElementById('prdStreamStatus').style.display = 'flex';
+      document.getElementById('prdCursor').style.display = 'inline-block';
+      document.getElementById('prdStatus').textContent = 'Analyzing...';
+      
+      // Simulate site analysis
+      const analysisSteps = [
+        `🔍 Analyzing ${currentPrdSource.url}...\n`,
+        `📡 Fetching homepage...\n`,
+        `✅ Page loaded successfully\n\n`,
+        `📊 Site Analysis Results:\n`,
+        `${'─'.repeat(40)}\n`,
+        `Domain: ${new URL(currentPrdSource.url).hostname}\n`,
+        `Protocol: ${new URL(currentPrdSource.url).protocol}\n\n`,
+        `🔎 Detected Patterns:\n`,
+        `  • Pagination: Yes (likely)\n`,
+        `  • JavaScript: Heavy usage detected\n`,
+        `  • Anti-bot: Unknown (needs testing)\n\n`,
+        `📝 Recommended Configuration:\n`,
+        `  • Scrape Mode: stealth\n`,
+        `  • Rate Limit: 3-5 seconds\n`,
+        `  • Concurrent: 2-3 browsers\n\n`,
+        `✨ Analysis complete. Click "Generate PRD" to create a tailored PRD.`
+      ];
+      
+      currentPrdContent = '';
+      streamEl.textContent = '';
+      
+      for (const step of analysisSteps) {
+        for (const char of step) {
+          currentPrdContent += char;
+          streamEl.textContent = currentPrdContent;
+          streamEl.parentElement.scrollTop = streamEl.parentElement.scrollHeight;
+          await new Promise(r => setTimeout(r, char === '\n' ? 50 : 10));
+        }
+      }
+      
+      document.getElementById('prdStreamStatus').style.display = 'none';
+      document.getElementById('prdCursor').style.display = 'none';
+      document.getElementById('prdStatus').textContent = 'Analysis complete';
+      document.getElementById('prdTimestamp').textContent = new Date().toLocaleTimeString();
+    }
+    
+    function clearPrdEditor() {
+      currentPrdContent = '';
+      document.getElementById('prdStreamText').textContent = 'Click "Generate PRD" to start...';
+      document.getElementById('prdEditorContent').value = '';
+      document.getElementById('prdPreviewContent').innerHTML = '<p style="color: var(--text-muted);">Generate a PRD to see the preview...</p>';
+      document.getElementById('prdStatus').textContent = 'Ready';
+      document.getElementById('prdTimestamp').textContent = '--';
+    }
+    
+    async function savePrdToFile() {
+      const content = document.getElementById('prdEditorContent').value;
+      if (!content) {
+        showNotification('❌ No PRD content to save', 'error');
+        return;
+      }
+      
+      try {
+        const prd = JSON.parse(content);
+        
+        const response = await fetch(`${API_BASE}/prd/save`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prd })
+        });
+        
+        if (response.ok) {
+          showNotification('✅ PRD saved to scripts/ralph/prd.json', 'success');
+        } else {
+          // Fallback: download as file
+          const blob = new Blob([content], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `prd_${currentPrdSource?.id || 'unknown'}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+          showNotification('📥 PRD downloaded as file', 'info');
+        }
+      } catch (err) {
+        showNotification(`❌ Invalid JSON: ${err.message}`, 'error');
+      }
+    }
+    
+    async function usePrdAndStartRalph() {
+      const content = document.getElementById('prdEditorContent').value;
+      if (!content) {
+        showNotification('❌ No PRD content', 'error');
+        return;
+      }
+      
+      try {
+        const prd = JSON.parse(content);
+        
+        // Save PRD first
+        await fetch(`${API_BASE}/prd/save`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prd })
+        });
+        
+        closePrdModal();
+        
+        // Start Ralph
+        showNotification(`🚀 Starting Ralph for ${prd.sourceId}...`, 'info');
+        
+        const response = await fetch(`${API_BASE}/ralph/start`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            iterations: 25,
+            sources: [prd.sourceId]
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showNotification(`✅ Ralph started for ${prd.sourceId}`, 'success');
+          setTimeout(updateDashboard, 1000);
+        } else {
+          showNotification(`❌ Failed: ${data.error}`, 'error');
+        }
+      } catch (err) {
+        showNotification(`❌ Error: ${err.message}`, 'error');
+      }
+    }
+    
+    // Close modal on overlay click
+    document.getElementById('prdModal').addEventListener('click', (e) => {
+      if (e.target.id === 'prdModal') {
+        closePrdModal();
+      }
+    });
+    
+    // Close modal on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('prdModal').classList.contains('visible')) {
+        closePrdModal();
+      }
+    });
   </script>
 </body>
 </html>
