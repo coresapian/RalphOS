@@ -1,75 +1,54 @@
 {
-  "projectName": "Goo-net Exchange JDM Vehicle Scraping",
-  "sourceId": "goo_net_exchange",
+  "projectName": "Manhart Automotive German Tuner Scraping",
+  "sourceId": "manhart_automotive",
   "branchName": "main",
-  "targetUrl": "https://goo-net-exchange.com",
-  "outputDir": "data/goo_net_exchange",
+  "targetUrl": "https://manhart-automotive.de",
+  "outputDir": "data/manhart_automotive",
   "pipelineStage": 2,
   "userStories": [
     {
       "id": "HTML-001",
-      "title": "Create HTML scraper for JDM vehicle listings",
+      "title": "Create HTML scraper for Manhart builds",
       "acceptanceCriteria": [
-        "scrape_html.py handles Japanese characters and UTF-8",
-        "Proper brotli/gzip decompression",
-        "Rate limiting to avoid blocks"
+        "scrape_html.py handles German/English content",
+        "Proper compression handling",
+        "Rate limiting"
       ],
       "priority": 1,
       "passes": true
     },
     {
       "id": "HTML-002",
-      "title": "Execute HTML scraping for all 100 URLs",
+      "title": "Execute HTML scraping for all 5 URLs",
       "acceptanceCriteria": [
-        "All 100 URLs attempted",
-        "HTML files saved to data/goo_net_exchange/html/",
-        "htmlScraped count updated in sources.json"
+        "All 5 URLs attempted",
+        "HTML files saved to data/manhart_automotive/html/"
       ],
       "priority": 2,
       "passes": true
     },
     {
       "id": "BUILD-001",
-      "title": "Create build extractor for JDM listings",
+      "title": "Create and execute build extraction",
       "acceptanceCriteria": [
-        "extract_builds.py parses vehicle details",
-        "Extracts: year, make, model, mileage, price, specs"
+        "extract_builds.py parses tuner package pages",
+        "Extracts: make, model, package name, power specs"
       ],
       "priority": 3,
       "passes": true
     },
     {
-      "id": "BUILD-002",
-      "title": "Execute build extraction",
+      "id": "MOD-001",
+      "title": "Create and execute mod extraction",
       "acceptanceCriteria": [
-        "builds.json contains extracted JDM vehicles",
-        "Valid build_id for each record"
+        "extract_mods.py detects performance upgrades",
+        "Categories: Engine, Exhaust, Suspension, Wheels"
       ],
       "priority": 4,
-      "passes": true
-    },
-    {
-      "id": "MOD-001",
-      "title": "Create mod extractor for JDM modifications",
-      "acceptanceCriteria": [
-        "extract_mods.py detects aftermarket parts",
-        "Uses category_detector for classification"
-      ],
-      "priority": 5,
-      "passes": true
-    },
-    {
-      "id": "MOD-002",
-      "title": "Execute mod extraction",
-      "acceptanceCriteria": [
-        "mods.json contains modifications if present",
-        "Category breakdown documented"
-      ],
-      "priority": 6,
-      "passes": true
+      "passes": false
     }
   ],
-  "createdAt": "2026-01-17T06:00:00Z",
+  "createdAt": "2026-01-17T07:00:00Z",
   "createdBy": "ralph",
-  "updatedAt": "2026-01-17T06:00:00Z"
+  "updatedAt": "2026-01-17T07:00:00Z"
 }

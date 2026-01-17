@@ -696,3 +696,50 @@ FACTORY_PACKAGES = {
 - Pricing in JPY, RHD steering default
 
 ---
+
+### 2026-01-17 - Manhart Automotive COMPLETE (All Stages)
+
+**Source:** manhart-automotive.de (German performance tuner)
+**Platform:** WordPress with custom theme
+
+**Pipeline Results:**
+- URLs: 5 (tuner package pages)
+- HTML Scraped: 5/5 (100%)
+- Builds: 5
+- Mods: 9
+
+**Vehicles & Power Specs:**
+| Package | Vehicle | Power |
+|---------|---------|-------|
+| AMG GT R | Mercedes-AMG GT R | 585 HP / 700 Nm |
+| CRT 800 | Porsche Cayenne | 800 HP / 770 Nm |
+| DP 500 | Land Rover Defender | 500 HP / 550 Nm |
+| MH1 350 | BMW 1 Series (F40) | 350 HP |
+| GR 450 | Toyota GR Supra | 450 HP / 650 Nm |
+
+**Category Breakdown:**
+- Engine: 5 (ECU tunes + stage power packages)
+- Exhaust: 2 (exhaust systems, tailpipes)
+- Suspension: 1 (KW coilovers)
+- Exterior: 1 (carbon fiber)
+
+**Technical Approach:**
+1. Title format: "MANHART {MODEL} {HP_NUMBER}" encodes power output
+2. Description text contains modification details
+3. Power specs regex: `(\d+)\s*(?:HP|PS)`, `(\d+)\s*Nm`
+4. OG meta tags provide primary images
+
+**Learnings:**
+1. German tuner pages embed HP in package names (CRT 800 = 800hp)
+2. Description paragraphs organized by mod category (exhaust, suspension, wheels)
+3. MANHART has multi-brand packages (Mercedes, Porsche, Land Rover, BMW, Toyota)
+4. Torque values (Nm) always accompany HP specs
+5. Small URL count (5) but high mod density (1.8 per build)
+
+**Pattern: European Tuner Sites**
+- Package names encode power output
+- Description text lists modifications in narrative form
+- Multi-brand tuner requires vehicle mapping table
+- Power gains extractable from regex patterns
+
+---

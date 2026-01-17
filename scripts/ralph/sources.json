@@ -1884,19 +1884,21 @@
       "name": "AutoTempest",
       "url": "https://autotempest.com",
       "outputDir": "data/autotempest",
-      "status": "pending",
+      "status": "blocked",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T06:50:00Z",
       "pipeline": {
         "expectedUrls": 199,
         "urlsFound": 199,
-        "htmlScraped": 0,
-        "htmlFailed": 0,
-        "htmlBlocked": 0,
+        "htmlScraped": 10,
+        "htmlFailed": 63,
+        "htmlBlocked": 20,
         "builds": null,
         "mods": null
-      }
+      },
+      "blockEvents": [{"timestamp": "2026-01-17T06:50:00Z", "type": "403+timeout", "afterUrls": 10}],
+      "notes": "BLOCKED: autohunter.com 403, cars.com timeouts. 10/199 scraped from smaller sources. Run: python scripts/tools/stealth_scraper.py --source autotempest"
     },
     {
       "id": "roushperformance",
@@ -2000,19 +2002,20 @@
       "name": "Manhart Automotive",
       "url": "https://manhart-automotive.de",
       "outputDir": "data/manhart_automotive",
-      "status": "pending",
+      "status": "completed",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T07:15:00Z",
       "pipeline": {
         "expectedUrls": 5,
         "urlsFound": 5,
-        "htmlScraped": 0,
+        "htmlScraped": 5,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": null,
-        "mods": null
-      }
+        "builds": 5,
+        "mods": 9
+      },
+      "notes": "COMPLETE: 5 builds, 9 mods. German tuner. Vehicles: AMG GT R (585hp), Cayenne CRT 800 (800hp), Defender DP 500, MH1 350, Supra GR 450. Categories: Engine (5), Exhaust (2), Suspension (1), Exterior (1)."
     }
   ]
 }
