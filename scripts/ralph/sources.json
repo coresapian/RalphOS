@@ -1763,7 +1763,7 @@
       "pipeline": {
         "expectedUrls": 9406,
         "urlsFound": 9406,
-        "htmlScraped": 0,
+        "htmlScraped": 81,
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": null,
@@ -1775,19 +1775,20 @@
       "name": "AudioCityUSA",
       "url": "https://audiocityusa.com",
       "outputDir": "data/audiocityusa",
-      "status": "in_progress",
-      "priority": 1,
+      "status": "completed",
+      "priority": 5,
       "attempted": 1,
-      "lastAttempted": "2026-01-16T18:30:00Z",
+      "lastAttempted": "2026-01-16T19:30:00Z",
       "pipeline": {
         "expectedUrls": 3731,
         "urlsFound": 3731,
         "htmlScraped": 3731,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": null,
-        "mods": null
-      }
+        "builds": 3717,
+        "mods": 8049
+      },
+      "notes": "Wheel gallery source - 3717 builds with wheel/tire/suspension fitment data. Top makes: Chevrolet (496), Ford (318), BMW (298)."
     },
     {
       "id": "hennesseyperformance",
@@ -1813,18 +1814,18 @@
       "name": "Tuned By Anton",
       "url": "https://tunedbyanton.com",
       "outputDir": "data/tunedbyanton",
-      "status": "pending",
-      "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "status": "completed",
+      "priority": 1,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T17:14:02Z",
       "pipeline": {
         "expectedUrls": 427,
         "urlsFound": 427,
-        "htmlScraped": 0,
-        "htmlFailed": 0,
+        "htmlScraped": 387,
+        "htmlFailed": 40,
         "htmlBlocked": 0,
-        "builds": null,
-        "mods": null
+        "builds": 387,
+        "mods": 0
       }
     },
     {
@@ -1839,7 +1840,7 @@
       "pipeline": {
         "expectedUrls": 414,
         "urlsFound": 414,
-        "htmlScraped": 68,
+        "htmlScraped": 105,
         "htmlFailed": 0,
         "htmlBlocked": 0,
         "builds": null,

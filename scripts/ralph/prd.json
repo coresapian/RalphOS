@@ -1,137 +1,39 @@
 {
-  "projectName": "AudioCityUSA Gallery Scraping",
+  "projectName": "AudioCityUSA Build Extraction",
   "sourceId": "audiocityusa",
-  "branchName": "multi-ralph",
-  "targetUrl": "https://audiocityusa.com/gallery/wheel-main",
+  "branchName": "main",
+  "targetUrl": "https://audiocityusa.com",
   "outputDir": "data/audiocityusa",
-  "pipelineStage": 2,
+  "pipelineStage": 3,
   "userStories": [
     {
-      "id": "URL-001",
-      "title": "Discover all gallery URLs from paginated listing",
+      "id": "BUILD-001",
+      "title": "Extract build data from HTML files",
       "acceptanceCriteria": [
-        "Create data/audiocityusa/ directory structure",
-        "Scrape all pages of gallery listing (94+ pages)",
-        "Extract gallery detail URLs (format: /gallery/{id}/{slug})",
-        "Save to urls.json with totalCount and lastUpdated"
+        "Read schema/build_extraction_schema.json for output format",
+        "Extract year, make, model, submodel from HTML",
+        "Extract wheel/tire/suspension fitment data",
+        "Generate build_id using build_id_generator.py",
+        "Output builds.json with all extracted builds"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "COMPLETED: 3,731 URLs discovered. Pagination uses ?&page=N parameter."
-    },
-    {
-      "id": "HTML-001",
-      "title": "Create HTML scraping script with retry logic",
-      "acceptanceCriteria": [
-        "Create scrape_html.py with robust error handling",
-        "Implement retry logic with exponential backoff",
-        "Use gallery ID for consistent filename creation (e.g., 1416553.html)",
-        "Save progress to checkpoint file",
-        "Rate limit requests (1-2 seconds between)"
-      ],
-      "priority": 2,
-      "passes": true,
-      "notes": "COMPLETED: Created scrape_html.py with retry logic, gallery ID filenames, progress tracking. Fixed Brotli encoding issue by excluding 'br' from Accept-Encoding."
-    },
-    {
-      "id": "HTML-002",
-      "title": "Execute full HTML scrape with progress tracking",
-      "acceptanceCriteria": [
-        "Resume from checkpoint (48 already scraped)",
-        "Scrape remaining ~3,683 URLs",
-        "Track progress in scrape_progress.json",
-        "Handle rate limiting gracefully"
-      ],
-      "priority": 3,
-      "passes": true,
-      "notes": "COMPLETED: 3731/3731 URLs scraped (100%), 0 failed, 0 blocked. No anti-bot issues encountered."
-    },
-    {
-      "id": "HTML-003",
-      "title": "Verify HTML scrape completion",
-      "acceptanceCriteria": [
-        "Verify scrape progress >= 95%",
-        "Update sources.json with htmlScraped count",
-        "Document any failed URLs for retry"
-      ],
-      "priority": 4,
-      "passes": true,
-      "notes": "COMPLETED: 100% scrape rate (3731/3731). sources.json updated. 0 failed URLs."
-    },
-    {
-      "id": "BUILD-001",
-      "title": "Create data extraction script for builds.json",
-      "acceptanceCriteria": [
-        "Create extract_builds.py that parses saved HTML files",
-        "Extract vehicle data: year, make, model, submodel",
-        "Extract wheel data: brand, model, color, sizes (front/rear for staggered)",
-        "Extract tire data: brand, model, sizes",
-        "Extract gallery metadata: galleryId, viewCount, images",
-        "Generate unique build IDs",
-        "Save to data/audiocityusa/builds.json"
-      ],
-      "priority": 5,
-      "passes": false,
-      "notes": "HTML has structured sections: Vehicle (Year, Make, Model, Submodel), Wheels (Brand, Model, Color, Sizes), Tires (Brand, Model, Size). Many fitments are staggered (different front/rear)."
-    },
-    {
-      "id": "BUILD-002",
-      "title": "Execute build extraction",
-      "acceptanceCriteria": [
-        "Run extract_builds.py on all HTML files",
-        "Generate builds.json with all extracted data",
-        "Validate data completeness",
-        "Log extraction errors"
-      ],
-      "priority": 6,
-      "passes": false,
-      "notes": "Each gallery entry = one build representing a wheel fitment on a specific vehicle."
+      "notes": "Completed: 3717/3731 builds extracted. 14 skipped (missing year/make/model). Top makes: Chevrolet (496), Ford (318), BMW (298)."
     },
     {
       "id": "MOD-001",
-      "title": "Create mods.json from wheel/tire modifications",
+      "title": "Extract modifications from build data",
       "acceptanceCriteria": [
-        "Extract wheel mods: brand, model, diameter, width, offset, color",
-        "Extract tire mods: brand, model, size",
-        "Link mods to builds via build_id",
-        "Save to data/audiocityusa/mods.json"
+        "Use category_detector.py for assigning categories",
+        "Extract wheels, tires, and suspension as modifications",
+        "Output mods.json with all modifications"
       ],
-      "priority": 7,
-      "passes": false,
-      "notes": "Each build typically has 1 wheel mod + 1 tire mod. Modifications are the wheel/tire products installed."
+      "priority": 2,
+      "passes": true,
+      "notes": "Completed: 8049 mods extracted (3717 wheels, 3717 tires, 615 suspension). All builds have mods attached."
     }
   ],
-  "siteAnalysis": {
-    "contentType": "wheel-fitment-gallery",
-    "description": "Customer vehicle gallery showcasing wheel and tire installations from AudioCityUSA purchases",
-    "paginationType": "numeric",
-    "paginationPattern": "?&page=N",
-    "totalPages": 94,
-    "estimatedEntries": 3731,
-    "antiBot": "none-detected",
-    "scrapingMethod": "standard-requests",
-    "dataFields": {
-      "vehicle": ["year", "make", "model", "submodel"],
-      "wheels": ["brand", "model", "color", "frontSize", "rearSize", "offset"],
-      "tires": ["brand", "model", "frontSize", "rearSize"],
-      "meta": ["galleryId", "viewCount", "images"]
-    },
-    "urlPatterns": {
-      "gallery": "https://audiocityusa.com/gallery/wheel-main",
-      "pagination": "https://audiocityusa.com/gallery/wheel-main?&page={page}",
-      "detail": "https://audiocityusa.com/gallery/{galleryId}/{slug}"
-    },
-    "htmlStructure": {
-      "vehicleSection": "h2 'Vehicle' followed by Year/Make/Model/Submodel labels",
-      "wheelsSection": "h2 'Wheels' followed by Brand/Model/Color/Sizes labels",
-      "tiresSection": "h2 'Tires' followed by Brand/Model/Size labels",
-      "staggeredFormat": "Front: 22x9 / Rear: 22x10.5"
-    },
-    "notes": [
-      "Gallery entries are customer wheel installations, not full vehicle builds",
-      "Many vehicles have staggered fitments (different front/rear wheel sizes)",
-      "Images served via Cloudflare CDN",
-      "Gallery IDs are numeric and embedded in URLs"
-    ]
-  }
+  "createdAt": "2026-01-16T19:00:00Z",
+  "createdBy": "ralph",
+  "completedAt": "2026-01-16T19:30:00Z"
 }

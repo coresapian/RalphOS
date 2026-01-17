@@ -160,3 +160,41 @@ This file captures accumulated knowledge from Ralph iterations. Each entry docum
 
 ---
 
+### 2026-01-16 - AudioCityUSA Build & Mod Extraction (Stages 3-4) - SOURCE COMPLETE
+- **Source**: AudioCityUSA (audiocityusa.com)
+- **Action**: Build Extraction (Stage 3) + Mod Extraction (Stage 4)
+- **Files Created/Modified**:
+  - `data/audiocityusa/extract_builds.py` - Build extraction script
+  - `data/audiocityusa/extract_mods.py` - Mod extraction script
+  - `data/audiocityusa/builds.json` - 3717 extracted builds with fitment data
+  - `data/audiocityusa/mods.json` - 8049 extracted modifications
+  - `scripts/ralph/sources.json` - Updated builds=3717, mods=8049, status=completed
+  - `scripts/ralph/prd.json` - All stories marked passes=true
+- **Pipeline Status**: COMPLETE ✓
+  - expectedUrls=3731, urlsFound=3731, htmlScraped=3731
+  - builds=3717 (14 skipped - missing year/make/model)
+  - mods=8049 (3717 wheels + 3717 tires + 615 suspension)
+- **Extraction Results**:
+  - This is a **wheel shop gallery** - primary data is wheel/tire/suspension fitment
+  - Well-structured HTML with `<h2>` sections (Vehicle, Wheels, Tires, Suspension)
+  - Tables contain `<th>/<td>` pairs for Year, Make, Model, Brand, Sizes, etc.
+  - source_type = "gallery" (not listing/auction)
+  - wheel_and_tire_fitment_specs populated with front/rear wheel/tire sizes
+- **Top Vehicle Makes**:
+  - Chevrolet (496), Ford (318), BMW (298), Mercedes-Benz (210), Dodge (199)
+  - Cadillac (198), Toyota (184), Audi (164), Lexus (142), Tesla (116)
+- **Mod Categories**:
+  - Wheels & Tires: 7342 (most correct)
+  - Suspension: 615
+  - Minor misclassifications: Wheel (75), Forced Induction (7), etc.
+
+**Learnings:**
+1. AudioCityUSA uses X-Cart e-commerce platform with consistent gallery-info structure
+2. Wheel fitment data is highly structured - front/rear wheel sizes, tire sizes available
+3. Suspension lifts indicate "Off-Road" build_type (4"+ lift = Off-Road)
+4. category_detector correctly identifies most mods, but force "Wheels & Tires" for wheel/tire mods
+5. 99.6% extraction rate (3717/3731) - only 14 pages missing basic vehicle info
+6. Large source (3731 URLs) processed quickly - clean HTML structure enables fast extraction
+
+---
+
