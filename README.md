@@ -1,4 +1,4 @@
-# 🤖 RalphOS
+# RalphOS
 
 **An autonomous AI agent loop system for executing multi-step tasks without human intervention.**
 
@@ -12,11 +12,11 @@ RalphOS wraps Claude CLI in a bash loop, enabling fully autonomous execution of 
 ║   ██╔══██╗██╔══██║██║     ██╔═══╝ ██╔══██║              ║
 ║   ██║  ██║██║  ██║███████╗██║     ██║  ██║              ║
 ║   ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝  ╚═╝              ║
-║            🤖 Autonomous AI Agent Loop                  ║
+║                   Autonomous AI                   ║
 ╚═══════════════════════════════════════════════════════════╝
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # 1. Clone the repo
