@@ -98,7 +98,7 @@ HTML-003: Verify all URLs scraped, update htmlScraped count
 ## Handling Blocks
 
 If you get 403/429/Cloudflare:
-1.
+1. Stop scraping immediately - do not continue with remaining URLs
 2. Record blocked URLs in `scrape_progress.json`
 3. Update `sources.json`:
    - Set `htmlBlocked` count

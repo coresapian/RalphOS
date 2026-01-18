@@ -112,6 +112,34 @@ python3 scripts/tools/stealth_scraper.py --source source_id
 - Tracks status: pending/in_progress/completed
 - Auto-generates new PRDs when current project completes
 
+### Stage Prompts (Pipeline Mode)
+
+The `scripts/ralph/prompts/` directory contains specialized prompts for parallel sub-Ralph execution in Pipeline Mode. Each prompt defines a focused agent for one stage of the scraping pipeline:
+
+**url_detective.md** - URL Discovery Agent
+- Discovers all vehicle/build URLs on a website
+- Analyzes pagination, sitemaps, and infinite scroll
+- Outputs: `{outputDir}/urls.json`
+- Stop signal: `URL_DETECTIVE_DONE`
+
+**html_scraper.md** - HTML Downloading Agent
+- Downloads HTML content for discovered URLs
+- Handles rate limiting and anti-bot detection
+- Outputs: `{outputDir}/html/*.html`, `scrape_progress.json`
+- Stop signals: `HTML_SCRAPER_DONE` or `HTML_SCRAPER_BLOCKED`
+
+**build_extractor.md** - Build Data Extraction Agent
+- Extracts structured vehicle data from HTML files
+- Uses `schema/build_extraction_schema.json` for output format
+- Outputs: `{outputDir}/builds.json`
+- Stop signal: `BUILD_EXTRACTOR_DONE`
+
+**mod_extractor.md** - Modification Extraction Agent
+- Extracts vehicle modifications from build records
+- Uses `category_detector.py` for categorization
+- Outputs: Updates `builds.json`, creates `{outputDir}/mods.json`
+- Stop signal: `MOD_EXTRACTOR_DONE`
+
 ### Project Structure
 
 ```
@@ -123,7 +151,11 @@ RalphOS/
 │   │   ├── pipeline.sh
 │   │   ├── check_completion.sh
 │   │   ├── prompt.md       # Agent instructions
-│   │   ├── prompts/        # Specialized prompts
+│   │   ├── prompts/        # Stage prompts for Pipeline Mode
+│   │   │   ├── url_detective.md
+│   │   │   ├── html_scraper.md
+│   │   │   ├── build_extractor.md
+│   │   │   └── mod_extractor.md
 │   │   ├── sources.json    # Source registry
 │   │   ├── progress.txt    # Learnings
 │   │   └── archive/        # Archived PRDs
