@@ -248,6 +248,7 @@ npm install && npm run build
 
 ### Available Tools
 
+#### Core Tools
 | Tool | Description |
 |------|-------------|
 | `sync_ralph_sources` | Import sources from sources.json into the knowledge graph |
@@ -259,6 +260,19 @@ npm install && npm run build
 | `visualize_graph` | Generate Mermaid diagrams of the knowledge graph |
 | `export_to_duckdb` | Export graph to DuckDB SQL for analysis |
 | `get_graph_stats` | View graph statistics |
+
+#### Validation & Self-Verification Tools
+| Tool | Description |
+|------|-------------|
+| `validate_pipeline_stage` | Validate pipeline stage outputs (url_discovery, html_scrape, build_extraction, mod_extraction) |
+| `assert_condition` | Assert conditions (file_exists, count_gte, json_valid) with pass/fail |
+| `assert_batch` | Run multiple assertions at once |
+| `get_quality_report` | Generate quality report with numeric scores (0-100) |
+| `verify_story_complete` | Verify user story acceptance criteria with evidence |
+| `get_completion_proof` | Generate completion proof showing outputs |
+| `diagnose_failure` | Analyze failures and suggest fixes |
+| `record_success_pattern` | Record successful patterns for future reference |
+| `get_success_patterns` | Retrieve recorded success patterns |
 
 ### Usage in Claude Code
 

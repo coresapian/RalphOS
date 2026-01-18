@@ -70,6 +70,35 @@ Or add to `.mcp.json`:
 | `visualize_graph` | Generate a Mermaid diagram |
 | `get_graph_stats` | View graph statistics |
 
+### Validation Suite
+
+| Tool | Description |
+|------|-------------|
+| `validate_pipeline_stage` | Validate a pipeline stage (url_discovery, html_scrape, build_extraction, mod_extraction, all) |
+| `assert_condition` | Assert a condition (file_exists, count_gte, json_valid, etc.) with pass/fail result |
+| `assert_batch` | Run multiple assertions at once for comprehensive validation |
+
+### Quality Scoring
+
+| Tool | Description |
+|------|-------------|
+| `get_quality_report` | Generate comprehensive quality report with numeric scores (0-100) |
+
+### Completion Proofs
+
+| Tool | Description |
+|------|-------------|
+| `verify_story_complete` | Verify user story acceptance criteria with evidence |
+| `get_completion_proof` | Generate completion proof showing what outputs exist |
+
+### Self-Diagnosis
+
+| Tool | Description |
+|------|-------------|
+| `diagnose_failure` | Analyze failed operations and suggest fixes |
+| `record_success_pattern` | Record successful approaches for future reference |
+| `get_success_patterns` | Retrieve recorded success patterns |
+
 ## Resources
 
 - `knowledge-graph://graph` - Full knowledge graph as JSON
@@ -106,7 +135,9 @@ Or add to `.mcp.json`:
 - `belongs_to`: Modification → Category
 - `discovered_pattern`: Source → Pattern
 
-## Example Workflow
+## Example Workflows
+
+### Basic Pipeline Tracking
 
 ```
 # 1. Sync sources from RalphOS
@@ -123,6 +154,34 @@ Or add to `.mcp.json`:
 
 # 5. Export to DuckDB for analysis
 > export_to_duckdb
+```
+
+### Validation Workflow (Ralph Self-Verification)
+
+```
+# After completing a task, validate the pipeline stage
+> validate_pipeline_stage sourceDir="data/my_source" stage="url_discovery"
+
+# Run batch assertions for acceptance criteria
+> assert_batch assertions=[
+    {"condition": "file_exists", "target": "data/my_source/urls.json"},
+    {"condition": "count_gte", "target": "data/my_source/urls.json", "jsonPath": "urls", "value": 50}
+  ]
+
+# Get quality report with scores
+> get_quality_report sourceDir="data/my_source"
+
+# Verify story completion with evidence
+> verify_story_complete storyId="US-002" criteria=[
+    {"type": "file_exists", "target": "data/my_source/urls.json"},
+    {"type": "count_gte", "target": "data/my_source/urls.json", "field": "urls", "value": 50}
+  ]
+
+# If something failed, diagnose the issue
+> diagnose_failure sourceDir="data/my_source" stage="html_scrape"
+
+# Record successful patterns for future reference
+> record_success_pattern sourceId="my_source" stage="url_discovery" pattern="Used JSON-LD structured data for URL extraction"
 ```
 
 ## License
