@@ -137,7 +137,7 @@
           },
           "category": {
             "type": "string",
-            "description": "Category from Vehicle_Componets.json (use category_detector.py)"
+            "description": "Category from Vehicle_Components.json (use category_detector.py)"
           },
           "brand": {
             "type": ["string", "null"],

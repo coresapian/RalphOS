@@ -267,7 +267,7 @@ MOD-004: Extract all mods to {outputDir}/mods.json, update mods count
 
 **ALWAYS use the category detector when extracting modifications.**
 
-The category detector (`scripts/tools/category_detector.py`) automatically predicts with a confidance score, the correct category to any vehicle modification based on the `Vehicle_Componets.json` schema.
+The category detector (`scripts/tools/category_detector.py`) automatically predicts with a confidence score, the correct category to any vehicle modification based on the `Vehicle_Components.json` schema.
 
 # Detect Modification Category
 
@@ -307,7 +307,7 @@ def extract_mods(builds_file, output_file):
     return len(all_mods)
 ```
 
-**IMPORTANT**: Never hardcode categories. Always use `detect_category()` to ensure consistency with the Vehicle_Componets.json schema.
+**IMPORTANT**: Never hardcode categories. Always use `detect_category()` to ensure consistency with the Vehicle_Components.json schema.
 
 ## Directory Structure Convention
 

@@ -26,7 +26,8 @@ from difflib import SequenceMatcher
 
 # Load the component schema
 SCRIPT_DIR = Path(__file__).parent
-COMPONENTS_FILE = SCRIPT_DIR / "Vehicle_Componets.json"
+REPO_ROOT = SCRIPT_DIR.parent.parent
+COMPONENTS_FILE = REPO_ROOT / "schema" / "Vehicle_Components.json"
 
 # Global lookup tables (initialized on first use)
 _component_to_category: Dict[str, str] = {}

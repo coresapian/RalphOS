@@ -232,7 +232,7 @@ RalphOS/
 │
 ├── schema/                     # Data schemas
 │   ├── build_extraction_schema.json  # JSON Schema for builds
-│   └── Vehicle_Componets.json        # Mod category taxonomy
+│   └── Vehicle_Components.json        # Mod category taxonomy
 │
 ├── data/                       # Scraped data output (gitignored)
 │   └── {source_name}/
