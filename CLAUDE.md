@@ -162,6 +162,12 @@ RalphOS/
 │   └── ralph_debug.log
 │
 ├── archive/                # Blocked source data
+├── FyloCore/               # Knowledge graph platform (submodule)
+├── fylo-core-mcp/          # MCP server for knowledge graph
+│   ├── src/index.ts        # Main MCP server implementation
+│   ├── package.json
+│   └── README.md
+├── .mcp.json               # Claude Code MCP configuration
 ├── CLAUDE.md
 ├── README.md
 └── requirements.txt
@@ -224,6 +230,85 @@ Completed projects are automatically archived with timestamp:
 - Handle pagination (both numeric and infinite scroll)
 - Normalize URLs (remove fragments, duplicates)
 - Include user-agent headers in requests
+
+## Fylo-Core-MCP (Knowledge Graph)
+
+RalphOS includes a knowledge graph MCP server for tracking pipeline progress and visualizing data.
+
+### Setup
+
+```bash
+# Install and build the MCP server
+cd fylo-core-mcp
+./setup.sh
+
+# Or manually
+npm install && npm run build
+```
+
+### Available Tools
+
+#### Core Tools
+| Tool | Description |
+|------|-------------|
+| `sync_ralph_sources` | Import sources from sources.json into the knowledge graph |
+| `get_pipeline_status` | View current pipeline progress across all sources |
+| `ingest_builds` | Import build data from builds.json files |
+| `create_entity` | Create entities (source, url, build, modification, category, pattern) |
+| `create_relation` | Create relationships between entities |
+| `query_graph` | Query entities and relationships |
+| `visualize_graph` | Generate Mermaid diagrams of the knowledge graph |
+| `export_to_duckdb` | Export graph to DuckDB SQL for analysis |
+| `get_graph_stats` | View graph statistics |
+
+#### Validation & Self-Verification Tools
+| Tool | Description |
+|------|-------------|
+| `validate_pipeline_stage` | Validate pipeline stage outputs (url_discovery, html_scrape, build_extraction, mod_extraction) |
+| `assert_condition` | Assert conditions (file_exists, count_gte, json_valid) with pass/fail |
+| `assert_batch` | Run multiple assertions at once |
+| `get_quality_report` | Generate quality report with numeric scores (0-100) |
+| `verify_story_complete` | Verify user story acceptance criteria with evidence |
+| `get_completion_proof` | Generate completion proof showing outputs |
+| `diagnose_failure` | Analyze failures and suggest fixes |
+| `record_success_pattern` | Record successful patterns for future reference |
+| `get_success_patterns` | Retrieve recorded success patterns |
+
+### Usage in Claude Code
+
+The MCP is configured in `.mcp.json`. After building, restart Claude Code to use the tools:
+
+```
+> sync_ralph_sources
+> get_pipeline_status
+> visualize_graph entityType="source"
+```
+
+### DuckDB Integration
+
+Export the knowledge graph to DuckDB for analysis:
+
+```bash
+# Export to SQL
+> export_to_duckdb
+
+# Load in DuckDB
+duckdb
+.read data/fylo-graph/knowledge-graph.sql
+SELECT * FROM source_summary;
+SELECT * FROM entity_relationships;
+```
+
+## FyloCore (Full Knowledge Graph Platform)
+
+The complete FyloCore platform is available in the `FyloCore/` directory for advanced knowledge graph features:
+
+- Real-time collaborative editing
+- AI-powered document ingestion
+- PostgreSQL + pgvector for vector embeddings
+- Schema-aware graph structure
+
+See `FyloCore/README.md` for setup instructions.
 
 ## Safety Notes
 

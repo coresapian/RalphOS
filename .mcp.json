@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "fylo-core-mcp": {
+      "command": "node",
+      "args": ["fylo-core-mcp/build/index.js"],
+      "env": {
+        "RALPH_DIR": "/home/user/RalphOS",
+        "FYLO_DATA_DIR": "/home/user/RalphOS/data/fylo-graph"
+      }
+    }
+  }
+}

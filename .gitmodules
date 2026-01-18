@@ -1,0 +1,3 @@
+[submodule "FyloCore"]
+	path = FyloCore
+	url = https://github.com/fylo-io/FyloCore.git
