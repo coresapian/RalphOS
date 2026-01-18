@@ -1,0 +1,78 @@
+{
+  "$schema": "Template PRD for resuming blocked sources after stealth_scraper.py intervention",
+  "instructions": [
+    "1. Copy this file to scripts/ralph/prd.json",
+    "2. Replace all {PLACEHOLDERS} with actual values from sources.json",
+    "3. Adjust userStories based on which pipeline stages remain incomplete",
+    "4. Run: ./scripts/ralph/ralph.sh"
+  ],
+  "projectName": "{SOURCE_NAME} Resume After Unblock",
+  "branchName": "main",
+  "targetUrl": "{SOURCE_URL}",
+  "outputDir": "data/{SOURCE_ID}",
+  "pipelineStage": "{RESUME_STAGE}",
+  "blockType": "{BLOCK_TYPE}",
+  "unblockMethod": "{UNBLOCK_METHOD}",
+  "userStories": [
+    {
+      "id": "RESUME-001",
+      "title": "Verify stealth scraper results",
+      "acceptanceCriteria": [
+        "Check data/{SOURCE_ID}/html/ for new HTML files from stealth_scraper.py",
+        "Update sources.json pipeline.htmlScraped count",
+        "Run diagnose_scraper.py to verify no remaining blocks"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": "Run: python scripts/tools/diagnose_scraper.py data/{SOURCE_ID}/"
+    },
+    {
+      "id": "RESUME-002",
+      "title": "Complete HTML scraping for remaining URLs",
+      "acceptanceCriteria": [
+        "Scrape any URLs not covered by stealth_scraper.py",
+        "All URLs in urls.json have been attempted",
+        "scrape_progress.json shows 100% coverage"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Skip if stealth_scraper.py already completed all URLs"
+    },
+    {
+      "id": "RESUME-003",
+      "title": "Extract builds from HTML content",
+      "acceptanceCriteria": [
+        "Parse all HTML files in data/{SOURCE_ID}/html/",
+        "Extract structured build data per build_extraction_schema.json",
+        "Generate builds.json with all extracted records"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Use MCP webReader if HTML files contain JavaScript-rendered content"
+    },
+    {
+      "id": "RESUME-004",
+      "title": "Extract modifications from builds",
+      "acceptanceCriteria": [
+        "Run category_detector.py on all modification names",
+        "Generate mods.json with categorized modifications",
+        "Update sources.json pipeline.mods count"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "python scripts/tools/category_detector.py --batch mods_raw.txt"
+    },
+    {
+      "id": "RESUME-005",
+      "title": "Mark source complete",
+      "acceptanceCriteria": [
+        "All 4 pipeline stages complete",
+        "sources.json status set to 'completed'",
+        "All pipeline counts updated accurately"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Run: python scripts/tools/sync_progress.py to verify counts"
+    }
+  ]
+}

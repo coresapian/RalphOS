@@ -140,6 +140,11 @@ RalphOS processes sources through four sequential stages:
 - `build_extractor.md` - Stage 3: Structured data extraction
 - `mod_extractor.md` - Stage 4: Modification extraction
 
+**scripts/ralph/templates/** - PRD templates for blocked sources
+- `blocked_source_prd.json` - Generic template for resuming after unblock
+- `tacoma_world_builds_resume.json` - Tacoma World (pagination auth required)
+- `ecd_auto_design_resume.json` - ECD Auto Design (JS blob URLs)
+
 ### Configuration Files
 
 **scripts/ralph/prd.json** - Project definition
@@ -211,8 +216,9 @@ RalphOS/
 │   │   │   └── mod_extractor.md
 │   │   ├── prd.json            # Current project
 │   │   ├── sources.json        # Source registry
-│   │   ├── progress.txt        # Learnings
-│   │   └── archive/            # Archived PRDs
+│   │   ├── progress.txt        # Learnings + Unblocking Playbook
+│   │   ├── archive/            # Archived PRDs
+│   │   └── templates/          # PRD templates for blocked sources
 │   │
 │   ├── tools/                  # Utility scripts
 │   │   ├── sync_progress.py    # Sync disk counts to sources.json
@@ -301,6 +307,24 @@ When blocked (403/429/Cloudflare):
 - GeoIP auto-detection from proxy IP
 - Human-like cursor movement
 - WebGL/Canvas anti-fingerprinting
+
+## Source Unblocking Playbook
+
+See `scripts/ralph/progress.txt` for the full unblocking playbook. Block categories:
+
+| Block Type | Symptoms | Resolution |
+|------------|----------|------------|
+| `pagination_blocked` | Pagination returns 404, auth required | `stealth_scraper.py --login-required` |
+| `javascript_blob_urls` | Site uses blob: URLs, high 404 rate | `stealth_scraper.py --js-render` |
+| `cloudflare_blocked` | 403/429, challenge pages | `stealth_scraper.py --stealth --proxy` |
+| `spa_javascript` | No static content, AJAX-loaded | API discovery or `--wait-for-js` |
+| `auth_required` | Login wall, no public access | Manual outreach for API access |
+| `not_target_content` | Galleries, dealers, not builds | Skip (mark completed with 0 URLs) |
+
+**Resume workflow:**
+1. Run appropriate `stealth_scraper.py` command
+2. Copy template from `scripts/ralph/templates/` to `prd.json`
+3. Run `./scripts/ralph/ralph.sh` to continue pipeline
 
 ## Schema Details
 

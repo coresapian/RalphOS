@@ -1,0 +1,90 @@
+{
+  "projectName": "ECD Auto Design - Resume with JS Rendering",
+  "branchName": "main",
+  "targetUrl": "https://ecdautodesign.com/ecd-showcase/",
+  "outputDir": "data/ecd_auto_design",
+  "pipelineStage": 2,
+  "blockType": "javascript_blob_urls",
+  "unblockMethod": "stealth_scraper.py --js-render OR claude-in-chrome MCP",
+  "preRequisites": [
+    "Site migrated from static URLs to JavaScript blob: URLs",
+    "Original 338 URLs are now 404 (site restructure)",
+    "Current showcase shows 23 projects using blob: navigation",
+    "Run: python scripts/tools/stealth_scraper.py --source ecd_auto_design --js-render"
+  ],
+  "siteContext": {
+    "previousState": "338 project URLs discovered, 337 returned 404",
+    "currentState": "23 projects visible, blob: URL navigation",
+    "successfulScrape": "Project 13 only (Defender 90, Keswick green)"
+  },
+  "currentProjects": [
+    "Project Inizio", "Harry Hart", "War Eagle", "Kaimana", "Camel Trophy",
+    "Malvern Commission", "Slow Horse", "Must-Be-Nice", "Snowy Range",
+    "Nantucket", "Pembrokeshire", "Gravette", "Liberty", "A Bit Dodgy",
+    "Lancashire", "Rutland", "Oliver", "69 Miles", "Daybreak", "Titan",
+    "Pearl", "Cornwall", "Arbo", "Brownie"
+  ],
+  "userStories": [
+    {
+      "id": "ECD-RESUME-001",
+      "title": "Navigate showcase with browser automation",
+      "acceptanceCriteria": [
+        "Use stealth_scraper.py or claude-in-chrome to navigate showcase",
+        "Click into each of 23 project cards",
+        "Extract project content from rendered DOM"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": "blob: URLs require JS execution, cannot be accessed via HTTP"
+    },
+    {
+      "id": "ECD-RESUME-002",
+      "title": "Scrape all 23 current projects",
+      "acceptanceCriteria": [
+        "Extract HTML/content for all 23 projects",
+        "Save to data/ecd_auto_design/html/",
+        "Update scrape_progress.json"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Existing Project 13 already scraped, need remaining 22"
+    },
+    {
+      "id": "ECD-RESUME-003",
+      "title": "Extract Defender build specifications",
+      "acceptanceCriteria": [
+        "Parse project pages for vehicle specs",
+        "Extract: model (Defender 90/110), engine, color, interior, wheels",
+        "ECD specializes in custom Land Rover Defenders",
+        "Generate builds.json per schema"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "ECD builds are high-end Defender restorations with LS/Coyote swaps"
+    },
+    {
+      "id": "ECD-RESUME-004",
+      "title": "Extract modifications from builds",
+      "acceptanceCriteria": [
+        "Parse modification lists (engines, wheels, interior, exterior)",
+        "Run category_detector.py on all mods",
+        "Generate mods.json"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Common ECD mods: LS V8, Coyote V8, custom wheels, leather interior, roof racks"
+    },
+    {
+      "id": "ECD-RESUME-005",
+      "title": "Complete and verify pipeline",
+      "acceptanceCriteria": [
+        "All 23 projects extracted (vs 1 currently)",
+        "sources.json updated with accurate counts",
+        "Status remains 'completed' with improved data"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "This is a data enrichment run, not initial scrape"
+    }
+  ]
+}

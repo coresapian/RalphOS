@@ -16,6 +16,104 @@ Target: https://www.tacomaworld.com/
 - **MANIFEST**: Create manifest.json after scraping with url, filename, scraped_at, file_size_bytes
 - **MULTI-SOURCE**: When PRD complete, update sources.json status and generate next PRD
 
+---
+
+## Source Unblocking Playbook
+
+### Block Categories & Resolution Strategies
+
+#### 1. PAGINATION_BLOCKED (Authentication Required)
+**Symptoms:** Pagination links exist in HTML but return 404/403 when accessed
+**Example:** tacoma_world_builds (98% content inaccessible)
+**Root Cause:** Site requires session cookies or authentication for paginated content
+**Resolution Strategy:**
+1. Run `stealth_scraper.py` with browser automation to establish session
+2. Use `--headless=false` for manual login if needed
+3. Extract session cookies and pass to subsequent requests
+4. Consider API endpoints if available (check network tab for XHR requests)
+**Command:** `python scripts/tools/stealth_scraper.py --source tacoma_world_builds --login-required`
+
+#### 2. JAVASCRIPT_BLOB_URLS (Client-Side Navigation)
+**Symptoms:** URLs discovered but site migrates to blob: URLs, high 404 rate (>90%)
+**Example:** ecd_auto_design (99.7% 404 after site restructure)
+**Root Cause:** Site uses JavaScript-generated blob: URLs for navigation
+**Resolution Strategy:**
+1. Use `stealth_scraper.py` with full browser automation (Playwright/Camoufox)
+2. Navigate to showcase page, scroll to trigger lazy loading
+3. Extract content via JavaScript execution, not HTTP requests
+4. Use `claude-in-chrome` MCP tool for interactive navigation
+**Command:** `python scripts/tools/stealth_scraper.py --source ecd_auto_design --js-render`
+
+#### 3. CLOUDFLARE/WAF_BLOCKED (Anti-Bot Protection)
+**Symptoms:** 403/429 responses, Cloudflare challenge pages
+**Example:** None currently (use for future sources)
+**Root Cause:** Site uses Cloudflare, Akamai, or other WAF protection
+**Resolution Strategy:**
+1. Run `stealth_scraper.py` with Camoufox anti-detection browser
+2. Enable human-like cursor movement and delays
+3. Use residential proxy if datacenter IP blocked
+4. Reduce request rate to 3-5s between requests
+**Command:** `python scripts/tools/stealth_scraper.py --source {id} --stealth --proxy residential`
+
+#### 4. SPA_JAVASCRIPT_REQUIRED (No Static Content)
+**Symptoms:** HTML contains no listing URLs, content loaded via JavaScript
+**Examples:** oneoff_autos, racemarket
+**Root Cause:** Modern SPA framework (React, Vue, Angular) with no SSR
+**Resolution Strategy:**
+1. Check for API endpoints in network tab (often JSON APIs)
+2. If API found: scrape API directly (faster, cleaner data)
+3. If no API: use `stealth_scraper.py` with JS rendering
+4. Consider if source is worth the effort vs. data quality
+**Command:** `python scripts/tools/stealth_scraper.py --source {id} --wait-for-js --api-discovery`
+
+#### 5. NOT_TARGET_CONTENT (Skip - No Action Needed)
+**Examples:** total_cost_involved, charlies_custom_creations, utv_source, creative_bespoke, lifted_trucks
+**Reason Types:**
+- Static gallery with no detail pages (embedded thumbnails only)
+- Dealership inventory (sales listings, not build projects)
+- Marketing pages (no individual vehicle data)
+**Resolution:** None - mark as completed with 0 URLs, document reason in notes
+
+#### 6. AUTH_REQUIRED (Login Mandatory)
+**Examples:** revmatch
+**Symptoms:** Content behind login wall, no public access
+**Root Cause:** User-generated content behind authentication
+**Resolution Strategy:**
+1. Check if public API exists for registered users
+2. Contact site owner for data partnership/API access
+3. If legitimate access obtained, use credentials with stealth_scraper.py
+**Command:** N/A - requires manual outreach
+
+### Source Status Summary
+
+| Source | Status | Block Type | Priority | Resolution |
+|--------|--------|------------|----------|------------|
+| tacoma_world_builds | blocked | pagination_blocked | HIGH | stealth_scraper.py --login-required |
+| ecd_auto_design | completed* | javascript_blob_urls | MEDIUM | stealth_scraper.py --js-render (23 projects remaining) |
+| oneoff_autos | skipped | spa_javascript | LOW | API discovery or skip |
+| racemarket | skipped | spa_javascript | LOW | API discovery or skip |
+| revmatch | skipped | auth_required | LOW | Manual outreach |
+| total_cost_involved | skipped | not_target_content | N/A | No action |
+| charlies_custom_creations | skipped | not_target_content | N/A | No action |
+| utv_source | skipped | not_target_content | N/A | No action |
+| creative_bespoke | skipped | not_target_content | N/A | No action |
+| lifted_trucks | skipped | not_target_content | N/A | No action |
+| lomar_refined | completed | none | N/A | Done (30 builds, 41 mods) |
+
+### Unblocking Workflow
+
+1. **Diagnose:** Run `python scripts/tools/diagnose_scraper.py data/{source}/` to categorize errors
+2. **Identify Block Type:** Match symptoms to categories above
+3. **Select Strategy:** Use appropriate resolution from playbook
+4. **Execute:** Run stealth_scraper.py with correct flags
+5. **Verify:** Check sources.json pipeline counts updated
+6. **Resume:** Generate new PRD from template to continue pipeline
+
+### Template PRD Location
+See `scripts/ralph/templates/blocked_source_prd.json` for resuming blocked sources.
+
+---
+
 ## Current Project
 - Target site: https://www.tacomaworld.com/
 - Output dir: scraped_builds/tacoma_world_builds/

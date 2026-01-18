@@ -1,0 +1,84 @@
+{
+  "projectName": "Tacoma World Build Threads - Resume After Auth",
+  "branchName": "main",
+  "targetUrl": "https://www.tacomaworld.com/",
+  "outputDir": "data/tacoma_world_builds",
+  "pipelineStage": 1,
+  "blockType": "pagination_blocked",
+  "unblockMethod": "stealth_scraper.py --login-required",
+  "preRequisites": [
+    "Run: python scripts/tools/stealth_scraper.py --source tacoma_world_builds --login-required",
+    "Manually log in if prompted (XenForo forum account required)",
+    "Let stealth_scraper complete URL discovery across all 158 pages"
+  ],
+  "expectedResults": {
+    "totalUrls": 7854,
+    "forums": [
+      "1st Gen (1995-2004): 1,744 threads",
+      "2nd Gen (2005-2015): 4,528 threads",
+      "3rd Gen (2016-2023): 1,582 threads"
+    ]
+  },
+  "userStories": [
+    {
+      "id": "TW-RESUME-001",
+      "title": "Verify URL discovery after auth bypass",
+      "acceptanceCriteria": [
+        "urls.json contains ~7,854 thread URLs (vs current 148)",
+        "All 158 pagination pages successfully accessed",
+        "No 404 errors on paginated URLs"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": "Current: 148 URLs (1.9%), Target: 7,854 URLs (100%)"
+    },
+    {
+      "id": "TW-RESUME-002",
+      "title": "Scrape HTML for all thread URLs",
+      "acceptanceCriteria": [
+        "Download HTML for all ~7,854 thread pages",
+        "Save to data/tacoma_world_builds/html/",
+        "Track progress in scrape_progress.json"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Use 2s delay between requests, checkpoint every 100 URLs"
+    },
+    {
+      "id": "TW-RESUME-003",
+      "title": "Extract build data from threads",
+      "acceptanceCriteria": [
+        "Parse XenForo thread HTML structure",
+        "Extract: vehicle year/make/model, modifications, images",
+        "Generate builds.json per schema"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "XenForo uses .message-body for post content, .bbImage for images"
+    },
+    {
+      "id": "TW-RESUME-004",
+      "title": "Extract and categorize modifications",
+      "acceptanceCriteria": [
+        "Parse modification lists from build threads",
+        "Run category_detector.py on all mods",
+        "Generate mods.json with categories and confidence scores"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Tacoma mods: suspension lifts, bumpers, racks, lighting, armor"
+    },
+    {
+      "id": "TW-RESUME-005",
+      "title": "Complete and verify pipeline",
+      "acceptanceCriteria": [
+        "All 4 stages complete",
+        "sources.json updated: status='completed'",
+        "Run sync_progress.py to verify counts"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Expected: ~7,854 builds, significant mod count for Toyota Tacoma community"
+    }
+  ]
+}
