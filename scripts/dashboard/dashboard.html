@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ralph Dashboard</title>
+  <!-- Preconnect for faster font loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
     
     * {
       margin: 0;
@@ -611,19 +614,33 @@
       }
     }
 
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Validate status class to prevent CSS injection
+    function safeStatusClass(status) {
+      const allowed = ['completed', 'in_progress', 'pending', 'blocked'];
+      return allowed.includes(status) ? status : 'pending';
+    }
+
     function updateSourcesList(sources) {
       const container = document.getElementById('sourcesList');
 
-      // Sort: in_progress first, then by name
-      sources.sort((a, b) => {
+      // Sort: in_progress first, then by name (use spread to avoid mutating original)
+      const sorted = [...sources].sort((a, b) => {
         const order = { in_progress: 0, pending: 1, blocked: 2, completed: 3 };
         const diff = (order[a.status] || 99) - (order[b.status] || 99);
         if (diff !== 0) return diff;
-        return a.name.localeCompare(b.name);
+        return (a.name || '').localeCompare(b.name || '');
       });
 
       // Take top 15
-      const topSources = sources.slice(0, 15);
+      const topSources = sorted.slice(0, 15);
 
       // Use DocumentFragment for efficient DOM update
       const fragment = document.createDocumentFragment();
@@ -631,15 +648,15 @@
       topSources.forEach(source => {
         const pipeline = source.pipeline || {};
         const progress = pipeline.urlsFound ?
-          Math.round((pipeline.htmlScraped || 0) / pipeline.urlsFound * 100) : 0;
+          Math.min(100, Math.round((pipeline.htmlScraped || 0) / pipeline.urlsFound * 100)) : 0;
 
         const item = document.createElement('div');
         item.className = 'source-item';
         item.innerHTML = `
           <div class="source-info">
-            <div class="source-status ${source.status}"></div>
+            <div class="source-status ${safeStatusClass(source.status)}"></div>
             <div>
-              <div class="source-name">${source.name}</div>
+              <div class="source-name">${escapeHtml(source.name)}</div>
               <div class="source-stats">
                 URLs: ${formatNumber(pipeline.urlsFound)} |
                 HTML: ${formatNumber(pipeline.htmlScraped)} |

@@ -4,10 +4,11 @@ Ralph Dashboard Server
 A simple HTTP server that provides real-time status data for the Ralph dashboard.
 
 Performance optimizations:
-- Caching with TTL to reduce file reads
+- Non-blocking TTL cache to reduce file reads
 - Cached subprocess results for pgrep/tail
 - Lazy HTML file counting (cached)
-- ThreadPoolExecutor for non-blocking operations
+- Cached dashboard HTML serving
+- ThreadedTCPServer for concurrent requests
 """
 
 import json
@@ -20,8 +21,6 @@ import time
 from pathlib import Path
 from datetime import datetime
 from urllib.parse import urlparse
-from concurrent.futures import ThreadPoolExecutor
-from functools import lru_cache
 
 # Configuration
 PORT = 8765
@@ -35,32 +34,43 @@ DATA_DIR = PROJECT_ROOT / "data"
 # Cache configuration
 CACHE_TTL = 5  # seconds
 HTML_COUNT_CACHE_TTL = 30  # HTML count changes slowly, cache longer
+DASHBOARD_CACHE_TTL = 60  # Dashboard HTML rarely changes
 
 
 class Cache:
-    """Simple TTL cache for expensive operations"""
+    """Non-blocking TTL cache for expensive operations"""
+
     def __init__(self):
         self._cache = {}
         self._lock = threading.Lock()
 
     def get(self, key, ttl, loader):
-        """Get cached value or load it if expired/missing"""
+        """Get cached value or load it if expired/missing.
+
+        Loader runs outside the lock to prevent blocking.
+        """
         now = time.time()
+
+        # Check cache under lock
         with self._lock:
             if key in self._cache:
                 value, timestamp = self._cache[key]
                 if now - timestamp < ttl:
                     return value
-            # Load new value
-            try:
-                value = loader()
-                self._cache[key] = (value, now)
-                return value
-            except Exception:
-                # Return stale value if available
-                if key in self._cache:
-                    return self._cache[key][0]
-                return None
+                # Store stale value for fallback
+                stale_value = value
+            else:
+                stale_value = None
+
+        # Load new value OUTSIDE lock to prevent blocking
+        try:
+            value = loader()
+            with self._lock:
+                self._cache[key] = (value, time.time())
+            return value
+        except Exception:
+            # Return stale value if available
+            return stale_value
 
     def invalidate(self, key=None):
         """Invalidate cache entry or all entries"""
@@ -74,20 +84,19 @@ class Cache:
 # Global cache instance
 cache = Cache()
 
-# Thread pool for background tasks
-executor = ThreadPoolExecutor(max_workers=2)
-
 
 class DashboardHandler(http.server.BaseHTTPRequestHandler):
     # Increase timeout for slow operations
     timeout = 30
+    # Protocol version for keep-alive support
+    protocol_version = 'HTTP/1.1'
 
     def log_message(self, format, *args):
         # Suppress default logging to reduce I/O
         pass
 
     def send_json(self, data, status=200):
-        response = json.dumps(data).encode()
+        response = json.dumps(data, separators=(',', ':')).encode()  # Compact JSON
         self.send_response(status)
         self.send_header('Content-Type', 'application/json')
         self.send_header('Content-Length', len(response))
@@ -95,6 +104,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.send_header('Cache-Control', 'no-cache')
+        self.send_header('Connection', 'keep-alive')
         self.end_headers()
         self.wfile.write(response)
 
@@ -103,6 +113,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Connection', 'keep-alive')
         self.end_headers()
 
     def do_GET(self):
@@ -120,13 +131,20 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self.send_json({'error': 'Not found'}, 404)
 
     def serve_dashboard(self):
-        """Serve the dashboard HTML file"""
-        dashboard_path = SCRIPT_DIR / "dashboard.html"
-        if dashboard_path.exists():
-            content = dashboard_path.read_bytes()
+        """Serve the dashboard HTML file (cached)"""
+        def loader():
+            dashboard_path = SCRIPT_DIR / "dashboard.html"
+            if dashboard_path.exists():
+                return dashboard_path.read_bytes()
+            return None
+
+        content = cache.get('dashboard_html', DASHBOARD_CACHE_TTL, loader)
+
+        if content:
             self.send_response(200)
-            self.send_header('Content-Type', 'text/html')
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.send_header('Content-Length', len(content))
+            self.send_header('Connection', 'keep-alive')
             self.end_headers()
             self.wfile.write(content)
         else:
@@ -224,15 +242,18 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         return cache.get('current_source', CACHE_TTL, loader)
 
     def _get_all_sources(self):
-        """Get all sources with their pipeline data"""
-        sources = self._load_sources()
-        return [{
-            'id': s.get('id'),
-            'name': s.get('name'),
-            'url': s.get('url'),
-            'status': s.get('status'),
-            'pipeline': s.get('pipeline', {})
-        } for s in sources]
+        """Get all sources with their pipeline data (cached transformation)"""
+        def loader():
+            sources = self._load_sources()
+            return [{
+                'id': s.get('id'),
+                'name': s.get('name'),
+                'url': s.get('url'),
+                'status': s.get('status'),
+                'pipeline': s.get('pipeline', {})
+            } for s in sources]
+
+        return cache.get('all_sources_transformed', CACHE_TTL, loader) or []
 
     def _load_sources(self):
         """Load sources from sources.json (cached)"""
@@ -261,7 +282,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                                 try:
                                     total += sum(1 for f in os.scandir(html_dir)
                                                 if f.is_file() and f.name.endswith('.html'))
-                                except PermissionError:
+                                except (PermissionError, OSError):
                                     pass
             except Exception:
                 pass
@@ -289,8 +310,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
                         ['tail', '-n', str(lines), str(LOG_FILE)],
                         capture_output=True,
                         text=True,
-                        timeout=5,
-                        errors='replace'
+                        timeout=5
                     )
                     return result.stdout
             except Exception as e:
@@ -310,12 +330,12 @@ def main():
     print(f"""
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   Ralph Dashboard Server (Optimized)                      ║
+║   Ralph Dashboard Server (Optimized v2)                   ║
 ║                                                           ║
 ║   Dashboard: http://localhost:{PORT}/                       ║
 ║   API:       http://localhost:{PORT}/status                 ║
 ║                                                           ║
-║   Cache TTL: {CACHE_TTL}s (sources/status), {HTML_COUNT_CACHE_TTL}s (html count)       ║
+║   Cache TTL: {CACHE_TTL}s (status), {HTML_COUNT_CACHE_TTL}s (html), {DASHBOARD_CACHE_TTL}s (page)    ║
 ║   Press Ctrl+C to stop                                    ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
@@ -333,8 +353,6 @@ def main():
             httpd.serve_forever()
         except KeyboardInterrupt:
             print("\n✓ Dashboard server stopped")
-        finally:
-            executor.shutdown(wait=False)
 
 
 if __name__ == "__main__":
