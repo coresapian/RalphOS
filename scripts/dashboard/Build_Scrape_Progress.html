@@ -13,14 +13,27 @@
             --cement: #EBECED;
             --ceramic: #FFFFFF;
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         html, body {
             min-height: 100vh;
             overflow-y: auto;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--carbon);
+            /* Performance: enable GPU compositing */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Performance: reduce paint areas */
+        .source-card {
+            contain: layout style paint;
+        }
+
+        /* Performance: hint browser about animations */
+        .delta {
+            will-change: opacity;
         }
         
         .dashboard {
@@ -149,13 +162,18 @@
             font-weight: 600;
             color: #00ff88;
             margin-left: 6px;
-            text-shadow: 0 0 8px #00ff88, 0 0 16px #00ff88, 0 0 24px #00ff8866;
-            animation: glow-pulse 2s ease-in-out infinite;
+            /* Static glow - no animation to reduce GPU load */
+            text-shadow: 0 0 8px #00ff88, 0 0 12px #00ff8866;
         }
-        
+
+        /* Only animate on hover to reduce constant GPU usage */
+        .source-card:hover .delta {
+            animation: glow-pulse 1.5s ease-in-out infinite;
+        }
+
         @keyframes glow-pulse {
-            0%, 100% { text-shadow: 0 0 8px #00ff88, 0 0 16px #00ff88, 0 0 24px #00ff8866; }
-            50% { text-shadow: 0 0 12px #00ff88, 0 0 24px #00ff88, 0 0 36px #00ff88aa; }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
         
         .source-meta {

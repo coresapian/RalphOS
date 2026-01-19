@@ -433,109 +433,187 @@
   
   <script>
     // Configuration
-    const REFRESH_INTERVAL = 5000; // 5 seconds
+    const REFRESH_INTERVAL = 10000; // 10 seconds (was 5s - reduced frequency)
     const API_BASE = 'http://localhost:8765';
-    
-    // State
-    let lastLogLines = [];
-    
+    const MAX_BACKOFF = 60000; // Max 60s between retries on error
+
+    // State - track previous values to avoid unnecessary DOM updates
+    let state = {
+      lastData: null,
+      lastLogHash: '',
+      isUpdating: false,
+      errorBackoff: REFRESH_INTERVAL,
+      refreshTimer: null
+    };
+
+    // Simple hash for change detection
+    function quickHash(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+      }
+      return hash;
+    }
+
     // Format numbers with commas
     function formatNumber(num) {
       if (num === null || num === undefined || num === 'null') return '--';
       return parseInt(num).toLocaleString();
     }
-    
-    // Colorize log output
+
+    // Colorize log output - single pass with combined regex
+    const LOG_PATTERNS = [
+      { pattern: /✓|✅|SUCCESS|COMPLETE/gi, class: 'success' },
+      { pattern: /❌|ERROR|FAIL|BLOCKED/gi, class: 'error' },
+      { pattern: /⚠️|WARNING|WARN/gi, class: 'warning' },
+      { pattern: /ℹ️|INFO|→|Stage \d/gi, class: 'info' },
+      { pattern: /\d+\/\d+/g, class: 'success' }
+    ];
+
     function colorizeLog(text) {
-      return text
-        .replace(/✓|✅|SUCCESS|COMPLETE/gi, '<span class="success">$&</span>')
-        .replace(/❌|ERROR|FAIL|BLOCKED/gi, '<span class="error">$&</span>')
-        .replace(/⚠️|WARNING|WARN/gi, '<span class="warning">$&</span>')
-        .replace(/ℹ️|INFO|→/gi, '<span class="info">$&</span>')
-        .replace(/(Stage \d)/gi, '<span class="info">$1</span>')
-        .replace(/(\d+\/\d+)/g, '<span class="success">$1</span>');
+      // Build combined pattern for single-pass replacement
+      let result = text;
+      for (const {pattern, class: cls} of LOG_PATTERNS) {
+        result = result.replace(pattern, `<span class="${cls}">$&</span>`);
+      }
+      return result;
     }
-    
-    // Update dashboard
+
+    // Update only if value changed
+    function updateText(id, value) {
+      const el = document.getElementById(id);
+      if (el && el.textContent !== value) {
+        el.textContent = value;
+      }
+    }
+
+    function updateClass(el, newClass) {
+      if (el.className !== newClass) {
+        el.className = newClass;
+      }
+    }
+
+    // Update dashboard with change detection
     async function updateDashboard() {
+      // Prevent overlapping requests
+      if (state.isUpdating) return;
+      state.isUpdating = true;
+
       try {
-        const response = await fetch(`${API_BASE}/status`);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+
+        const response = await fetch(`${API_BASE}/status`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+
         const data = await response.json();
-        
-        // Update status
+
+        // Reset backoff on success
+        state.errorBackoff = REFRESH_INTERVAL;
+
+        // Update status indicator
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
-        if (data.running) {
-          statusDot.className = 'status-dot running';
-          statusText.textContent = 'Running';
-        } else {
-          statusDot.className = 'status-dot stopped';
-          statusText.textContent = 'Stopped';
-        }
-        
-        // Update stats
-        document.getElementById('totalSources').textContent = data.sources.total;
-        document.getElementById('completedSources').textContent = data.sources.completed;
-        document.getElementById('inProgressSources').textContent = data.sources.in_progress;
-        document.getElementById('htmlFiles').textContent = formatNumber(data.html_files);
-        
+        const newStatusClass = `status-dot ${data.running ? 'running' : 'stopped'}`;
+        const newStatusText = data.running ? 'Running' : 'Stopped';
+        updateClass(statusDot, newStatusClass);
+        updateText('statusText', newStatusText);
+
+        // Update stats only if changed
+        updateText('totalSources', String(data.sources.total));
+        updateText('completedSources', String(data.sources.completed));
+        updateText('inProgressSources', String(data.sources.in_progress));
+        updateText('htmlFiles', formatNumber(data.html_files));
+
         // Update current source
         if (data.current_source) {
-          document.getElementById('currentSourceName').textContent = data.current_source.name;
-          document.getElementById('currentSourceUrl').textContent = data.current_source.url;
-          
-          // Update pipeline stages
+          updateText('currentSourceName', data.current_source.name);
+          updateText('currentSourceUrl', data.current_source.url);
+
           const pipeline = data.current_source.pipeline || {};
           updateStage('stage1', pipeline.urlsFound, pipeline.expectedUrls);
           updateStage('stage2', pipeline.htmlScraped, pipeline.urlsFound);
           updateStage('stage3', pipeline.builds, null);
           updateStage('stage4', pipeline.mods, null);
         }
-        
-        // Update sources list
-        updateSourcesList(data.all_sources || []);
-        
-        // Update log
-        if (data.log_tail) {
-          const logOutput = document.getElementById('logOutput');
-          logOutput.innerHTML = colorizeLog(data.log_tail);
-          logOutput.scrollTop = logOutput.scrollHeight;
+
+        // Update sources list only if changed
+        const sourcesJson = JSON.stringify(data.all_sources || []);
+        if (sourcesJson !== state.lastSourcesJson) {
+          state.lastSourcesJson = sourcesJson;
+          updateSourcesList(data.all_sources || []);
         }
-        
+
+        // Update log only if changed (use hash for efficiency)
+        if (data.log_tail) {
+          const logHash = quickHash(data.log_tail);
+          if (logHash !== state.lastLogHash) {
+            state.lastLogHash = logHash;
+            const logOutput = document.getElementById('logOutput');
+            logOutput.innerHTML = colorizeLog(data.log_tail);
+            // Only scroll if near bottom already (user might be reading)
+            const isNearBottom = logOutput.scrollHeight - logOutput.scrollTop - logOutput.clientHeight < 100;
+            if (isNearBottom) {
+              logOutput.scrollTop = logOutput.scrollHeight;
+            }
+          }
+        }
+
         // Update refresh times
         const now = new Date().toLocaleTimeString();
-        document.getElementById('logRefresh').textContent = `Updated: ${now}`;
-        document.getElementById('sourcesRefresh').textContent = `Updated: ${now}`;
-        
+        updateText('logRefresh', `Updated: ${now}`);
+        updateText('sourcesRefresh', `Updated: ${now}`);
+
+        scheduleNextUpdate(REFRESH_INTERVAL);
+
       } catch (error) {
         console.error('Failed to fetch status:', error);
-        document.getElementById('statusDot').className = 'status-dot stopped';
-        document.getElementById('statusText').textContent = 'API Offline';
+        updateClass(document.getElementById('statusDot'), 'status-dot stopped');
+        updateText('statusText', 'API Offline');
+
+        // Exponential backoff on errors
+        state.errorBackoff = Math.min(state.errorBackoff * 1.5, MAX_BACKOFF);
+        scheduleNextUpdate(state.errorBackoff);
+      } finally {
+        state.isUpdating = false;
       }
     }
-    
+
+    function scheduleNextUpdate(delay) {
+      if (state.refreshTimer) {
+        clearTimeout(state.refreshTimer);
+      }
+      state.refreshTimer = setTimeout(updateDashboard, delay);
+    }
+
     function updateStage(id, current, total) {
       const stage = document.getElementById(id);
       const valueEl = stage.querySelector('.stage-value');
-      
+
       if (current !== null && current !== undefined && current !== 'null') {
-        valueEl.textContent = formatNumber(current);
-        if (total && current >= total) {
-          stage.className = 'stage-box complete';
-        } else if (current > 0) {
-          stage.className = 'stage-box active';
-        } else {
-          stage.className = 'stage-box';
+        const formatted = formatNumber(current);
+        if (valueEl.textContent !== formatted) {
+          valueEl.textContent = formatted;
         }
+        let newClass = 'stage-box';
+        if (total && current >= total) {
+          newClass = 'stage-box complete';
+        } else if (current > 0) {
+          newClass = 'stage-box active';
+        }
+        updateClass(stage, newClass);
       } else {
-        valueEl.textContent = '--';
-        stage.className = 'stage-box';
+        if (valueEl.textContent !== '--') valueEl.textContent = '--';
+        updateClass(stage, 'stage-box');
       }
     }
-    
+
     function updateSourcesList(sources) {
       const container = document.getElementById('sourcesList');
-      
+
       // Sort: in_progress first, then by name
       sources.sort((a, b) => {
         const order = { in_progress: 0, pending: 1, blocked: 2, completed: 3 };
@@ -543,39 +621,45 @@
         if (diff !== 0) return diff;
         return a.name.localeCompare(b.name);
       });
-      
+
       // Take top 15
       const topSources = sources.slice(0, 15);
-      
-      container.innerHTML = topSources.map(source => {
+
+      // Use DocumentFragment for efficient DOM update
+      const fragment = document.createDocumentFragment();
+
+      topSources.forEach(source => {
         const pipeline = source.pipeline || {};
-        const progress = pipeline.urlsFound ? 
+        const progress = pipeline.urlsFound ?
           Math.round((pipeline.htmlScraped || 0) / pipeline.urlsFound * 100) : 0;
-        
-        return `
-          <div class="source-item">
-            <div class="source-info">
-              <div class="source-status ${source.status}"></div>
-              <div>
-                <div class="source-name">${source.name}</div>
-                <div class="source-stats">
-                  URLs: ${formatNumber(pipeline.urlsFound)} | 
-                  HTML: ${formatNumber(pipeline.htmlScraped)} |
-                  Builds: ${formatNumber(pipeline.builds)}
-                </div>
+
+        const item = document.createElement('div');
+        item.className = 'source-item';
+        item.innerHTML = `
+          <div class="source-info">
+            <div class="source-status ${source.status}"></div>
+            <div>
+              <div class="source-name">${source.name}</div>
+              <div class="source-stats">
+                URLs: ${formatNumber(pipeline.urlsFound)} |
+                HTML: ${formatNumber(pipeline.htmlScraped)} |
+                Builds: ${formatNumber(pipeline.builds)}
               </div>
             </div>
-            <div class="progress-bar">
-              <div class="progress-bar-fill" style="width: ${progress}%"></div>
-            </div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: ${progress}%"></div>
           </div>
         `;
-      }).join('');
+        fragment.appendChild(item);
+      });
+
+      container.innerHTML = '';
+      container.appendChild(fragment);
     }
-    
-    // Initial load and start refresh
+
+    // Initial load
     updateDashboard();
-    setInterval(updateDashboard, REFRESH_INTERVAL);
   </script>
 </body>
 </html>
