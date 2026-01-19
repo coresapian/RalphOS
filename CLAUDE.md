@@ -65,14 +65,18 @@ python3 scripts/tools/stealth_scraper.py --source source_id
 # Quick discovery (3 sources, fewer searches)
 ./scripts/ralph/ralph-discovery.sh --quick
 
-# Deep discovery (all vehicle categories, ~15 sources)
+# Deep discovery (all categories + international, ~30 sources)
 ./scripts/ralph/ralph-discovery.sh --deep
+
+# International markets only (17 countries, ~20 sources)
+./scripts/ralph/ralph-discovery.sh --international
 
 # Continuous discovery (runs until stopped)
 ./scripts/ralph/ralph-discovery.sh --continuous
 
-# Target specific vehicle types
+# Target specific vehicle types or countries
 ./scripts/ralph/ralph-discovery.sh --categories jdm trucks muscle
+./scripts/ralph/ralph-discovery.sh --categories japan germany uk australia
 ```
 
 ### Source Discovery Tools
@@ -263,6 +267,7 @@ Sources must have:
 
 #### Source Categories
 
+**General Categories:**
 | Category | Description | Examples |
 |----------|-------------|----------|
 | `build_showcase` | Car build portfolio sites | Speedhunters, StanceNation |
@@ -271,11 +276,36 @@ Sources must have:
 | `wheel_fitment` | Wheel/fitment galleries | Custom Wheel Offset |
 | `auctions` | Modified car auctions | Bring a Trailer, Cars & Bids |
 | `publications` | Car magazine features | Super Street, Hot Rod |
+
+**US Vehicle Types:**
+| Category | Description | Examples |
+|----------|-------------|----------|
 | `jdm` | JDM vehicle builds | Civic, Miata, Supra forums |
 | `trucks` | Truck/off-road builds | Tacoma, F-150, Jeep forums |
 | `muscle` | American muscle builds | Mustang, Camaro, Corvette |
 | `european` | European car builds | BMW, VW, Porsche forums |
 | `exotic` | Supercar tuning | Ferrari, Lamborghini shops |
+
+**International Markets (17 Countries):**
+| Category | Region | Signature Styles |
+|----------|--------|------------------|
+| `japan` | East Asia | Drift, VIP, Time Attack, Bosozoku |
+| `germany` | Europe | ABT, Brabus, AC Schnitzer, Autobahn |
+| `uk` | Europe | Stance, Ford RS, Track day builds |
+| `australia` | Oceania | HSV, FPV, Ute culture, Burnouts |
+| `scandinavia` | Nordic | Gatebil, Volvo, Rally, Winter builds |
+| `middle_east` | Gulf | Dubai supercars, Luxury tuning |
+| `brazil` | S. America | VW Fusca, Hot hatches, Opala |
+| `southeast_asia` | Asia | Thai drift, Bangkok Auto Salon |
+| `russia` | Europe/Asia | Lada/VAZ tuning, Drift scene |
+| `new_zealand` | Oceania | JDM imports, V8 culture |
+| `netherlands` | Europe | VAG scene, Wörthersee style |
+| `france` | Europe | Peugeot GTI, Renault Sport |
+| `south_korea` | East Asia | Hyundai, Kia, Genesis tuning |
+| `mexico` | N. America | VW Vocho, Lowriders, Tsuru |
+| `canada` | N. America | Winter builds, Truck culture |
+| `poland` | Europe | Stance, BMW, Drift scene |
+| `south_africa` | Africa | Spin culture, Golf scene |
 
 #### Discovery Metadata
 

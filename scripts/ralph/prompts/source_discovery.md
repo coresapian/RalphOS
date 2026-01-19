@@ -108,8 +108,7 @@ modified vehicle showcase publication
 
 ## Vehicle Categories to Search
 
-Search for builds across all vehicle types:
-
+### US Market Categories
 - **Sports Cars**: Mustang, Corvette, Camaro, 911, GTR, Supra, M3, AMG
 - **JDM**: Civic, Integra, S2000, 240SX, Silvia, RX-7, Miata, WRX, Evo
 - **Trucks**: F-150, Silverado, Tacoma, Tundra, Ram, Colorado
@@ -117,6 +116,57 @@ Search for builds across all vehicle types:
 - **Euro**: Golf GTI/R, RS3, M2, RS6, C63
 - **Classic**: Chevelle, GTO, Charger, Mustang, Nova, Camaro
 - **Exotics**: Ferrari, Lamborghini, McLaren, Porsche GT cars
+
+### International Market Categories
+
+Search these markets with strong car modification cultures:
+
+| Region | Signature Styles | Key Brands/Models |
+|--------|------------------|-------------------|
+| **Japan** | Drift, VIP, Time Attack, Bosozoku | Silvia, GTR, RX-7, JZX, Crown |
+| **Germany** | Autobahn tuning, VAG scene | ABT, Brabus, AC Schnitzer builds |
+| **UK** | Stance, Ford RS, Track day | Fiesta ST, Golf R, M3 |
+| **Australia** | HSV, Ute culture, Burnouts | Holden Commodore, Ford Falcon |
+| **Scandinavia** | Rally, Volvo, Winter builds | Gatebil, Volvo 240 turbo |
+| **Middle East** | Supercar tuning, Luxury | Dubai supercars, Gulf region |
+| **Brazil** | VW Fusca, Hot hatches | Beetle, Gol GTI, Opala |
+| **Southeast Asia** | Bangkok scene, Thai drift | Proton, local JDM imports |
+| **Russia** | Lada, Drift scene | VAZ, Priora, imported JDM |
+| **New Zealand** | JDM imports, V8 culture | Skyline, Silvia, Commodore |
+| **Netherlands** | VAG scene, Stance | Golf, Polo, Wörthersee style |
+| **France** | Hot hatches, Renault Sport | Clio RS, Megane RS, 205 GTI |
+| **South Korea** | Hyundai, Genesis tuning | Veloster N, Stinger GT |
+| **Mexico** | VW Vocho, Lowriders | Beetle, Tsuru, classic US |
+| **Canada** | Winter builds, Trucks | Rally, lifted trucks |
+| **Poland** | Stance, BMW, Drift | E30, E36, VAG |
+| **South Africa** | Spin culture, Golf | Golf, BMW, Spin cars |
+
+### International Search Strategies
+
+```
+# Japan
+"japanese tuning builds showcase"
+"drift builds japan modifications"
+"VIP style car builds"
+"time attack japan"
+
+# Germany
+"german tuning builds ABT Brabus"
+"autobahn tuner builds"
+"Essen motorshow car builds"
+
+# UK
+"UK modified car builds"
+"fast car magazine builds"
+"modified nationals builds"
+
+# Australia
+"HSV holden builds showcase"
+"summernats car builds"
+"australian V8 builds"
+
+# And similar for each region...
+```
 
 ## Discovery Workflow
 

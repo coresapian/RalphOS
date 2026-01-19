@@ -38,6 +38,7 @@ CANDIDATES_FILE = "logs/source_candidates.json"
 
 # Search query templates for different discovery strategies
 SEARCH_QUERIES = {
+    # === GENERAL CATEGORIES ===
     "build_showcase": [
         "car build showcase gallery modifications",
         "vehicle project builds parts list",
@@ -75,7 +76,8 @@ SEARCH_QUERIES = {
         "modified vehicle showcase publication",
         "project car article series mods",
     ],
-    # Vehicle-specific searches
+
+    # === US VEHICLE-SPECIFIC ===
     "jdm": [
         "civic build showcase modifications",
         "s2000 build thread mods list",
@@ -107,6 +109,247 @@ SEARCH_QUERIES = {
         "lamborghini modifications gallery",
         "porsche 911 build thread mods",
         "mclaren build showcase parts",
+    ],
+
+    # === INTERNATIONAL MARKETS ===
+
+    # Japan - Drift, VIP, Time Attack, Bosozoku
+    "japan": [
+        "日本 チューニング カスタム builds",  # Japanese tuning custom
+        "japan tuning car builds modifications",
+        "japanese drift builds showcase",
+        "VIP style car builds japan",
+        "time attack builds japan modifications",
+        "japanese car meeting showcase builds",
+        "option magazine style builds",
+        "wangan midnight style builds mods",
+        "HKS tuned car builds gallery",
+        "RE Amemiya RX7 builds showcase",
+        "Top Secret GTR builds modifications",
+    ],
+
+    # Germany - Autobahn, VAG, BMW tuning
+    "germany": [
+        "german tuning car builds modifications",
+        "autobahn tuner builds showcase",
+        "ABT tuning builds gallery",
+        "Brabus mercedes builds modifications",
+        "AC Schnitzer BMW builds showcase",
+        "german VAG tuning builds forum",
+        "MTM audi tuning builds",
+        "Techart porsche builds modifications",
+        "german car tuning magazine builds",
+        "Essen motorshow car builds",
+    ],
+
+    # UK - Modified car scene, stance
+    "uk": [
+        "UK modified car builds showcase",
+        "british car tuning builds forum",
+        "UK stance builds gallery",
+        "modified nationals car builds",
+        "players classic car builds UK",
+        "fast car magazine builds UK",
+        "UK ford tuning builds RS",
+        "vauxhall modified builds UK",
+        "UK time attack builds showcase",
+        "UK car meet builds gallery",
+    ],
+
+    # Australia - HSV, FPV, ute culture
+    "australia": [
+        "australian car builds modifications",
+        "HSV holden builds showcase",
+        "FPV ford australia builds",
+        "australian ute builds modifications",
+        "street machine builds australia",
+        "summernats car builds showcase",
+        "australian V8 builds forum",
+        "aussie burnout car builds",
+        "australian muscle car builds",
+        "powercruise builds australia",
+    ],
+
+    # Scandinavia - Rally, Volvo, winter builds
+    "scandinavia": [
+        "scandinavian car builds modifications",
+        "swedish volvo builds showcase",
+        "finnish rally builds modifications",
+        "norway stance builds gallery",
+        "gatebil car builds showcase",
+        "swedish drift builds forum",
+        "saab tuning builds modifications",
+        "nordic car meet builds",
+        "volvo turbo builds showcase",
+        "koenigsegg inspired builds",
+    ],
+
+    # Middle East - UAE, Saudi supercar tuning
+    "middle_east": [
+        "UAE supercar tuning builds",
+        "dubai modified car builds showcase",
+        "saudi arabia car builds gallery",
+        "middle east luxury car tuning",
+        "gulf car festival builds",
+        "qatar car builds modifications",
+        "arab drifting builds showcase",
+        "dubai custom car builds forum",
+        "middle east stance builds",
+        "arabian car culture builds",
+    ],
+
+    # Brazil - VW scene, hot hatches
+    "brazil": [
+        "brazilian car builds modifications",
+        "brasil tuning builds showcase",
+        "VW fusca beetle builds brazil",
+        "brazilian hot hatch builds",
+        "gol GTI builds brazil modifications",
+        "brazil car meet builds gallery",
+        "fiat uno turbo builds brazil",
+        "chevette builds brazil tuning",
+        "opala builds brazil showcase",
+        "salao do automovel builds",
+    ],
+
+    # Southeast Asia - Thailand, Indonesia, Malaysia
+    "southeast_asia": [
+        "thailand car builds modifications",
+        "indonesian car builds showcase",
+        "malaysian car builds forum",
+        "bangkok auto salon builds",
+        "indonesia modified car gallery",
+        "proton builds malaysia tuning",
+        "thai drift builds showcase",
+        "singapore car builds modifications",
+        "philippines car builds forum",
+        "ASEAN car culture builds",
+    ],
+
+    # Russia - Lada, drift scene
+    "russia": [
+        "russian car builds modifications",
+        "lada tuning builds showcase",
+        "russian drift builds gallery",
+        "VAZ builds russia modifications",
+        "russian car tuning forum builds",
+        "moscow tuning show builds",
+        "russian stance builds showcase",
+        "priora builds russia tuning",
+        "russian JDM builds gallery",
+        "russian car meet builds",
+    ],
+
+    # New Zealand - JDM imports, V8 culture
+    "new_zealand": [
+        "new zealand car builds modifications",
+        "NZ JDM import builds showcase",
+        "kiwi car builds forum",
+        "new zealand V8 builds gallery",
+        "NZ drift builds modifications",
+        "new zealand stance builds",
+        "NZ holden builds showcase",
+        "wellington car meet builds",
+        "auckland modified car builds",
+        "new zealand ford builds",
+    ],
+
+    # Netherlands - VAG scene, lowered cars
+    "netherlands": [
+        "dutch car builds modifications",
+        "netherlands VAG tuning builds",
+        "dutch stance builds showcase",
+        "holland car meet builds gallery",
+        "dutch golf GTI builds forum",
+        "netherlands modified car builds",
+        "dutch lowrider builds showcase",
+        "amsterdam car culture builds",
+        "wörthersee dutch builds",
+        "netherlands BMW builds tuning",
+    ],
+
+    # France - Peugeot, Renault, hot hatches
+    "france": [
+        "french car builds modifications",
+        "peugeot GTI builds showcase france",
+        "renault sport builds modifications",
+        "french hot hatch builds forum",
+        "clio RS builds france gallery",
+        "megane RS builds modifications",
+        "french tuning builds showcase",
+        "alpine A110 builds france",
+        "citroen DS builds modifications",
+        "french car meet builds gallery",
+    ],
+
+    # South Korea - Hyundai, Kia, Genesis tuning
+    "south_korea": [
+        "korean car builds modifications",
+        "hyundai tuning builds showcase",
+        "kia stinger builds modifications",
+        "genesis builds korea gallery",
+        "korean car meet builds forum",
+        "seoul motor show custom builds",
+        "korean drift builds showcase",
+        "korean stance builds gallery",
+        "veloster N builds korea",
+        "korean tuning shop builds",
+    ],
+
+    # Mexico - VW scene, lowriders
+    "mexico": [
+        "mexican car builds modifications",
+        "mexico VW beetle vocho builds",
+        "mexican lowrider builds showcase",
+        "tsuru builds mexico tuning",
+        "mexican car meet builds gallery",
+        "mexico tuning builds forum",
+        "mexican muscle car builds",
+        "autoshow mexico custom builds",
+        "mexican drift builds showcase",
+        "mexico car culture builds",
+    ],
+
+    # Canada - Winter builds, truck culture
+    "canada": [
+        "canadian car builds modifications",
+        "canada truck builds showcase",
+        "canadian winter builds gallery",
+        "canadian muscle car builds forum",
+        "importfest canada builds",
+        "CSCS time attack builds canada",
+        "canadian drift builds showcase",
+        "quebec car builds modifications",
+        "alberta truck builds lifted",
+        "canadian euro builds gallery",
+    ],
+
+    # Poland - Stance, drift scene
+    "poland": [
+        "polish car builds modifications",
+        "poland stance builds showcase",
+        "polish drift builds gallery",
+        "polish car meet builds forum",
+        "poland BMW builds modifications",
+        "polish tuning builds showcase",
+        "poznan motor show builds",
+        "polish VAG builds gallery",
+        "poland car culture builds",
+        "polish project car builds",
+    ],
+
+    # South Africa - Spin culture, modified scene
+    "south_africa": [
+        "south african car builds modifications",
+        "SA spin car builds showcase",
+        "south africa modified builds gallery",
+        "johannesburg car meet builds",
+        "cape town car builds forum",
+        "south african BMW builds modifications",
+        "SA car culture builds showcase",
+        "south african golf builds",
+        "SA stance builds gallery",
+        "south african tuning builds",
     ],
 }
 

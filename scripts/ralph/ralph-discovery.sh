@@ -52,8 +52,14 @@ while [[ $# -gt 0 ]]; do
             ;;
         --deep|-d)
             MODE="deep"
-            MAX_ITERATIONS=50
-            TARGET_SOURCES=15
+            MAX_ITERATIONS=100
+            TARGET_SOURCES=30
+            shift
+            ;;
+        --international|-i)
+            MODE="international"
+            MAX_ITERATIONS=60
+            TARGET_SOURCES=20
             shift
             ;;
         --continuous|-c)
@@ -69,15 +75,21 @@ while [[ $# -gt 0 ]]; do
             echo "Ralph Source Discovery - Find new vehicle build sources"
             echo ""
             echo "Usage:"
-            echo "  $0                        # Standard discovery session"
-            echo "  $0 --quick                # Quick discovery (fewer searches)"
-            echo "  $0 --deep                 # Deep discovery (all categories)"
-            echo "  $0 --continuous           # Run continuously"
-            echo "  $0 --categories jdm trucks  # Target specific vehicle types"
+            echo "  $0                           # Standard discovery session"
+            echo "  $0 --quick                   # Quick discovery (fewer searches)"
+            echo "  $0 --deep                    # Deep discovery (all categories + international)"
+            echo "  $0 --international           # International markets only (17 countries)"
+            echo "  $0 --continuous              # Run continuously"
+            echo "  $0 --categories jdm trucks   # Target specific vehicle types"
             echo ""
-            echo "Categories: build_showcase, forum_threads, tuner_shops,"
-            echo "            wheel_fitment, auctions, publications,"
-            echo "            jdm, trucks, muscle, european, exotic"
+            echo "US Categories: build_showcase, forum_threads, tuner_shops,"
+            echo "               wheel_fitment, auctions, publications,"
+            echo "               jdm, trucks, muscle, european, exotic"
+            echo ""
+            echo "International: japan, germany, uk, australia, scandinavia,"
+            echo "               middle_east, brazil, southeast_asia, russia,"
+            echo "               new_zealand, netherlands, france, south_korea,"
+            echo "               mexico, canada, poland, south_africa"
             exit 0
             ;;
         *)
@@ -130,6 +142,9 @@ generate_prd() {
             ;;
         deep)
             prd_args="--deep"
+            ;;
+        international)
+            prd_args="--international"
             ;;
         *)
             if [[ -n "$CATEGORIES" ]]; then
