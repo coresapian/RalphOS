@@ -56,6 +56,49 @@ python3 scripts/tools/test_scraper.py data/source_name/scrape_html.py
 python3 scripts/tools/stealth_scraper.py --source source_id
 ```
 
+### Source Discovery Ralph
+
+```bash
+# Run standard discovery (find ~5 new sources)
+./scripts/ralph/ralph-discovery.sh
+
+# Quick discovery (3 sources, fewer searches)
+./scripts/ralph/ralph-discovery.sh --quick
+
+# Deep discovery (all vehicle categories, ~15 sources)
+./scripts/ralph/ralph-discovery.sh --deep
+
+# Continuous discovery (runs until stopped)
+./scripts/ralph/ralph-discovery.sh --continuous
+
+# Target specific vehicle types
+./scripts/ralph/ralph-discovery.sh --categories jdm trucks muscle
+```
+
+### Source Discovery Tools
+
+```bash
+# Generate search queries
+python3 scripts/tools/discover_sources.py --queries --limit 10
+
+# List existing sources
+python3 scripts/tools/discover_sources.py --list
+
+# Show discovery statistics
+python3 scripts/tools/discover_sources.py --stats
+
+# Validate a potential source
+python3 scripts/tools/validate_source.py "https://example.com/builds" --verbose
+
+# Generate discovery PRD
+python3 scripts/tools/generate_discovery_prd.py --quick
+python3 scripts/tools/generate_discovery_prd.py --deep
+python3 scripts/tools/generate_discovery_prd.py --categories jdm trucks
+
+# Add a source directly
+python3 scripts/tools/discover_sources.py --add-url "https://site.com/builds" --name "Site Name"
+```
+
 ## Architecture
 
 ### Core Loop Flow
@@ -119,11 +162,17 @@ RalphOS/
 ├── scripts/
 │   ├── ralph/              # Core orchestration
 │   │   ├── ralph.sh        # Main loop script
+│   │   ├── ralph-discovery.sh  # Source discovery loop
 │   │   ├── ralph-parallel.sh
 │   │   ├── pipeline.sh
 │   │   ├── check_completion.sh
 │   │   ├── prompt.md       # Agent instructions
 │   │   ├── prompts/        # Specialized prompts
+│   │   │   ├── source_discovery.md  # Discovery agent prompt
+│   │   │   ├── url_detective.md
+│   │   │   ├── html_scraper.md
+│   │   │   ├── build_extractor.md
+│   │   │   └── mod_extractor.md
 │   │   ├── sources.json    # Source registry
 │   │   ├── progress.txt    # Learnings
 │   │   └── archive/        # Archived PRDs
@@ -136,7 +185,10 @@ RalphOS/
 │   │   ├── category_detector.py
 │   │   ├── create_manifest.py
 │   │   ├── test_scraper.py
-│   │   └── test_url_discovery.py
+│   │   ├── test_url_discovery.py
+│   │   ├── discover_sources.py      # Source discovery queries/management
+│   │   ├── validate_source.py       # Source validation
+│   │   └── generate_discovery_prd.py # Discovery PRD generator
 │   │
 │   └── dashboard/          # Monitoring UI
 │       ├── dashboard.html
@@ -180,6 +232,68 @@ New scraping projects typically follow this pattern:
 - **US-002**: Scrape all URLs from gallery/listing (discover content)
 - **US-003**: Create HTML scraping script (fetch content)
 - **US-004**: Execute full scrape (process all discovered URLs)
+
+### Source Discovery System
+
+The Source Discovery Ralph autonomously finds new vehicle build websites and adds them to the sources queue.
+
+#### Discovery Architecture
+
+```
+Source Discovery Flow:
+1. Generate search queries (vehicle types, build forums, tuner shops)
+2. Execute web searches via MCP (webSearchPrime)
+3. Filter results (exclude social media, dealerships, bad patterns)
+4. Validate candidates via MCP (webReader)
+   - Check for individual build pages
+   - Verify modifications are listed
+   - Test pagination accessibility
+5. Add valid sources to sources.json with discovery metadata
+6. Continue until target sources found or iterations exhausted
+```
+
+#### Valid Source Criteria
+
+Sources must have:
+- **Individual build pages** (not just a thumbnail gallery)
+- **Vehicle specifications** (year, make, model)
+- **Modifications listed** (aftermarket parts, upgrades)
+- **Scrapable content** (static HTML, no auth required)
+- **Working pagination** (if paginated)
+
+#### Source Categories
+
+| Category | Description | Examples |
+|----------|-------------|----------|
+| `build_showcase` | Car build portfolio sites | Speedhunters, StanceNation |
+| `forum_threads` | Forum build thread sections | TacomaWorld, E46Fanatics |
+| `tuner_shops` | Tuner shop customer builds | Performance shop portfolios |
+| `wheel_fitment` | Wheel/fitment galleries | Custom Wheel Offset |
+| `auctions` | Modified car auctions | Bring a Trailer, Cars & Bids |
+| `publications` | Car magazine features | Super Street, Hot Rod |
+| `jdm` | JDM vehicle builds | Civic, Miata, Supra forums |
+| `trucks` | Truck/off-road builds | Tacoma, F-150, Jeep forums |
+| `muscle` | American muscle builds | Mustang, Camaro, Corvette |
+| `european` | European car builds | BMW, VW, Porsche forums |
+| `exotic` | Supercar tuning | Ferrari, Lamborghini shops |
+
+#### Discovery Metadata
+
+New sources include discovery tracking:
+```json
+{
+  "id": "source_id",
+  "name": "Source Name",
+  "url": "https://example.com/builds",
+  "discovery": {
+    "discovered_at": "2026-01-19T07:00:00Z",
+    "discovered_by": "source_discovery_ralph",
+    "confidence_score": 0.85,
+    "vehicle_types": ["jdm", "trucks"],
+    "validation_notes": "Forum with 500+ build threads"
+  }
+}
+```
 
 ## Important Conventions
 

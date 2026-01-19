@@ -21,6 +21,14 @@
     "3_build_extraction": "Extract structured build data from HTML",
     "4_mod_extraction": "Extract modifications/parts from build data"
   },
+  "discoveryFields": {
+    "discovered_at": "ISO8601 timestamp when source was found",
+    "discovered_by": "Agent that discovered the source (e.g., 'source_discovery_ralph')",
+    "search_query": "Search query that found this source",
+    "confidence_score": "Validation confidence score (0.0-1.0)",
+    "vehicle_types": "Array of vehicle types found on the source",
+    "validation_notes": "Notes from validation process"
+  },
   "sources": [
     {
       "id": "oneoff_autos",
