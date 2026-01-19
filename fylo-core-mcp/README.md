@@ -115,6 +115,35 @@ Or add to `.mcp.json`:
 |----------|-------------|---------|
 | `FYLO_DATA_DIR` | Directory for graph persistence | `./data/fylo-graph` |
 | `RALPH_DIR` | Path to RalphOS directory | `.` (current directory) |
+| `FYLO_AUTO_SYNC` | Enable/disable auto-sync file watching | `true` |
+| `FYLO_SYNC_DEBOUNCE` | Debounce delay in ms for file changes | `2000` |
+| `FYLO_PERIODIC_SYNC` | Periodic sync interval in ms (0 = disabled) | `0` |
+
+## Auto-Sync Feature
+
+The MCP server automatically watches for file changes and syncs the knowledge graph:
+
+- **sources.json watching**: When `scripts/ralph/sources.json` changes, sources are automatically synced
+- **Data directory scanning**: When directories under `data/` change, pipeline stats are updated
+- **Periodic sync**: Optionally run a full sync at regular intervals
+
+### Configuration Examples
+
+```bash
+# Disable auto-sync entirely
+FYLO_AUTO_SYNC=false
+
+# Set debounce to 5 seconds (reduce rapid syncs)
+FYLO_SYNC_DEBOUNCE=5000
+
+# Enable periodic sync every 30 seconds
+FYLO_PERIODIC_SYNC=30000
+```
+
+### What gets auto-synced
+
+1. **From sources.json**: Source IDs, names, URLs, status
+2. **From data directories**: Pipeline progress (URLs found, HTML scraped, builds/mods extracted)
 
 ## Knowledge Graph Structure
 

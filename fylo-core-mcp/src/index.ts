@@ -62,6 +62,16 @@ const DATA_DIR = process.env.FYLO_DATA_DIR || path.join(process.cwd(), "data", "
 const GRAPH_FILE = path.join(DATA_DIR, "knowledge-graph.json");
 const RALPH_DIR = process.env.RALPH_DIR || process.cwd();
 
+// Auto-sync configuration
+const AUTO_SYNC_ENABLED = process.env.FYLO_AUTO_SYNC !== "false";
+const SYNC_DEBOUNCE_MS = parseInt(process.env.FYLO_SYNC_DEBOUNCE || "2000", 10);
+const PERIODIC_SYNC_INTERVAL_MS = parseInt(process.env.FYLO_PERIODIC_SYNC || "0", 10); // 0 = disabled
+
+// File watcher state
+let syncDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+let periodicSyncTimer: ReturnType<typeof setInterval> | null = null;
+const activeWatchers: fs.FSWatcher[] = [];
+
 // Ensure data directory exists
 function ensureDataDir(): void {
   if (!fs.existsSync(DATA_DIR)) {
@@ -96,6 +106,255 @@ function saveGraph(): void {
     }
   };
   fs.writeFileSync(GRAPH_FILE, JSON.stringify(data, null, 2));
+}
+
+// ============== AUTO-SYNC FILE WATCHING ==============
+
+/**
+ * Debounced sync function to prevent rapid re-syncing
+ */
+function debouncedSync(syncFn: () => void): void {
+  if (syncDebounceTimer) {
+    clearTimeout(syncDebounceTimer);
+  }
+  syncDebounceTimer = setTimeout(() => {
+    try {
+      syncFn();
+      saveGraph();
+      console.error(`[Auto-Sync] Knowledge graph updated at ${new Date().toISOString()}`);
+    } catch (error) {
+      console.error("[Auto-Sync] Error during sync:", error);
+    }
+  }, SYNC_DEBOUNCE_MS);
+}
+
+/**
+ * Sync sources from sources.json into the knowledge graph
+ */
+function syncSourcesFromFile(): void {
+  const sourcesPath = path.join(RALPH_DIR, "scripts", "ralph", "sources.json");
+  if (!fs.existsSync(sourcesPath)) {
+    return;
+  }
+
+  try {
+    const sourcesData = JSON.parse(fs.readFileSync(sourcesPath, "utf-8"));
+    const sources = sourcesData.sources || [];
+
+    for (const source of sources) {
+      const entityId = `source_${source.id.replace(/[^a-zA-Z0-9]/g, "_")}`;
+
+      if (!graph.entities.has(entityId)) {
+        // Create new source entity
+        graph.entities.set(entityId, {
+          id: entityId,
+          type: "source",
+          name: source.name || source.id,
+          observations: [`Auto-synced from sources.json`],
+          properties: {
+            sourceId: source.id,
+            url: source.url,
+            status: source.status || "pending",
+            outputDir: source.outputDir,
+            pipeline: {
+              urlsFound: 0,
+              htmlScraped: 0,
+              buildsExtracted: 0,
+              modsExtracted: 0
+            }
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+      } else {
+        // Update existing source
+        const existing = graph.entities.get(entityId)!;
+        existing.properties.status = source.status || existing.properties.status;
+        existing.properties.url = source.url || existing.properties.url;
+        existing.updatedAt = new Date().toISOString();
+        graph.entities.set(entityId, existing);
+      }
+    }
+
+    graph.metadata.lastUpdated = new Date().toISOString();
+  } catch (error) {
+    console.error("[Auto-Sync] Error parsing sources.json:", error);
+  }
+}
+
+/**
+ * Scan data directories for pipeline progress and update entities
+ */
+function scanDataDirectories(): void {
+  const dataDir = path.join(RALPH_DIR, "data");
+  if (!fs.existsSync(dataDir)) {
+    return;
+  }
+
+  try {
+    const dirs = fs.readdirSync(dataDir, { withFileTypes: true })
+      .filter(d => d.isDirectory() && !d.name.startsWith(".") && d.name !== "fylo-graph");
+
+    for (const dir of dirs) {
+      const sourceDir = path.join(dataDir, dir.name);
+      const entityId = `source_${dir.name.replace(/[^a-zA-Z0-9]/g, "_")}`;
+
+      // Find or create source entity
+      let entity = graph.entities.get(entityId);
+      if (!entity) {
+        entity = {
+          id: entityId,
+          type: "source",
+          name: dir.name,
+          observations: [`Auto-discovered from data directory`],
+          properties: {
+            sourceId: dir.name,
+            outputDir: `data/${dir.name}`,
+            pipeline: {
+              urlsFound: 0,
+              htmlScraped: 0,
+              buildsExtracted: 0,
+              modsExtracted: 0
+            }
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+      }
+
+      // Update pipeline stats from files
+      const pipeline = entity.properties.pipeline as Record<string, number>;
+
+      // Check urls.json
+      const urlsFile = path.join(sourceDir, "urls.json");
+      if (fs.existsSync(urlsFile)) {
+        try {
+          const urlsData = JSON.parse(fs.readFileSync(urlsFile, "utf-8"));
+          pipeline.urlsFound = Array.isArray(urlsData.urls) ? urlsData.urls.length : 0;
+        } catch { /* ignore parse errors */ }
+      }
+
+      // Check html directory
+      const htmlDir = path.join(sourceDir, "html");
+      if (fs.existsSync(htmlDir)) {
+        try {
+          const htmlFiles = fs.readdirSync(htmlDir).filter(f => f.endsWith(".html"));
+          pipeline.htmlScraped = htmlFiles.length;
+        } catch { /* ignore errors */ }
+      }
+
+      // Check builds.json
+      const buildsFile = path.join(sourceDir, "builds.json");
+      if (fs.existsSync(buildsFile)) {
+        try {
+          const buildsData = JSON.parse(fs.readFileSync(buildsFile, "utf-8"));
+          pipeline.buildsExtracted = Array.isArray(buildsData.builds) ? buildsData.builds.length :
+                                     Array.isArray(buildsData) ? buildsData.length : 0;
+        } catch { /* ignore parse errors */ }
+      }
+
+      // Check mods.json
+      const modsFile = path.join(sourceDir, "mods.json");
+      if (fs.existsSync(modsFile)) {
+        try {
+          const modsData = JSON.parse(fs.readFileSync(modsFile, "utf-8"));
+          pipeline.modsExtracted = Array.isArray(modsData.modifications) ? modsData.modifications.length :
+                                   Array.isArray(modsData) ? modsData.length : 0;
+        } catch { /* ignore parse errors */ }
+      }
+
+      entity.properties.pipeline = pipeline;
+      entity.updatedAt = new Date().toISOString();
+      graph.entities.set(entityId, entity);
+    }
+
+    graph.metadata.lastUpdated = new Date().toISOString();
+  } catch (error) {
+    console.error("[Auto-Sync] Error scanning data directories:", error);
+  }
+}
+
+/**
+ * Start file watchers for auto-sync
+ */
+function startFileWatchers(): void {
+  if (!AUTO_SYNC_ENABLED) {
+    console.error("[Auto-Sync] Disabled via FYLO_AUTO_SYNC=false");
+    return;
+  }
+
+  // Watch sources.json
+  const sourcesPath = path.join(RALPH_DIR, "scripts", "ralph", "sources.json");
+  if (fs.existsSync(sourcesPath)) {
+    try {
+      const watcher = fs.watch(sourcesPath, (eventType) => {
+        if (eventType === "change") {
+          console.error("[Auto-Sync] sources.json changed, syncing...");
+          debouncedSync(syncSourcesFromFile);
+        }
+      });
+      activeWatchers.push(watcher);
+      console.error(`[Auto-Sync] Watching: ${sourcesPath}`);
+    } catch (error) {
+      console.error("[Auto-Sync] Failed to watch sources.json:", error);
+    }
+  }
+
+  // Watch data directory for new source directories
+  const dataDir = path.join(RALPH_DIR, "data");
+  if (fs.existsSync(dataDir)) {
+    try {
+      const watcher = fs.watch(dataDir, { recursive: false }, (eventType, filename) => {
+        if (filename && !filename.startsWith(".") && filename !== "fylo-graph") {
+          console.error(`[Auto-Sync] Data directory change detected: ${filename}`);
+          debouncedSync(scanDataDirectories);
+        }
+      });
+      activeWatchers.push(watcher);
+      console.error(`[Auto-Sync] Watching: ${dataDir}`);
+    } catch (error) {
+      console.error("[Auto-Sync] Failed to watch data directory:", error);
+    }
+  }
+
+  // Start periodic sync if configured
+  if (PERIODIC_SYNC_INTERVAL_MS > 0) {
+    periodicSyncTimer = setInterval(() => {
+      console.error("[Auto-Sync] Running periodic sync...");
+      syncSourcesFromFile();
+      scanDataDirectories();
+      saveGraph();
+    }, PERIODIC_SYNC_INTERVAL_MS);
+    console.error(`[Auto-Sync] Periodic sync enabled every ${PERIODIC_SYNC_INTERVAL_MS / 1000}s`);
+  }
+
+  // Initial sync on startup
+  console.error("[Auto-Sync] Running initial sync...");
+  syncSourcesFromFile();
+  scanDataDirectories();
+  saveGraph();
+}
+
+/**
+ * Stop all file watchers and timers
+ */
+function stopFileWatchers(): void {
+  for (const watcher of activeWatchers) {
+    watcher.close();
+  }
+  activeWatchers.length = 0;
+
+  if (syncDebounceTimer) {
+    clearTimeout(syncDebounceTimer);
+    syncDebounceTimer = null;
+  }
+
+  if (periodicSyncTimer) {
+    clearInterval(periodicSyncTimer);
+    periodicSyncTimer = null;
+  }
+
+  console.error("[Auto-Sync] File watchers stopped");
 }
 
 // Generate unique ID
@@ -2227,6 +2486,9 @@ async function main(): Promise<void> {
   // Load existing graph
   loadGraph();
 
+  // Start file watchers for auto-sync
+  startFileWatchers();
+
   // Connect to stdio transport
   const transport = new StdioServerTransport();
   await server.connect(transport);
@@ -2234,9 +2496,25 @@ async function main(): Promise<void> {
   // Log to stderr (not stdout which is used for JSON-RPC)
   console.error("Fylo-Core-MCP server running on stdio");
   console.error(`Graph loaded: ${graph.entities.size} entities, ${graph.relations.length} relations`);
+
+  // Handle graceful shutdown
+  process.on("SIGINT", () => {
+    console.error("Received SIGINT, shutting down...");
+    stopFileWatchers();
+    saveGraph();
+    process.exit(0);
+  });
+
+  process.on("SIGTERM", () => {
+    console.error("Received SIGTERM, shutting down...");
+    stopFileWatchers();
+    saveGraph();
+    process.exit(0);
+  });
 }
 
 main().catch((error) => {
   console.error("Fatal error:", error);
+  stopFileWatchers();
   process.exit(1);
 });
