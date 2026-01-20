@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 DATA_DIR = Path("data")
-OUTPUT_DIR = Path("/Users/core/Downloads/motormia/motormia-etl/data/input")
+OUTPUT_DIR = Path("/Volumes/io/motormia-etl/data/input")
 
 for source_dir in sorted(DATA_DIR.iterdir()):
     if not source_dir.is_dir():

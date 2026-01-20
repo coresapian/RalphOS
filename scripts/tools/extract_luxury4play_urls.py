@@ -223,7 +223,7 @@ def main():
     print(f"{'='*60}\n")
 
     # Log to progress file
-    progress_file = "scripts/ralph-stages/url-detective/progress.txt"
+    progress_file = "scripts/ralph/progress.txt"
     with open(progress_file, 'a') as f:
         f.write(f"\n## {time.strftime('%Y-%m-%d %H:%M:%S')} - luxury4play URL Discovery\n")
         f.write(f"- Total URLs discovered: {metadata['totalCount']}\n")

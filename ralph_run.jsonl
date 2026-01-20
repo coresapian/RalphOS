@@ -1,0 +1,187 @@
+{"timestamp": "2026-01-17T01:42:32.936713Z", "level": "INFO", "message": "Starting Wheel Specialists URL discovery", "data": {}}
+{"timestamp": "2026-01-17T01:42:32.970563Z", "level": "INFO", "message": "Crawling Acura (ID: 1)", "data": {}}
+{"timestamp": "2026-01-17T01:42:32.972248Z", "level": "ERROR", "message": "Acura: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:33.977233Z", "level": "INFO", "message": "Crawling Alfa Romeo (ID: 65)", "data": {}}
+{"timestamp": "2026-01-17T01:42:33.980232Z", "level": "ERROR", "message": "Alfa Romeo: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:34.985711Z", "level": "INFO", "message": "Crawling Arctic Cat (ID: 60)", "data": {}}
+{"timestamp": "2026-01-17T01:42:34.987735Z", "level": "ERROR", "message": "Arctic Cat: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:35.989672Z", "level": "INFO", "message": "Crawling Aston Martin (ID: 2)", "data": {}}
+{"timestamp": "2026-01-17T01:42:35.991855Z", "level": "ERROR", "message": "Aston Martin: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:36.997301Z", "level": "INFO", "message": "Crawling Audi (ID: 3)", "data": {}}
+{"timestamp": "2026-01-17T01:42:36.999550Z", "level": "ERROR", "message": "Audi: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:37.002300Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 172}}
+{"timestamp": "2026-01-17T01:42:37.002588Z", "level": "INFO", "message": "Checkpoint: 0 total URLs from 5 makes", "data": {}}
+{"timestamp": "2026-01-17T01:42:38.007922Z", "level": "INFO", "message": "Crawling Bentley (ID: 4)", "data": {}}
+{"timestamp": "2026-01-17T01:42:38.010043Z", "level": "ERROR", "message": "Bentley: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:39.015587Z", "level": "INFO", "message": "Crawling BMW (ID: 5)", "data": {}}
+{"timestamp": "2026-01-17T01:42:39.017817Z", "level": "ERROR", "message": "BMW: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:40.022983Z", "level": "INFO", "message": "Crawling Bugatti (ID: 63)", "data": {}}
+{"timestamp": "2026-01-17T01:42:40.025280Z", "level": "ERROR", "message": "Bugatti: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:41.028413Z", "level": "INFO", "message": "Crawling Buick (ID: 55)", "data": {}}
+{"timestamp": "2026-01-17T01:42:41.030440Z", "level": "ERROR", "message": "Buick: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:42.034690Z", "level": "INFO", "message": "Crawling Cadillac (ID: 7)", "data": {}}
+{"timestamp": "2026-01-17T01:42:42.037213Z", "level": "ERROR", "message": "Cadillac: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:42.039189Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 242}}
+{"timestamp": "2026-01-17T01:42:42.039447Z", "level": "INFO", "message": "Checkpoint: 0 total URLs from 10 makes", "data": {}}
+{"timestamp": "2026-01-17T01:42:43.042225Z", "level": "INFO", "message": "Crawling Chevrolet (ID: 8)", "data": {}}
+{"timestamp": "2026-01-17T01:42:43.044483Z", "level": "ERROR", "message": "Chevrolet: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:44.045677Z", "level": "INFO", "message": "Crawling Chrysler (ID: 9)", "data": {}}
+{"timestamp": "2026-01-17T01:42:44.048157Z", "level": "ERROR", "message": "Chrysler: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:45.048856Z", "level": "INFO", "message": "Crawling Dodge (ID: 11)", "data": {}}
+{"timestamp": "2026-01-17T01:42:45.051130Z", "level": "ERROR", "message": "Dodge: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:46.056266Z", "level": "INFO", "message": "Crawling Ferrari (ID: 13)", "data": {}}
+{"timestamp": "2026-01-17T01:42:46.058459Z", "level": "ERROR", "message": "Ferrari: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:47.060807Z", "level": "INFO", "message": "Crawling Fisker (ID: 58)", "data": {}}
+{"timestamp": "2026-01-17T01:42:47.062953Z", "level": "ERROR", "message": "Fisker: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:47.065366Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 317}}
+{"timestamp": "2026-01-17T01:42:47.065748Z", "level": "INFO", "message": "Checkpoint: 0 total URLs from 15 makes", "data": {}}
+{"timestamp": "2026-01-17T01:42:48.068943Z", "level": "INFO", "message": "Crawling Ford (ID: 14)", "data": {}}
+{"timestamp": "2026-01-17T01:42:48.071098Z", "level": "ERROR", "message": "Ford: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:49.073070Z", "level": "INFO", "message": "Crawling Genesis (ID: 61)", "data": {}}
+{"timestamp": "2026-01-17T01:42:49.075253Z", "level": "ERROR", "message": "Genesis: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:50.080909Z", "level": "INFO", "message": "Crawling GMC (ID: 16)", "data": {}}
+{"timestamp": "2026-01-17T01:42:50.083192Z", "level": "ERROR", "message": "GMC: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:51.086658Z", "level": "INFO", "message": "Crawling Honda (ID: 17)", "data": {}}
+{"timestamp": "2026-01-17T01:42:51.088684Z", "level": "ERROR", "message": "Honda: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:52.094270Z", "level": "INFO", "message": "Crawling Hummer (ID: 18)", "data": {}}
+{"timestamp": "2026-01-17T01:42:52.096536Z", "level": "ERROR", "message": "Hummer: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:52.098721Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 382}}
+{"timestamp": "2026-01-17T01:42:52.099051Z", "level": "INFO", "message": "Checkpoint: 0 total URLs from 20 makes", "data": {}}
+{"timestamp": "2026-01-17T01:42:53.104367Z", "level": "INFO", "message": "Crawling Hyundai (ID: 19)", "data": {}}
+{"timestamp": "2026-01-17T01:42:53.106448Z", "level": "ERROR", "message": "Hyundai: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:54.111585Z", "level": "INFO", "message": "Crawling Ineos (ID: 69)", "data": {}}
+{"timestamp": "2026-01-17T01:42:54.114104Z", "level": "ERROR", "message": "Ineos: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:55.119875Z", "level": "INFO", "message": "Crawling Infiniti (ID: 20)", "data": {}}
+{"timestamp": "2026-01-17T01:42:55.122072Z", "level": "ERROR", "message": "Infiniti: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:56.126419Z", "level": "INFO", "message": "Crawling Jaguar (ID: 22)", "data": {}}
+{"timestamp": "2026-01-17T01:42:56.128790Z", "level": "ERROR", "message": "Jaguar: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:57.134254Z", "level": "INFO", "message": "Crawling Jeep (ID: 23)", "data": {}}
+{"timestamp": "2026-01-17T01:42:57.136455Z", "level": "ERROR", "message": "Jeep: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:57.139043Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 452}}
+{"timestamp": "2026-01-17T01:42:57.139579Z", "level": "INFO", "message": "Checkpoint: 0 total URLs from 25 makes", "data": {}}
+{"timestamp": "2026-01-17T01:42:58.145113Z", "level": "INFO", "message": "Crawling Kia (ID: 54)", "data": {}}
+{"timestamp": "2026-01-17T01:42:58.147487Z", "level": "ERROR", "message": "Kia: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:42:59.153146Z", "level": "INFO", "message": "Crawling Lamborghini (ID: 25)", "data": {}}
+{"timestamp": "2026-01-17T01:42:59.155164Z", "level": "ERROR", "message": "Lamborghini: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:00.160680Z", "level": "INFO", "message": "Crawling Land Rover (ID: 26)", "data": {}}
+{"timestamp": "2026-01-17T01:43:00.162938Z", "level": "ERROR", "message": "Land Rover: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:01.168556Z", "level": "INFO", "message": "Crawling Lexus (ID: 27)", "data": {}}
+{"timestamp": "2026-01-17T01:43:01.170599Z", "level": "ERROR", "message": "Lexus: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:02.176055Z", "level": "INFO", "message": "Crawling Lincoln (ID: 28)", "data": {}}
+{"timestamp": "2026-01-17T01:43:02.178298Z", "level": "ERROR", "message": "Lincoln: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:02.180086Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 528}}
+{"timestamp": "2026-01-17T01:43:02.180388Z", "level": "INFO", "message": "Checkpoint: 0 total URLs from 30 makes", "data": {}}
+{"timestamp": "2026-01-17T01:43:03.185779Z", "level": "INFO", "message": "Crawling Lotus (ID: 29)", "data": {}}
+{"timestamp": "2026-01-17T01:43:03.188048Z", "level": "ERROR", "message": "Lotus: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:04.193704Z", "level": "INFO", "message": "Crawling Lucid (ID: 68)", "data": {}}
+{"timestamp": "2026-01-17T01:43:04.195974Z", "level": "ERROR", "message": "Lucid: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:05.201588Z", "level": "INFO", "message": "Crawling Maserati (ID: 30)", "data": {}}
+{"timestamp": "2026-01-17T01:43:05.203829Z", "level": "ERROR", "message": "Maserati: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:06.208969Z", "level": "INFO", "message": "Crawling Mazda (ID: 31)", "data": {}}
+{"timestamp": "2026-01-17T01:43:06.211267Z", "level": "ERROR", "message": "Mazda: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:07.216896Z", "level": "INFO", "message": "Crawling McLaren (ID: 64)", "data": {}}
+{"timestamp": "2026-01-17T01:43:07.219338Z", "level": "ERROR", "message": "McLaren: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:07.221930Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 598}}
+{"timestamp": "2026-01-17T01:43:07.222405Z", "level": "INFO", "message": "Checkpoint: 0 total URLs from 35 makes", "data": {}}
+{"timestamp": "2026-01-17T01:43:08.227873Z", "level": "INFO", "message": "Crawling Mercedes-Benz (ID: 32)", "data": {}}
+{"timestamp": "2026-01-17T01:43:08.230197Z", "level": "ERROR", "message": "Mercedes-Benz: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:09.235830Z", "level": "INFO", "message": "Crawling Mini (ID: 34)", "data": {}}
+{"timestamp": "2026-01-17T01:43:09.238113Z", "level": "ERROR", "message": "Mini: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:10.243725Z", "level": "INFO", "message": "Crawling Mitsubishi (ID: 35)", "data": {}}
+{"timestamp": "2026-01-17T01:43:10.247408Z", "level": "ERROR", "message": "Mitsubishi: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:11.248265Z", "level": "INFO", "message": "Crawling Nissan (ID: 36)", "data": {}}
+{"timestamp": "2026-01-17T01:43:11.250228Z", "level": "ERROR", "message": "Nissan: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:12.255768Z", "level": "INFO", "message": "Crawling Pontiac (ID: 40)", "data": {}}
+{"timestamp": "2026-01-17T01:43:12.258120Z", "level": "ERROR", "message": "Pontiac: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:12.260118Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 678}}
+{"timestamp": "2026-01-17T01:43:12.260586Z", "level": "INFO", "message": "Checkpoint: 0 total URLs from 40 makes", "data": {}}
+{"timestamp": "2026-01-17T01:43:13.265124Z", "level": "INFO", "message": "Crawling Porsche (ID: 41)", "data": {}}
+{"timestamp": "2026-01-17T01:43:13.267385Z", "level": "ERROR", "message": "Porsche: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:14.272911Z", "level": "INFO", "message": "Crawling Ram (ID: 66)", "data": {}}
+{"timestamp": "2026-01-17T01:43:14.275111Z", "level": "ERROR", "message": "Ram: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:15.280766Z", "level": "INFO", "message": "Crawling Rivian (ID: 67)", "data": {}}
+{"timestamp": "2026-01-17T01:43:15.283068Z", "level": "ERROR", "message": "Rivian: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:16.288648Z", "level": "INFO", "message": "Crawling Rolls-Royce (ID: 42)", "data": {}}
+{"timestamp": "2026-01-17T01:43:16.290410Z", "level": "ERROR", "message": "Rolls-Royce: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:17.291148Z", "level": "INFO", "message": "Crawling Saturn (ID: 44)", "data": {}}
+{"timestamp": "2026-01-17T01:43:17.293314Z", "level": "ERROR", "message": "Saturn: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:17.298140Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 751}}
+{"timestamp": "2026-01-17T01:43:17.298273Z", "level": "INFO", "message": "Checkpoint: 0 total URLs from 45 makes", "data": {}}
+{"timestamp": "2026-01-17T01:43:18.303469Z", "level": "INFO", "message": "Crawling Scion (ID: 45)", "data": {}}
+{"timestamp": "2026-01-17T01:43:18.305635Z", "level": "ERROR", "message": "Scion: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:19.311382Z", "level": "INFO", "message": "Crawling Smart (ID: 52)", "data": {}}
+{"timestamp": "2026-01-17T01:43:19.313583Z", "level": "ERROR", "message": "Smart: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:20.315551Z", "level": "INFO", "message": "Crawling Subaru (ID: 62)", "data": {}}
+{"timestamp": "2026-01-17T01:43:20.317841Z", "level": "ERROR", "message": "Subaru: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:21.323397Z", "level": "INFO", "message": "Crawling Suzuki (ID: 56)", "data": {}}
+{"timestamp": "2026-01-17T01:43:21.325699Z", "level": "ERROR", "message": "Suzuki: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:22.331251Z", "level": "INFO", "message": "Crawling Tesla (ID: 59)", "data": {}}
+{"timestamp": "2026-01-17T01:43:22.333513Z", "level": "ERROR", "message": "Tesla: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:22.335466Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 818}}
+{"timestamp": "2026-01-17T01:43:22.335833Z", "level": "INFO", "message": "Checkpoint: 0 total URLs from 50 makes", "data": {}}
+{"timestamp": "2026-01-17T01:43:23.337168Z", "level": "INFO", "message": "Crawling Toyota (ID: 48)", "data": {}}
+{"timestamp": "2026-01-17T01:43:23.337715Z", "level": "ERROR", "message": "Toyota: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:24.345684Z", "level": "INFO", "message": "Crawling Volkswagen (ID: 49)", "data": {}}
+{"timestamp": "2026-01-17T01:43:24.346754Z", "level": "ERROR", "message": "Volkswagen: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:25.352041Z", "level": "INFO", "message": "Crawling Volvo (ID: 50)", "data": {}}
+{"timestamp": "2026-01-17T01:43:25.354282Z", "level": "ERROR", "message": "Volvo: Error getting first page: [Errno 8] nodename nor servname provided, or not known", "data": {}}
+{"timestamp": "2026-01-17T01:43:26.359196Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/discovery_checkpoint.json", "data": {"size": 863}}
+{"timestamp": "2026-01-17T01:43:26.361007Z", "level": "DEBUG", "message": "Atomically wrote /Users/core/motormia-etl/motormia-ralph/data/wheelspecialists/urls.json", "data": {"size": 145}}
+{"timestamp": "2026-01-17T01:43:26.361273Z", "level": "INFO", "message": "COMPLETE: 0 unique URLs saved to urls.json", "data": {}}
+{"timestamp": "2026-01-17T08:31:18.063354Z", "level": "INFO", "message": "DuckDB connection established", "data": {"db_path": ":memory:"}}
+{"timestamp": "2026-01-17T08:31:18.582862Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prds (\n                source_id TEXT PRIMARY KEY,\n         "}}
+{"timestamp": "2026-01-17T08:31:18.583265Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prd_history (\n                id INTEGER PRIMARY KEY,\n      "}}
+{"timestamp": "2026-01-17T08:31:18.583407Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "CREATE SEQUENCE IF NOT EXISTS prd_history_seq START 1"}}
+{"timestamp": "2026-01-17T08:31:18.583454Z", "level": "INFO", "message": "PRD tables initialized", "data": {}}
+{"timestamp": "2026-01-17T08:31:18.583830Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prds (\n                source_id TEXT PRIMARY KEY,\n         "}}
+{"timestamp": "2026-01-17T08:31:18.584003Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prd_history (\n                id INTEGER PRIMARY KEY,\n      "}}
+{"timestamp": "2026-01-17T08:31:18.584184Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "CREATE SEQUENCE IF NOT EXISTS prd_history_seq START 1"}}
+{"timestamp": "2026-01-17T08:31:18.584328Z", "level": "INFO", "message": "PRD tables initialized", "data": {}}
+{"timestamp": "2026-01-17T08:31:18.592982Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT source_id FROM prds WHERE source_id = ?"}}
+{"timestamp": "2026-01-17T08:31:18.597767Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n                INSERT INTO prds (\n                    source_id, project_name, target_url, output_"}}
+{"timestamp": "2026-01-17T08:31:18.598817Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n                INSERT INTO prd_history (id, source_id, action, prd_json, stories_total, stories_co"}}
+{"timestamp": "2026-01-17T08:31:18.598879Z", "level": "INFO", "message": "PRD created", "data": {"source_id": "test-source", "stories": "1/2"}}
+{"timestamp": "2026-01-17T08:31:18.599109Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prds (\n                source_id TEXT PRIMARY KEY,\n         "}}
+{"timestamp": "2026-01-17T08:31:18.599254Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prd_history (\n                id INTEGER PRIMARY KEY,\n      "}}
+{"timestamp": "2026-01-17T08:31:18.599379Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "CREATE SEQUENCE IF NOT EXISTS prd_history_seq START 1"}}
+{"timestamp": "2026-01-17T08:31:18.599463Z", "level": "INFO", "message": "PRD tables initialized", "data": {}}
+{"timestamp": "2026-01-17T08:31:18.600366Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT prd_json FROM prds WHERE source_id = ?"}}
+{"timestamp": "2026-01-17T08:31:18.600580Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prds (\n                source_id TEXT PRIMARY KEY,\n         "}}
+{"timestamp": "2026-01-17T08:31:18.600704Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prd_history (\n                id INTEGER PRIMARY KEY,\n      "}}
+{"timestamp": "2026-01-17T08:31:18.600784Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "CREATE SEQUENCE IF NOT EXISTS prd_history_seq START 1"}}
+{"timestamp": "2026-01-17T08:31:18.600819Z", "level": "INFO", "message": "PRD tables initialized", "data": {}}
+{"timestamp": "2026-01-17T08:31:18.603620Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n                SELECT source_id, project_name, target_url, status,\n                       stories_"}}
+{"timestamp": "2026-01-17T08:31:18.603909Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prds (\n                source_id TEXT PRIMARY KEY,\n         "}}
+{"timestamp": "2026-01-17T08:31:18.604065Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prd_history (\n                id INTEGER PRIMARY KEY,\n      "}}
+{"timestamp": "2026-01-17T08:31:18.604172Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "CREATE SEQUENCE IF NOT EXISTS prd_history_seq START 1"}}
+{"timestamp": "2026-01-17T08:31:18.604225Z", "level": "INFO", "message": "PRD tables initialized", "data": {}}
+{"timestamp": "2026-01-17T08:31:18.604769Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT COUNT(*) FROM prds"}}
+{"timestamp": "2026-01-17T08:31:18.605173Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT COUNT(*) FROM prds WHERE status = 'active'"}}
+{"timestamp": "2026-01-17T08:31:18.605374Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT COUNT(*) FROM prds WHERE status = 'complete'"}}
+{"timestamp": "2026-01-17T08:31:18.605562Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT COUNT(*) FROM prds WHERE status = 'blocked'"}}
+{"timestamp": "2026-01-17T08:31:18.606218Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT COALESCE(SUM(stories_total), 0) FROM prds"}}
+{"timestamp": "2026-01-17T08:31:18.606562Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT COALESCE(SUM(stories_completed), 0) FROM prds"}}
+{"timestamp": "2026-01-17T08:31:18.606832Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prds (\n                source_id TEXT PRIMARY KEY,\n         "}}
+{"timestamp": "2026-01-17T08:31:18.606989Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prd_history (\n                id INTEGER PRIMARY KEY,\n      "}}
+{"timestamp": "2026-01-17T08:31:18.607089Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "CREATE SEQUENCE IF NOT EXISTS prd_history_seq START 1"}}
+{"timestamp": "2026-01-17T08:31:18.607130Z", "level": "INFO", "message": "PRD tables initialized", "data": {}}
+{"timestamp": "2026-01-17T08:31:18.607433Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT prd_json FROM prds WHERE source_id = ?"}}
+{"timestamp": "2026-01-17T08:31:18.607634Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prds (\n                source_id TEXT PRIMARY KEY,\n         "}}
+{"timestamp": "2026-01-17T08:31:18.607774Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prd_history (\n                id INTEGER PRIMARY KEY,\n      "}}
+{"timestamp": "2026-01-17T08:31:18.607869Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "CREATE SEQUENCE IF NOT EXISTS prd_history_seq START 1"}}
+{"timestamp": "2026-01-17T08:31:18.607915Z", "level": "INFO", "message": "PRD tables initialized", "data": {}}
+{"timestamp": "2026-01-17T08:31:18.608171Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT source_id FROM prds WHERE source_id = ?"}}
+{"timestamp": "2026-01-17T08:31:18.610244Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n                UPDATE prds SET\n                    project_name = ?,\n                    target_ur"}}
+{"timestamp": "2026-01-17T08:31:18.611129Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n                INSERT INTO prd_history (id, source_id, action, prd_json, stories_total, stories_co"}}
+{"timestamp": "2026-01-17T08:31:18.611179Z", "level": "INFO", "message": "PRD updated", "data": {"source_id": "test-source", "stories": "2/2"}}
+{"timestamp": "2026-01-17T08:31:18.611883Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n                INSERT INTO prd_history (id, source_id, action, prd_json, stories_total, stories_co"}}
+{"timestamp": "2026-01-17T08:31:18.612080Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prds (\n                source_id TEXT PRIMARY KEY,\n         "}}
+{"timestamp": "2026-01-17T08:31:18.612224Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prd_history (\n                id INTEGER PRIMARY KEY,\n      "}}
+{"timestamp": "2026-01-17T08:31:18.612310Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "CREATE SEQUENCE IF NOT EXISTS prd_history_seq START 1"}}
+{"timestamp": "2026-01-17T08:31:18.612344Z", "level": "INFO", "message": "PRD tables initialized", "data": {}}
+{"timestamp": "2026-01-17T08:31:18.612590Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "SELECT prd_json FROM prds WHERE source_id = ?"}}
+{"timestamp": "2026-01-17T08:31:18.612779Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prds (\n                source_id TEXT PRIMARY KEY,\n         "}}
+{"timestamp": "2026-01-17T08:31:18.612991Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            CREATE TABLE IF NOT EXISTS prd_history (\n                id INTEGER PRIMARY KEY,\n      "}}
+{"timestamp": "2026-01-17T08:31:18.613099Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "CREATE SEQUENCE IF NOT EXISTS prd_history_seq START 1"}}
+{"timestamp": "2026-01-17T08:31:18.613134Z", "level": "INFO", "message": "PRD tables initialized", "data": {}}
+{"timestamp": "2026-01-17T08:31:18.614818Z", "level": "DEBUG", "message": "SQL executed", "data": {"query": "\n            SELECT action, stories_total, stories_completed, story_id, timestamp\n            FROM p"}}

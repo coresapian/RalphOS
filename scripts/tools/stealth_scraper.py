@@ -83,8 +83,8 @@ class StealthConfig:
     def __init__(
         self,
         output_dir: Path,
-        min_delay: float = 2.0,
-        max_delay: float = 5.0,
+        min_delay: float = 20.0,
+        max_delay: float = 40.0,
         timeout: int = 60000,
         headless: bool = True,
         rotate_every: int = 50,

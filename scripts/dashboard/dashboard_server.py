@@ -13,6 +13,18 @@ import threading
 from pathlib import Path
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
+import sys
+
+# Add Ralph scripts to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "ralph"))
+
+# Import RalphDuckDB for PRD storage
+try:
+    from ralph_duckdb import RalphDuckDB
+    PRD_DB_AVAILABLE = True
+except ImportError:
+    PRD_DB_AVAILABLE = False
+    print("Warning: RalphDuckDB not available, PRDs will only be stored as JSON files")
 
 # Configuration
 PORT = 8765
@@ -21,8 +33,64 @@ PROJECT_ROOT = SCRIPT_DIR.parent.parent
 SOURCES_FILE = PROJECT_ROOT / "scripts" / "ralph" / "sources.json"
 LOG_FILE = PROJECT_ROOT / "logs" / "ralph_output.log"
 SCRAPER_LOG_FILE = PROJECT_ROOT / "logs" / "scraper_output.log"
-PRD_FILE = PROJECT_ROOT / "scripts" / "ralph" / "prd.json"
+PRD_FILE = PROJECT_ROOT / "scripts" / "ralph" / "prd.json"  # Active PRD (symlink/copy)
 DATA_DIR = PROJECT_ROOT / "data"
+PRD_DB_PATH = DATA_DIR / "prds.duckdb"  # DuckDB database for PRD storage
+
+# Singleton database connection
+_prd_db = None
+
+def get_prd_db() -> "RalphDuckDB":
+    """Get or create the PRD database connection."""
+    global _prd_db
+    if not PRD_DB_AVAILABLE:
+        return None
+    if _prd_db is None:
+        _prd_db = RalphDuckDB(str(PRD_DB_PATH))
+        _prd_db.init_prd_tables()
+    return _prd_db
+
+def get_source_prd_path(source_id: str) -> Path:
+    """Get the PRD path for a specific source (stored in source's data folder)"""
+    return DATA_DIR / source_id / "prd.json"
+
+def save_prd_to_source(prd: dict, source_id: str = None):
+    """
+    Save PRD to multiple storage locations.
+
+    This multi-save approach:
+    1. Stores PRD in DuckDB database (data/prds.duckdb) for querying and history
+    2. Stores PRD in data/{source_id}/prd.json for file-based access
+    3. Copies to scripts/ralph/prd.json as the "active" PRD for Ralph to read
+    """
+    if source_id is None:
+        source_id = prd.get('sourceId') or prd.get('outputDir', '').split('/')[-1]
+
+    if not source_id:
+        raise ValueError("Cannot save PRD without source_id")
+
+    # 1. Save to DuckDB (primary storage with history tracking)
+    db = get_prd_db()
+    if db:
+        try:
+            db.save_prd(prd, source_id)
+            print(f"PRD saved to DuckDB: {source_id}")
+        except Exception as e:
+            print(f"Warning: DuckDB PRD save failed: {e}")
+
+    # 2. Save to source folder (file-based backup)
+    source_prd_path = get_source_prd_path(source_id)
+    source_prd_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(source_prd_path, 'w') as f:
+        json.dump(prd, f, indent=2)
+
+    # 3. Save to active PRD location (for Ralph to read)
+    with open(PRD_FILE, 'w') as f:
+        json.dump(prd, f, indent=2)
+
+    print(f"PRD saved: {source_prd_path} (source) + {PRD_FILE} (active)")
+    return source_prd_path
+
 STEALTH_SCRAPER = PROJECT_ROOT / "scripts" / "tools" / "aggressive_stealth_scraper.py"
 RALPH_SCRIPT = PROJECT_ROOT / "scripts" / "ralph" / "ralph.sh"
 
@@ -123,6 +191,10 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self.handle_ralph_status()
         elif path == '/browser/screenshot':
             self.handle_browser_screenshot()
+        elif path == '/prds':
+            self.handle_list_prds()
+        elif path == '/prds/stats':
+            self.handle_prd_stats()
         elif path == '/':
             self.serve_dashboard()
         else:
@@ -164,7 +236,53 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
     def handle_sources(self):
         """Return all sources"""
         self.send_json({'sources': self.get_all_sources()})
-    
+
+    def handle_list_prds(self):
+        """Return all PRDs from database"""
+        db = get_prd_db()
+        if not db:
+            # Fallback to file-based PRD listing
+            prds = []
+            for source_dir in DATA_DIR.iterdir():
+                if source_dir.is_dir():
+                    prd_path = source_dir / "prd.json"
+                    if prd_path.exists():
+                        try:
+                            with open(prd_path) as f:
+                                prd = json.load(f)
+                                stories = prd.get('userStories', [])
+                                prds.append({
+                                    'source_id': source_dir.name,
+                                    'project_name': prd.get('projectName', ''),
+                                    'target_url': prd.get('targetUrl', ''),
+                                    'status': 'complete' if all(s.get('passes') for s in stories) else 'active',
+                                    'stories_total': len(stories),
+                                    'stories_completed': sum(1 for s in stories if s.get('passes')),
+                                })
+                        except:
+                            pass
+            self.send_json({'prds': prds, 'source': 'files'})
+            return
+
+        try:
+            prds = db.list_prds()
+            self.send_json({'prds': prds, 'source': 'duckdb'})
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+
+    def handle_prd_stats(self):
+        """Return PRD statistics from database"""
+        db = get_prd_db()
+        if not db:
+            self.send_json({'error': 'DuckDB not available'}, 503)
+            return
+
+        try:
+            stats = db.get_prd_stats()
+            self.send_json(stats)
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+
     def handle_start_scraper(self, data):
         """Start the aggressive stealth scraper"""
         global scraper_process
@@ -467,11 +585,10 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             "createdBy": "dashboard"
         }
         
-        # Write the PRD
-        with open(PRD_FILE, 'w') as f:
-            json.dump(prd, f, indent=2)
-        
-        print(f"Created PRD for {source.get('id')} with {len(stories)} stories")
+        # Write the PRD to both source folder and active location
+        source_prd_path = save_prd_to_source(prd, source.get('id'))
+
+        print(f"Created PRD for {source.get('id')} with {len(stories)} stories at {source_prd_path}")
     
     def handle_save_prd(self, data):
         """Save PRD to file"""
@@ -484,18 +601,19 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             # Ensure it's valid JSON
             if isinstance(prd, str):
                 prd = json.loads(prd)
-            
-            # Write to prd.json
-            with open(PRD_FILE, 'w') as f:
-                json.dump(prd, f, indent=2)
-            
+
+            # Write to both source folder and active location
+            source_id = prd.get('sourceId') or prd.get('outputDir', '').split('/')[-1]
+            source_prd_path = save_prd_to_source(prd, source_id)
+
             self.send_json({
                 'success': True,
                 'message': 'PRD saved successfully',
-                'path': str(PRD_FILE)
+                'path': str(source_prd_path),
+                'active_path': str(PRD_FILE)
             })
-            
-            print(f"PRD saved for {prd.get('sourceId', 'unknown')}")
+
+            print(f"PRD saved for {source_id}")
             
         except json.JSONDecodeError as e:
             self.send_json({'error': f'Invalid JSON: {str(e)}'}, 400)
@@ -887,36 +1005,35 @@ Be specific and actionable. This analysis will guide automated scraping."""
                 if prd_content:
                     # Save PRD markdown
                     prd_md_file.write_text(prd_content)
-                    
-                    # Also create JSON PRD for Ralph
+
+                    # Create JSON PRD and save to both source folder and active location
                     prd_json = self._convert_prd_to_json(source_id, source_name, source_url, prd_content)
                     if prd_json:
-                        # Save to main PRD file for Ralph
-                        with open(PRD_FILE, 'w') as f:
-                            json.dump(prd_json, f, indent=2)
-                    
+                        source_prd_path = save_prd_to_source(prd_json, source_id)
+
                     self.send_json({
                         'success': True,
                         'prd': prd_content,
                         'path': str(prd_md_file),
-                        'json_path': str(PRD_FILE)
+                        'json_path': str(get_source_prd_path(source_id)),
+                        'active_path': str(PRD_FILE)
                     })
                     return
-            
+
             # Fallback: Generate template PRD
             prd_content = self._generate_template_prd(source_id, source_name, source_url, analysis_content)
             prd_md_file.write_text(prd_content)
-            
-            # Create JSON PRD
+
+            # Create JSON PRD and save to both locations
             prd_json = self._convert_prd_to_json(source_id, source_name, source_url, prd_content)
             if prd_json:
-                with open(PRD_FILE, 'w') as f:
-                    json.dump(prd_json, f, indent=2)
-            
+                source_prd_path = save_prd_to_source(prd_json, source_id)
+
             self.send_json({
                 'success': True,
                 'prd': prd_content,
                 'path': str(prd_md_file),
+                'json_path': str(get_source_prd_path(source_id)),
                 'note': 'Template PRD - customize user stories as needed'
             })
             

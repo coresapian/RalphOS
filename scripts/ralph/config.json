@@ -1,7 +1,14 @@
 {
   "version": "1.0.0",
   "description": "RalphOS configuration file. Feature flags and settings.",
-  
+
+  "database": {
+    "centralDatabaseDir": "/Volumes/io/motormia-etl/database",
+    "consolidatedDb": "motormia_builds.duckdb",
+    "localDataDir": "data",
+    "exportToCentral": true
+  },
+
   "defaults": {
     "maxIterations": 25,
     "parallel": 1,

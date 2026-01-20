@@ -899,3 +899,50 @@ Mod extraction from article__content.rte with category headers in strong tags.
 - Builds span 1989-2023 (classic to modern Honda enthusiasts)
 
 ---
+
+## 2026-01-16 - ClubLexus URL Discovery & HTML Scraping (Stage 1-2)
+
+**Source:** https://clublexus.com
+**Platform:** vBulletin forum
+**Pipeline Stage:** 2 (HTML Scraping in progress)
+
+**Stage 1 Results:**
+- 2,715 unique build thread URLs discovered
+- Search queries: "build thread", "build", "project", "mods", "modified", etc.
+- URL pattern: `showthread.php?t={thread_id}`
+
+**Key Technical Discovery - vBulletin Search Pagination:**
+Unlike XenForo or WordPress, vBulletin uses session-based search results:
+1. First request to `do=process` creates a `searchid` stored server-side
+2. Pagination requires `do=showresults&searchid=XXX&page=N` with SAME session cookies
+3. Without cookies, every page request returns page 1 (appears to work but returns duplicates)
+
+**Solution:**
+```python
+# Use httpx.Client with cookie persistence
+session = httpx.Client(cookies=httpx.Cookies())
+
+# Step 1: Initial search creates searchid
+response = session.get(url, params={"do": "process", "query": "build thread", ...})
+search_id = extract_searchid(response.text)
+
+# Step 2: Paginate with same session
+for page in range(2, total_pages + 1):
+    response = session.get(url, params={"do": "showresults", "searchid": search_id, "page": page})
+```
+
+**Stage 2 Progress:**
+- HTML scraper created with checkpoint-based resume
+- ~275/2715 scraped (10%) as of checkpoint
+- 0 failures, 0 blocks - site is scraper-friendly
+- Rate: ~40 URLs/minute with 1-2s delays
+- ETA: ~68 minutes total
+
+**Learnings:**
+1. vBulletin search requires session cookies for pagination - critical for bulk URL discovery
+2. ClubLexus has no anti-bot protection - simple httpx requests work
+3. Thread IDs extracted from `id="thread_title_XXXXX"` attribute (most reliable)
+4. vBulletin SEO URLs: `/forums/{forum-name}/{thread-id}-{slug}.html`
+5. `www.` prefix required - site redirects from `clublexus.com` to `www.clublexus.com`
+
+---

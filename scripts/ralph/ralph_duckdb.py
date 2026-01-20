@@ -606,6 +606,389 @@ class RalphDuckDB:
         return metrics
 
     # ==========================================
+    # PRD STORAGE
+    # ==========================================
+
+    def init_prd_tables(self):
+        """
+        Initialize PRD storage tables if they don't exist.
+
+        Tables created:
+        - prds: Current PRD state for each source
+        - prd_history: Historical changes for audit trail
+        """
+        # Main PRD table - stores current state for each source
+        self.execute("""
+            CREATE TABLE IF NOT EXISTS prds (
+                source_id TEXT PRIMARY KEY,
+                project_name TEXT,
+                target_url TEXT,
+                output_dir TEXT,
+                pipeline_stage INTEGER DEFAULT 1,
+                prd_json JSON NOT NULL,
+                status TEXT DEFAULT 'active',
+                stories_total INTEGER DEFAULT 0,
+                stories_completed INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # History table for tracking changes
+        self.execute("""
+            CREATE TABLE IF NOT EXISTS prd_history (
+                id INTEGER PRIMARY KEY,
+                source_id TEXT NOT NULL,
+                action TEXT NOT NULL,
+                prd_json JSON,
+                stories_total INTEGER,
+                stories_completed INTEGER,
+                story_id TEXT,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Create sequence for history IDs if not exists
+        try:
+            self.execute("CREATE SEQUENCE IF NOT EXISTS prd_history_seq START 1")
+        except:
+            pass  # Sequence may already exist
+
+        if hasattr(ralph_logger, 'log'):
+            ralph_logger.log("INFO", "PRD tables initialized")
+
+    def save_prd(self, prd: Dict, source_id: str = None) -> str:
+        """
+        Save or update a PRD in the database.
+
+        Args:
+            prd: PRD dictionary with userStories, projectName, etc.
+            source_id: Optional source ID (extracted from PRD if not provided)
+
+        Returns:
+            source_id of saved PRD
+        """
+        self.init_prd_tables()
+
+        # Extract source_id from PRD if not provided
+        if source_id is None:
+            source_id = prd.get('sourceId') or prd.get('outputDir', '').split('/')[-1]
+        if not source_id:
+            raise ValueError("Cannot save PRD without source_id")
+
+        # Calculate story stats
+        stories = prd.get('userStories', [])
+        stories_total = len(stories)
+        stories_completed = sum(1 for s in stories if s.get('passes', False))
+
+        # Determine status
+        status = 'complete' if stories_completed == stories_total and stories_total > 0 else 'active'
+
+        # Convert PRD to JSON string
+        prd_json = json.dumps(prd)
+
+        # Check if PRD exists
+        existing = self.query_scalar(
+            "SELECT source_id FROM prds WHERE source_id = ?",
+            (source_id,)
+        )
+
+        if existing:
+            # Update existing PRD
+            self.execute("""
+                UPDATE prds SET
+                    project_name = ?,
+                    target_url = ?,
+                    output_dir = ?,
+                    pipeline_stage = ?,
+                    prd_json = ?,
+                    status = ?,
+                    stories_total = ?,
+                    stories_completed = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE source_id = ?
+            """, (
+                prd.get('projectName', ''),
+                prd.get('targetUrl', ''),
+                prd.get('outputDir', ''),
+                prd.get('pipelineStage', 1),
+                prd_json,
+                status,
+                stories_total,
+                stories_completed,
+                source_id
+            ))
+            action = 'updated'
+        else:
+            # Insert new PRD
+            self.execute("""
+                INSERT INTO prds (
+                    source_id, project_name, target_url, output_dir,
+                    pipeline_stage, prd_json, status, stories_total, stories_completed
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                source_id,
+                prd.get('projectName', ''),
+                prd.get('targetUrl', ''),
+                prd.get('outputDir', ''),
+                prd.get('pipelineStage', 1),
+                prd_json,
+                status,
+                stories_total,
+                stories_completed
+            ))
+            action = 'created'
+
+        # Record in history
+        self._record_prd_history(source_id, action, prd_json, stories_total, stories_completed)
+
+        if hasattr(ralph_logger, 'log'):
+            ralph_logger.log("INFO", f"PRD {action}", {"source_id": source_id, "stories": f"{stories_completed}/{stories_total}"})
+
+        return source_id
+
+    def _record_prd_history(self, source_id: str, action: str, prd_json: str,
+                           stories_total: int, stories_completed: int, story_id: str = None):
+        """Record a PRD change in history table."""
+        try:
+            self.execute("""
+                INSERT INTO prd_history (id, source_id, action, prd_json, stories_total, stories_completed, story_id)
+                VALUES (nextval('prd_history_seq'), ?, ?, ?, ?, ?, ?)
+            """, (source_id, action, prd_json, stories_total, stories_completed, story_id))
+        except:
+            # Fallback without sequence
+            self.execute("""
+                INSERT INTO prd_history (source_id, action, prd_json, stories_total, stories_completed, story_id)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (source_id, action, prd_json, stories_total, stories_completed, story_id))
+
+    def get_prd(self, source_id: str) -> Optional[Dict]:
+        """
+        Get PRD for a specific source.
+
+        Args:
+            source_id: Source identifier
+
+        Returns:
+            PRD dictionary or None if not found
+        """
+        self.init_prd_tables()
+
+        result = self.query(
+            "SELECT prd_json FROM prds WHERE source_id = ?",
+            (source_id,)
+        )
+
+        if result:
+            prd_json = result[0]['prd_json']
+            # Handle both string and dict cases
+            if isinstance(prd_json, str):
+                return json.loads(prd_json)
+            return prd_json
+        return None
+
+    def get_active_prd(self) -> Optional[Dict]:
+        """
+        Get the currently active (most recently updated) PRD.
+
+        Returns:
+            PRD dictionary or None if no active PRDs
+        """
+        self.init_prd_tables()
+
+        result = self.query("""
+            SELECT source_id, prd_json FROM prds
+            WHERE status = 'active'
+            ORDER BY updated_at DESC
+            LIMIT 1
+        """)
+
+        if result:
+            prd_json = result[0]['prd_json']
+            if isinstance(prd_json, str):
+                return json.loads(prd_json)
+            return prd_json
+        return None
+
+    def list_prds(self, status: str = None) -> List[Dict]:
+        """
+        List all PRDs with summary info.
+
+        Args:
+            status: Optional filter by status ('active', 'complete', 'blocked')
+
+        Returns:
+            List of PRD summaries
+        """
+        self.init_prd_tables()
+
+        if status:
+            result = self.query("""
+                SELECT source_id, project_name, target_url, status,
+                       stories_total, stories_completed, pipeline_stage,
+                       created_at, updated_at
+                FROM prds
+                WHERE status = ?
+                ORDER BY updated_at DESC
+            """, (status,))
+        else:
+            result = self.query("""
+                SELECT source_id, project_name, target_url, status,
+                       stories_total, stories_completed, pipeline_stage,
+                       created_at, updated_at
+                FROM prds
+                ORDER BY updated_at DESC
+            """)
+
+        return result
+
+    def mark_prd_complete(self, source_id: str) -> bool:
+        """
+        Mark a PRD as complete.
+
+        Args:
+            source_id: Source identifier
+
+        Returns:
+            True if updated, False if not found
+        """
+        self.init_prd_tables()
+
+        # Get current PRD
+        prd = self.get_prd(source_id)
+        if not prd:
+            return False
+
+        # Update status
+        self.execute("""
+            UPDATE prds SET
+                status = 'complete',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE source_id = ?
+        """, (source_id,))
+
+        # Record in history
+        stories = prd.get('userStories', [])
+        self._record_prd_history(source_id, 'completed', json.dumps(prd),
+                                len(stories), len(stories))
+
+        return True
+
+    def update_prd_story(self, source_id: str, story_id: str, passes: bool) -> bool:
+        """
+        Update a specific story's status in a PRD.
+
+        Args:
+            source_id: Source identifier
+            story_id: Story ID (e.g., 'US-001')
+            passes: Whether the story passes
+
+        Returns:
+            True if updated, False if PRD or story not found
+        """
+        prd = self.get_prd(source_id)
+        if not prd:
+            return False
+
+        # Find and update the story
+        stories = prd.get('userStories', [])
+        story_found = False
+        for story in stories:
+            if story.get('id') == story_id:
+                story['passes'] = passes
+                story_found = True
+                break
+
+        if not story_found:
+            return False
+
+        # Save updated PRD
+        self.save_prd(prd, source_id)
+
+        # Record specific story update in history
+        self._record_prd_history(
+            source_id,
+            'story_passed' if passes else 'story_failed',
+            json.dumps(prd),
+            len(stories),
+            sum(1 for s in stories if s.get('passes', False)),
+            story_id
+        )
+
+        return True
+
+    def get_prd_history(self, source_id: str, limit: int = 50) -> List[Dict]:
+        """
+        Get history of changes for a PRD.
+
+        Args:
+            source_id: Source identifier
+            limit: Maximum number of history entries
+
+        Returns:
+            List of history entries (newest first)
+        """
+        self.init_prd_tables()
+
+        return self.query("""
+            SELECT action, stories_total, stories_completed, story_id, timestamp
+            FROM prd_history
+            WHERE source_id = ?
+            ORDER BY timestamp DESC
+            LIMIT ?
+        """, (source_id, limit))
+
+    def get_prd_stats(self) -> Dict:
+        """
+        Get overall PRD statistics.
+
+        Returns:
+            Dict with PRD statistics
+        """
+        self.init_prd_tables()
+
+        stats = {
+            'total': self.query_scalar("SELECT COUNT(*) FROM prds") or 0,
+            'active': self.query_scalar("SELECT COUNT(*) FROM prds WHERE status = 'active'") or 0,
+            'complete': self.query_scalar("SELECT COUNT(*) FROM prds WHERE status = 'complete'") or 0,
+            'blocked': self.query_scalar("SELECT COUNT(*) FROM prds WHERE status = 'blocked'") or 0,
+            'total_stories': self.query_scalar("SELECT COALESCE(SUM(stories_total), 0) FROM prds") or 0,
+            'completed_stories': self.query_scalar("SELECT COALESCE(SUM(stories_completed), 0) FROM prds") or 0,
+        }
+
+        return stats
+
+    def delete_prd(self, source_id: str) -> bool:
+        """
+        Delete a PRD and its history.
+
+        Args:
+            source_id: Source identifier
+
+        Returns:
+            True if deleted, False if not found
+        """
+        self.init_prd_tables()
+
+        # Check if exists
+        existing = self.query_scalar(
+            "SELECT source_id FROM prds WHERE source_id = ?",
+            (source_id,)
+        )
+
+        if not existing:
+            return False
+
+        # Delete from both tables
+        self.execute("DELETE FROM prd_history WHERE source_id = ?", (source_id,))
+        self.execute("DELETE FROM prds WHERE source_id = ?", (source_id,))
+
+        if hasattr(ralph_logger, 'log'):
+            ralph_logger.log("INFO", f"PRD deleted", {"source_id": source_id})
+
+        return True
+
+    # ==========================================
     # TRANSACTIONS
     # ==========================================
 

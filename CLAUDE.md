@@ -12,12 +12,11 @@ RalphOS processes sources through a 3-stage pipeline:
 
 ```
 Stage 1: URL Discovery → Stage 2: HTML Scraping → Stage 3: Data Extraction
-(url-detective) (html-scraper) (data-extractor)
- ↓ ↓ ↓
-urls.jsonl html/*.html builds.jsonl + mods.jsonl
+         ↓                       ↓                       ↓
+    urls.jsonl              html/*.html         builds.jsonl + mods.jsonl
 ```
 
-Each stage has an independent runner in `scripts/ralph-stages/` with its own prompt.md and queue.json.
+All stages are orchestrated by the unified `scripts/ralph/` agent loop.
 
 ## Commands
 
@@ -116,16 +115,6 @@ python3 scripts/tools/cloudflare_bypass_scraper.py --source source_id --no-headl
 | `scripts/ralph/progress.txt` | Accumulated learnings |
 | `scripts/ralph/TOOLS.md` | Complete toolkit documentation |
 
-### Stage Runners
-
-| Stage | Directory | Output |
-|-------|-----------|--------|
-| URL Detective | `scripts/ralph-stages/url-detective/` | `urls.jsonl`, `urls_meta.json` |
-| HTML Scraper | `scripts/ralph-stages/html-scraper/` | `html/*.html`, `scrape_progress.jsonl` |
-| Data Extractor | `scripts/ralph-stages/data-extractor/` | `builds.jsonl`, `mods.jsonl` |
-
-Each stage directory contains: `prompt.md`, `queue.json`, `progress.txt`
-
 ### Project Structure
 
 ```
@@ -141,12 +130,7 @@ RalphOS/
  ralph_vlm.py # Vision analysis
  ralph_validator.py # Visual validation
  ralph_mcp.py # MCP integration
- 
- ralph-stages/ # Independent stage runners
- url-detective/
- html-scraper/
- data-extractor/
- 
+
  tools/ # Utility scripts
  build_id_generator.py
  category_detector.py

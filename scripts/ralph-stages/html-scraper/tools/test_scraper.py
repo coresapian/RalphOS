@@ -1,1 +1,0 @@
-../../../tools/test_scraper.py

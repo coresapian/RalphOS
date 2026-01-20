@@ -34,8 +34,8 @@ python3 tests/test_parallel_processor.py -v
 python3 tests/test_integration.py -v
 
 # Stage-specific validation
-python scripts/tools/test_url_discovery.py data/{source}/     # Stage 1
-python scripts/tools/test_scraper.py data/{source}/scrape_html.py  # Stage 2
+python scripts/tools/test_url_discovery.py data/{source}/ # Stage 1
+python scripts/tools/test_scraper.py data/{source}/scrape_html.py # Stage 2
 ```
 
 ### Monitoring & Diagnostics
@@ -68,14 +68,13 @@ python scripts/tools/sync_progress.py
 
 ## Architecture
 
-### 4-Stage Pipeline
+### 3-Stage Pipeline
 
-Each source goes through these stages sequentially:
+Each source goes through these stages sequentially (orchestrated by `scripts/ralph/`):
 
-1. **URL Discovery** (`scripts/ralph-stages/url-detective/`) - Find all content URLs from gallery/listing pages
-2. **HTML Scraping** (`scripts/ralph-stages/html-scraper/`) - Download HTML for each discovered URL
-3. **Build Extraction** (`scripts/ralph-stages/build-extractor/`) - Extract structured vehicle build data
-4. **Mod Extraction** (`scripts/ralph-stages/mod-extractor/`) - Extract modification details
+1. **URL Discovery** - Find all content URLs from gallery/listing pages → `urls.jsonl`
+2. **HTML Scraping** - Download HTML for each discovered URL → `html/*.html`
+3. **Data Extraction** - Extract structured vehicle build data and modifications → `builds.jsonl`, `mods.jsonl`
 
 ### Core Loop Flow
 
@@ -110,11 +109,11 @@ Each source goes through these stages sequentially:
 
 ```
 data/{source_name}/
-├── urls.json           # Discovered URLs (Stage 1)
-├── html/               # Saved HTML files (Stage 2)
-├── builds.json         # Extracted build data (Stage 3)
-├── mods.json           # Extracted modifications (Stage 4)
-└── scrape_progress.json
+ urls.json # Discovered URLs (Stage 1)
+ html/ # Saved HTML files (Stage 2)
+ builds.json # Extracted build data (Stage 3)
+ mods.json # Extracted modifications (Stage 4)
+ scrape_progress.json
 ```
 
 ## Important Conventions

@@ -334,7 +334,7 @@ Specification for approval
    Issues:
    •  Multiple file formats (.json, .jsonl, .json)
    •  No clear schema versioning
-   •  Mixed file locations (data/ vs scripts/ralph-stages/)
+   •  Data consolidated under data/ (ralph-stages removed)
    •  No backup/restore mechanism
 
    Recommendation:

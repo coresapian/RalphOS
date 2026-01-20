@@ -197,15 +197,6 @@ class RalphLauncher:
         if os.path.exists(main_ralph):
             self.ralphs.append({"name": "Main Ralph (Full Pipeline)", "path": main_ralph, "cwd": os.path.dirname(main_ralph)})
 
-        # Stage Ralphs
-        stages_dir = os.path.join(project_root, "scripts/ralph-stages")
-        if os.path.exists(stages_dir):
-            for stage in sorted(os.listdir(stages_dir)):
-                stage_path = os.path.join(stages_dir, stage, "ralph.sh")
-                if os.path.exists(stage_path):
-                    name = stage.replace("-", " ").title()
-                    self.ralphs.append({"name": f"Stage: {name}", "path": stage_path, "cwd": os.path.dirname(stage_path)})
-
         self.ralph_combo["values"] = [r["name"] for r in self.ralphs]
         if self.ralphs:
             self.ralph_combo.current(0)

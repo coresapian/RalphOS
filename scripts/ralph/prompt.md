@@ -310,11 +310,54 @@ Before scraping, try to determine the total count:
 2. Read `scripts/ralph/prd.json` for current active project (if any)
 3. Read `scripts/ralph/progress.txt` for learnings and patterns
 
+### PRD Storage Architecture
+
+PRDs are stored in **three locations** for redundancy and queryability:
+
+1. **DuckDB Database**: `data/prds.duckdb` - **primary storage** with history tracking
+   - Tables: `prds` (current state), `prd_history` (audit trail)
+   - Query PRDs: `db.list_prds()`, `db.get_prd(source_id)`
+   - Track progress: `db.get_prd_stats()`, `db.get_prd_history(source_id)`
+
+2. **Source folder**: `data/{source_id}/prd.json` - **file-based backup**
+   - Useful for direct file access and debugging
+   - Human-readable JSON format
+
+3. **Active copy**: `scripts/ralph/prd.json` - **working copy** Ralph reads from
+   - This is what Ralph actively uses during execution
+
+When generating or updating a PRD, use the dashboard API which saves to all three locations automatically.
+
+**Using the PRD Database** (from Python):
+
+```python
+from ralph_duckdb import RalphDuckDB
+
+db = RalphDuckDB("data/prds.duckdb")
+db.init_prd_tables()
+
+# Save a PRD (auto-calculates stats, tracks history)
+db.save_prd(prd_dict, source_id)
+
+# Get PRD for a source
+prd = db.get_prd("luxury4play")
+
+# List all PRDs
+all_prds = db.list_prds()  # or db.list_prds(status='active')
+
+# Get statistics
+stats = db.get_prd_stats()  # {total, active, complete, blocked, total_stories, completed_stories}
+
+# Update a specific story
+db.update_prd_story("luxury4play", "US-003", passes=True)
+```
+
 ### If NO active PRD exists:
 1. Find a source that needs work (check pipeline fields)
 2. Generate a new `prd.json` with appropriate user stories based on what stage is needed
-3. Set source status to "in_progress" in sources.json
-4. Begin work
+3. Save PRD using the dashboard (saves to DuckDB, source folder, and active location)
+4. Set source status to "in_progress" in sources.json
+5. Begin work
 
 ### If active PRD exists:
 1. Check you're on the correct branch (see `branchName` in prd.json)
@@ -322,7 +365,7 @@ Before scraping, try to determine the total count:
 3. Pick the highest priority story where `passes: false`
 4. Implement that ONE story completely
 5. Commit your changes: `feat: [ID] - [Title]`
-6. Update prd.json: set `passes: true` for completed story
+6. Update prd.json: set `passes: true` for completed story (saves to all locations via dashboard)
 7. Update sources.json pipeline fields with current counts
 8. Append learnings to progress.txt
 

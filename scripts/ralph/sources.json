@@ -46,57 +46,60 @@
       "name": "ClubLexus",
       "url": "https://clublexus.com",
       "outputDir": "data/clublexus",
-      "status": "pending",
+      "status": "stopped",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T22:00:00Z",
       "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
+        "expectedUrls": 2715,
+        "urlsFound": 2715,
+        "htmlScraped": 301,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
-      }
+        "builds": null,
+        "mods": null
+      },
+      "notes": "Stage 1 COMPLETE: 2715 URLs discovered from 12 search queries (build thread, build, project, mods, modified, etc). vBulletin forum. Ready for Stage 2 HTML scraping."
     },
     {
       "id": "motoringexposure",
       "name": "Motoring Exposure",
       "url": "https://motoringexposure.com",
       "outputDir": "data/motoringexposure",
-      "status": "pending",
+      "status": "completed",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T05:00:00Z",
       "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
+        "expectedUrls": 338,
+        "urlsFound": 338,
+        "htmlScraped": 338,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
-      }
+        "builds": 338,
+        "mods": 557
+      },
+      "notes": "COMPLETE: 338 builds, 557 mods. Featured Fitment articles - wheel/vehicle builds with high-end supercars. Top makes: BMW (47), Lamborghini (44), Porsche (38), Ferrari (30), Audi (26). Wheel brands: Brixton Forged, PUR, ADV.1, Vorsteiner, HRE."
     },
     {
       "id": "nicheroadwheels",
       "name": "Niche Road Wheels",
       "url": "https://nicheroadwheels.com",
       "outputDir": "data/nicheroadwheels",
-      "status": "pending",
+      "status": "completed",
       "priority": 5,
-      "attempted": 0,
-      "lastAttempted": null,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T22:30:00Z",
       "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
+        "expectedUrls": 97,
+        "urlsFound": 97,
+        "htmlScraped": 97,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
-      }
+        "builds": 97,
+        "mods": 114
+      },
+      "notes": "COMPLETE: 97 builds, 114 mods. Premium wheel gallery. Top makes: Ford (12), Chevrolet (12), Mercedes-Benz (11), BMW (10). Mods: Wheels (97), Tires (14), Suspension (3). Tire brands: Nitto, Toyo, Michelin."
     },
     {
       "id": "vwvortex",
@@ -1283,7 +1286,7 @@
       "url": "https://650sforum.com",
       "outputDir": "data/650scom",
       "status": "completed",
-      "priority": 1,
+      "priority": 5,
       "attempted": 3,
       "lastAttempted": "2026-01-16T19:30:00Z",
       "pipeline": {
@@ -1897,7 +1900,13 @@
         "builds": null,
         "mods": null
       },
-      "blockEvents": [{"timestamp": "2026-01-17T06:50:00Z", "type": "403+timeout", "afterUrls": 10}],
+      "blockEvents": [
+        {
+          "timestamp": "2026-01-17T06:50:00Z",
+          "type": "403+timeout",
+          "afterUrls": 10
+        }
+      ],
       "notes": "BLOCKED: autohunter.com 403, cars.com timeouts. 10/199 scraped from smaller sources. Run: python scripts/tools/stealth_scraper.py --source autotempest"
     },
     {
