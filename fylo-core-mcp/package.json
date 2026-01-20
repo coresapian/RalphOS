@@ -1,0 +1,35 @@
+{
+  "name": "fylo-core-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for RalphOS knowledge graph tracking and visualization",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "fylo-core-mcp": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod 755 build/index.js",
+    "start": "node build/index.js",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "duckdb": "^1.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "build"
+  ],
+  "keywords": [
+    "mcp",
+    "knowledge-graph",
+    "duckdb",
+    "ralph",
+    "scraping"
+  ],
+  "license": "Apache-2.0"
+}
