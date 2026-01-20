@@ -1,0 +1,51 @@
+{
+  "projectName": "PistonHeads Auctions Scraping",
+  "sourceId": "pistonheads_auctions",
+  "branchName": "main",
+  "targetUrl": "https://pistonheads.com",
+  "outputDir": "data/pistonheads_auctions",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "URL Discovery",
+      "acceptanceCriteria": [
+        "urls.jsonl contains all discoverable URLs",
+        "URLs are deduplicated and normalized"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "HTML Scraping",
+      "acceptanceCriteria": [
+        "HTML files saved for each URL",
+        "Success rate > 95%"
+      ],
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "US-003",
+      "title": "Build Data Extraction",
+      "acceptanceCriteria": [
+        "builds.jsonl contains vehicle data",
+        "Required fields populated"
+      ],
+      "priority": 3,
+      "passes": false
+    },
+    {
+      "id": "US-004",
+      "title": "Modification Extraction",
+      "acceptanceCriteria": [
+        "builds.jsonl contains vehicle data",
+        "Required fields populated"
+      ],
+      "priority": 4,
+      "passes": false
+    }
+  ],
+  "createdAt": "2026-01-17T00:52:56.036349",
+  "createdBy": "dashboard-prd-generator"
+}

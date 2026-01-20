@@ -1,0 +1,175 @@
+/**
+ * Browser Preview Feature Styles
+ * CDP browser panel inside PRD modal
+ */
+
+/* Browser Container */
+.prd-browser-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Browser Toolbar */
+.prd-browser-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 10px var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.prd-browser-toolbar button {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all var(--transition-normal);
+}
+
+.prd-browser-toolbar button:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-cyan);
+}
+
+.prd-browser-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--spacing-xs) 10px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Browser Viewport */
+.prd-browser-viewport {
+  flex: 1;
+  position: relative;
+  min-height: 300px;
+  background: var(--bg-tertiary);
+}
+
+.browser-screenshot-container {
+  position: absolute;
+  inset: 10px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #1a1a1a;
+}
+
+.browser-screenshot-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.browser-screenshot-placeholder .icon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}
+
+.browser-screenshot {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Browser Controls */
+.prd-browser-controls {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: 10px var(--spacing-md);
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+}
+
+.prd-browser-controls button {
+  padding: var(--spacing-sm) 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all var(--transition-normal);
+}
+
+.prd-browser-controls button:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-cyan);
+}
+
+.prd-browser-controls button.primary {
+  background: var(--accent-cyan);
+  color: var(--bg-primary);
+  border-color: var(--accent-cyan);
+}
+
+.prd-browser-controls button.primary:hover {
+  opacity: 0.9;
+}
+
+.prd-browser-controls button.danger {
+  background: var(--accent-red);
+  color: white;
+  border-color: var(--accent-red);
+}
+
+/* Browser Log */
+.prd-browser-log {
+  max-height: 100px;
+  overflow-y: auto;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.browser-log-entry {
+  padding: 2px 0;
+  color: var(--text-muted);
+}
+
+.browser-log-time {
+  color: var(--accent-purple);
+  margin-right: var(--spacing-sm);
+}
+
+.browser-log-action {
+  color: var(--accent-cyan);
+}
+
+.browser-log-url {
+  color: var(--accent-purple);
+  word-break: break-all;
+}
+
+.browser-log-error {
+  color: var(--accent-red);
+}
+
+.browser-log-success {
+  color: var(--accent-green);
+}
+
+/* Browser Button Active State */
+.browser-btn.active {
+  border-color: var(--accent-purple);
+  background: rgba(167, 139, 250, 0.2);
+}

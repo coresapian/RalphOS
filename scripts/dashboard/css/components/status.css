@@ -1,0 +1,188 @@
+/**
+ * Status Indicators
+ * Dots, badges, and status animations
+ */
+
+/* Status Badge */
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+/* Status Dot */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-dot.running { background: var(--accent-green); }
+.status-dot.stopped { background: var(--accent-red); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Source Status Indicators */
+.source-status {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.source-status:hover {
+  transform: scale(1.4);
+  box-shadow: 0 0 12px currentColor;
+}
+
+/* Completed - desaturated/greyed out */
+.source-status.completed {
+  background: #6b7280;
+  color: #6b7280;
+  opacity: 0.5;
+}
+
+/* Active Ralph - slow glow fade orange to green */
+.source-status.in_progress {
+  animation: activeRalphGlow 3s ease-in-out infinite;
+}
+
+@keyframes activeRalphGlow {
+  0%, 100% {
+    background: var(--accent-orange);
+    box-shadow: 0 0 8px var(--accent-orange), 0 0 16px rgba(249, 115, 22, 0.4);
+  }
+  50% {
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e, 0 0 16px rgba(34, 197, 94, 0.4);
+  }
+}
+
+/* Pending - muted, waiting */
+.source-status.pending {
+  background: var(--text-muted);
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Paused - steady orange glow */
+.source-status.paused {
+  background: var(--accent-orange);
+  box-shadow: 0 0 6px var(--accent-orange), 0 0 12px rgba(249, 115, 22, 0.3);
+  animation: pausedGlow 2s ease-in-out infinite;
+}
+
+@keyframes pausedGlow {
+  0%, 100% {
+    box-shadow: 0 0 6px var(--accent-orange), 0 0 12px rgba(249, 115, 22, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 10px var(--accent-orange), 0 0 20px rgba(249, 115, 22, 0.5);
+  }
+}
+
+/* Blocked/Error - rapid red blink */
+.source-status.blocked,
+.source-status.error,
+.source-status.hitl {
+  background: var(--accent-red);
+  animation: errorBlink 0.5s ease-in-out infinite;
+}
+
+@keyframes errorBlink {
+  0%, 100% {
+    background: #ef4444;
+    box-shadow: 0 0 8px #ef4444, 0 0 16px rgba(239, 68, 68, 0.6);
+    opacity: 1;
+  }
+  50% {
+    background: #dc2626;
+    box-shadow: 0 0 4px #dc2626;
+    opacity: 0.4;
+  }
+}
+
+/* Stopped - subtle indicator */
+.source-status.stopped {
+  background: #9ca3af;
+  opacity: 0.7;
+}
+
+/* Scraper Status Dot */
+.scraper-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.scraper-status-dot.running {
+  background: var(--accent-green);
+  animation: pulse 2s infinite;
+}
+
+.scraper-status-dot.stopped {
+  background: var(--text-muted);
+}
+
+/* Auto Scroll Indicator */
+.auto-scroll-indicator {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* Browser Status Dot */
+.browser-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.browser-status-dot.connected {
+  background: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+}
+
+.browser-status-dot.loading {
+  background: var(--accent-yellow);
+  animation: pulse 0.5s infinite;
+}
+
+/* Log Source Status */
+.log-source-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  display: inline-block;
+}
+
+.log-source-status.running {
+  background: var(--accent-green);
+  animation: pulse 2s infinite;
+}
+
+.log-source-status.completed {
+  background: var(--accent-cyan);
+}
+
+.log-source-status.pending {
+  background: var(--accent-yellow);
+}
+
+.log-source-status.blocked {
+  background: var(--accent-red);
+}

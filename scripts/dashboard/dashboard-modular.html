@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ralph Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-logo">🤖</div>
+    <div class="loading-title">RALPH</div>
+    <div class="loading-subtitle">Autonomous AI Agent Dashboard</div>
+    <div class="loading-spinner">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="loading-status" id="loadingStatus">Connecting to server...</div>
+    <div class="loading-progress"><div class="loading-progress-bar"></div></div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">🚗</div>
+      <div>
+        <h1>MOTORMIA A.B.C.</h1>
+        <p>Autonomous Builds Collection</p>
+      </div>
+    </div>
+
+    <!-- Pipeline Stats (inline) -->
+    <div class="header-pipeline" id="pipelineStages">
+      <div class="header-stage" id="stage1">
+        <span class="header-stage-value">--</span>
+        <span class="header-stage-label">URLs</span>
+      </div>
+      <span class="header-stage-arrow">→</span>
+      <div class="header-stage" id="stage2">
+        <span class="header-stage-value">--</span>
+        <span class="header-stage-label">HTML</span>
+      </div>
+      <span class="header-stage-arrow">→</span>
+      <div class="header-stage" id="stage3">
+        <span class="header-stage-value">--</span>
+        <span class="header-stage-label">Builds</span>
+      </div>
+      <span class="header-stage-arrow">→</span>
+      <div class="header-stage" id="stage4">
+        <span class="header-stage-value">--</span>
+        <span class="header-stage-label">Mods</span>
+      </div>
+    </div>
+
+    <!-- Notification & Controls -->
+    <div class="notif-container">
+      <button id="killAllBtn" class="header-kill-btn" onclick="killAllRalphs()" title="Kill all Ralph processes">☠ Kill All</button>
+      <button class="notif-btn" onclick="toggleNotifications()" title="Alerts & Suggestions" id="notifBtn">
+        🔔
+        <span class="notif-badge" id="notifBadge"></span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-header">
+          <h3>🔔 Alerts & Suggestions</h3>
+          <button class="notif-clear-btn" onclick="clearAllNotifications()">Clear All</button>
+        </div>
+        <div class="notif-list" id="notifList">
+          <div class="notif-empty">
+            <div class="notif-empty-icon">🔔</div>
+            <div>No alerts - all systems running smoothly</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="settings-btn" onclick="toggleSettingsPanel()" title="Settings">
+      ⚙
+    </button>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid" id="mainGrid">
+    <!-- Log Panel -->
+    <div class="card log-card" id="logCard" style="position: relative;">
+      <div class="log-collapsed-tab" onclick="toggleLogPanel()">
+        <span class="log-expand-icon">→</span>
+        <span>📝 Live Log</span>
+        <span class="log-expand-icon">→</span>
+      </div>
+      <div class="card-header">
+        <div class="status-badge" style="padding: 6px 12px;">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Checking...</span>
+        </div>
+        <button class="log-collapse-btn" onclick="toggleLogPanel()" title="Collapse log panel">◀</button>
+
+        <!-- Source Pagination -->
+        <div class="log-source-pagination">
+          <button class="log-source-arrow" onclick="prevLogSource()" title="Previous source" id="logPrevBtn">◀</button>
+          <div class="log-source-indicator">
+            <div style="display: flex; align-items: center;">
+              <span class="log-source-status" id="logSourceStatus"></span>
+              <span class="log-source-name all-sources" id="logSourceName">All Sources</span>
+            </div>
+            <span class="log-source-counter" id="logSourceCounter">0 of 0</span>
+          </div>
+          <button class="log-source-arrow" onclick="nextLogSource()" title="Next source" id="logNextBtn">▶</button>
+        </div>
+
+        <div class="log-controls">
+          <button onclick="refreshLogNow()" title="Refresh now">🔄</button>
+          <button id="autoRefreshBtn" class="active" onclick="toggleAutoRefresh()" title="Toggle auto-refresh">Auto</button>
+          <button onclick="clearLogDisplay()" title="Clear display">Clear</button>
+          <span class="auto-scroll-indicator" id="autoScrollIndicator">↓ Auto-scroll ON</span>
+        </div>
+        <span class="refresh-time" id="logRefresh">--</span>
+      </div>
+      <div class="card-body">
+        <div class="log-output" id="logOutput">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Sources Panel -->
+    <div class="card sources-card" id="sourcesCard">
+      <div class="card-header" style="flex-direction: column; align-items: stretch; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 style="display: flex; align-items: center; gap: 16px;">
+            📋 Sources
+            <span style="display: flex; gap: 12px; font-size: 12px; font-weight: 500;">
+              <span style="color: var(--accent-cyan);"><span id="totalSources">--</span> total</span>
+              <span style="color: var(--accent-green);">✓ <span id="completedSources">--</span></span>
+              <span style="color: var(--accent-yellow);">⏳ <span id="inProgressSources">--</span></span>
+            </span>
+          </h2>
+          <span class="refresh-time" id="sourcesRefresh"><div class="live-dot" id="sourcesLiveDot"></div><span id="sourcesRefreshText">--</span></span>
+        </div>
+        <div class="sources-controls">
+          <input type="text" id="sourcesFilter" placeholder="Filter sources..." class="sources-filter-input">
+          <select id="sourcesSort" class="sources-sort-select">
+            <option value="progress">Sort: Progress ↓</option>
+            <option value="status">Sort: Status</option>
+            <option value="name">Sort: Name</option>
+            <option value="urls">Sort: URLs ↓</option>
+            <option value="html">Sort: HTML ↓</option>
+            <option value="builds">Sort: Builds ↓</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body scrollable" id="sourcesList">
+        Loading...
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settingsOverlay" class="settings-overlay" onclick="if(event.target === this) closeSettingsPanel()">
+    <div class="settings-panel">
+      <div class="settings-header">
+        <h2>⚙ Settings</h2>
+        <button class="settings-close" onclick="closeSettingsPanel()">×</button>
+      </div>
+      <div class="settings-content">
+        <!-- Ralph Loop Section -->
+        <div class="settings-section">
+          <div class="settings-section-title">🤖 Ralph Loop Configuration</div>
+
+          <!-- Status Bar -->
+          <div class="ralph-status" style="margin-bottom: 16px;">
+            <div class="ralph-status-indicator">
+              <div class="scraper-status-dot" id="ralphStatusDot2"></div>
+            </div>
+            <div class="ralph-info">
+              <div class="project-name" id="ralphProject">No active project</div>
+              <div class="story-progress" id="ralphStoryProgress">--</div>
+            </div>
+            <div class="status-badge" style="padding: 4px 12px; margin-left: auto;">
+              <div class="status-dot" id="ralphStatusDot"></div>
+              <span id="ralphStatusText" style="font-size: 11px;">Checking...</span>
+            </div>
+          </div>
+
+          <!-- Source Selection -->
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label>Target Source(s)</label>
+            <select id="ralphSource" multiple size="6" style="width: 100%;">
+              <option value="">Loading sources...</option>
+            </select>
+            <span class="help-text">Hold Ctrl/Cmd to select multiple. Leave empty to use current PRD.</span>
+          </div>
+
+          <!-- Iterations Config -->
+          <div class="iterations-input" style="margin-bottom: 16px;">
+            <label>Max Iterations:</label>
+            <input type="number" id="ralphIterations" value="25" min="1" max="100">
+            <span class="help-text">Ralph will stop after this many iterations</span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="btn-group" style="flex-wrap: wrap; gap: 8px;">
+            <button class="btn btn-secondary" onclick="generatePRD()" title="Use browser to analyze site and generate PRD">
+              🔍 Generate PRD
+            </button>
+            <button class="btn btn-primary" id="startRalphBtn" onclick="startRalph()" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));">
+              🚀 Start Ralph
+            </button>
+            <button class="btn btn-danger" id="stopRalphBtn" onclick="stopRalph()" style="display: none;">
+              ⏹ Stop Ralph
+            </button>
+          </div>
+
+          <!-- PRD Generation Status -->
+          <div id="prdGenStatus" style="display: none; margin-top: 16px; padding: 12px; background: var(--bg-primary); border-radius: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div class="scraper-status-dot running"></div>
+              <span id="prdGenStatusText">Analyzing site...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Source Action Menu -->
+  <div id="sourceActionMenu" class="source-action-menu">
+    <div class="source-action-menu-header">
+      <div class="name" id="menuSourceName">Source Name</div>
+      <div class="url" id="menuSourceUrl">https://example.com</div>
+    </div>
+    <div class="source-action-item start" id="menuStartRalph" onclick="startRalphForSource()">
+      <span class="icon">▶</span>
+      <span class="label">Start Ralph</span>
+    </div>
+    <div class="source-action-item stop" id="menuStopRalph" onclick="stopRalph()">
+      <span class="icon">⏹</span>
+      <span class="label">Stop Ralph</span>
+    </div>
+    <div class="source-action-divider"></div>
+    <div class="source-action-item generate" id="menuGeneratePrd" onclick="generatePrdForSource()">
+      <span class="icon">📋</span>
+      <span class="label">Generate PRD</span>
+    </div>
+    <div class="source-action-item view" onclick="viewSourceData()">
+      <span class="icon">🌐</span>
+      <span class="label">Visit Website</span>
+    </div>
+  </div>
+
+  <!-- PRD Editor Modal -->
+  <div id="prdModal" class="prd-modal-overlay">
+    <div class="prd-modal">
+      <div class="prd-modal-header">
+        <h2>
+          📋 PRD Generator
+          <span class="source-badge" id="prdSourceBadge">source_name</span>
+        </h2>
+        <button class="prd-modal-close" onclick="closePrdModal()">×</button>
+      </div>
+
+      <div class="prd-modal-body">
+        <div class="prd-sidebar">
+          <h3>⚙ Variables</h3>
+          <div class="prd-variables" id="prdVariables">
+            <div class="prd-variable">
+              <label>{{source_id}}</label>
+              <input type="text" id="varSourceId" placeholder="source_id">
+            </div>
+            <div class="prd-variable">
+              <label>{{source_name}}</label>
+              <input type="text" id="varSourceName" placeholder="Source Name">
+            </div>
+            <div class="prd-variable">
+              <label>{{source_url}}</label>
+              <input type="text" id="varSourceUrl" placeholder="https://example.com">
+            </div>
+            <div class="prd-variable">
+              <label>{{output_dir}}</label>
+              <input type="text" id="varOutputDir" placeholder="data/source_name">
+            </div>
+            <div class="prd-variable">
+              <label>{{scrape_mode}}</label>
+              <select id="varScrapeMode">
+                <option value="standard">Standard (httpx)</option>
+                <option value="stealth">Stealth (Camoufox)</option>
+                <option value="aggressive">Aggressive Stealth</option>
+              </select>
+            </div>
+            <div class="prd-variable">
+              <label>{{priority}}</label>
+              <select id="varPriority">
+                <option value="1">1 - Highest</option>
+                <option value="2">2 - High</option>
+                <option value="3" selected>3 - Normal</option>
+                <option value="4">4 - Low</option>
+                <option value="5">5 - Lowest</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="prd-actions-sidebar">
+            <h3 style="margin-top: 0;">⚡ Actions</h3>
+            <button class="prd-action-btn" id="btnDomainAnalysis" onclick="runDomainAnalysis()" title="Analyze website structure with browser">
+              🔍 Run Domain Analysis
+            </button>
+            <button class="prd-action-btn" id="btnGeneratePrd" onclick="runPrdGeneration()" title="Generate PRD from analysis">
+              ⚡ Generate PRD
+            </button>
+            <button class="prd-action-btn" onclick="savePrdToRalph()" title="Save PRD for Ralph to use">
+              💾 Save PRD
+            </button>
+            <button class="prd-action-btn danger" onclick="clearPrdEditor()">
+              🗑 Clear
+            </button>
+          </div>
+        </div>
+
+        <div class="prd-main">
+          <div class="prd-tabs">
+            <button class="prd-tab active" onclick="switchPrdTab('stream')">📺 Live Stream</button>
+            <button class="prd-tab" onclick="switchPrdTab('editor')">📝 Editor</button>
+            <button class="prd-tab" onclick="switchPrdTab('preview')">👁 Preview</button>
+            <button class="prd-tab" onclick="switchPrdTab('browser')">🌐 Browser</button>
+          </div>
+
+          <div class="prd-content">
+            <div class="prd-panel active" id="prdStreamPanel">
+              <div class="prd-stream" id="prdStreamContent">
+                <span class="prd-stream-status" id="prdStreamStatus" style="display: none;">
+                  <span class="dot"></span>
+                  Generating...
+                </span>
+                <span id="prdStreamText">Click "Generate PRD" to start...</span>
+                <span class="cursor" id="prdCursor" style="display: none;"></span>
+              </div>
+            </div>
+
+            <div class="prd-panel" id="prdEditorPanel">
+              <textarea class="prd-editor" id="prdEditorContent" placeholder="PRD JSON will appear here after generation..."></textarea>
+            </div>
+
+            <div class="prd-panel" id="prdPreviewPanel">
+              <div class="prd-preview" id="prdPreviewContent">
+                <p style="color: var(--text-muted);">Generate a PRD to see the preview...</p>
+              </div>
+            </div>
+
+            <!-- Browser Panel inside PRD Modal -->
+            <div class="prd-panel" id="prdBrowserPanel">
+              <div class="prd-browser-container">
+                <div class="prd-browser-toolbar">
+                  <div class="prd-browser-status">
+                    <div class="browser-status-dot" id="browserStatusDot"></div>
+                    <span id="browserStatusText">Disconnected</span>
+                  </div>
+                  <button onclick="browserBack()" title="Back">←</button>
+                  <button onclick="browserForward()" title="Forward">→</button>
+                  <button onclick="browserRefresh()" title="Refresh">🔄</button>
+                  <input type="text" class="browser-url-bar" id="browserUrlBar" placeholder="Enter URL...">
+                  <button onclick="browserNavigate()">Go</button>
+                  <button onclick="browserSnapshot()" title="Take Snapshot">📷</button>
+                </div>
+
+                <div class="prd-browser-viewport">
+                  <div class="browser-screenshot-container" id="browserScreenshotContainer">
+                    <div class="browser-screenshot-placeholder" id="browserPlaceholder">
+                      <div class="icon">🌐</div>
+                      <div>Browser Preview</div>
+                      <div style="margin-top: 12px; font-size: 12px;">
+                        <button onclick="startBrowserSession()" style="padding: 8px 16px; background: var(--accent-cyan); border: none; border-radius: 6px; color: var(--bg-primary); cursor: pointer; font-weight: 600;">
+                          🚀 Start Browser Session
+                        </button>
+                      </div>
+                      <div style="margin-top: 8px; font-size: 11px; opacity: 0.7;">
+                        Uses Chrome DevTools Protocol for live preview
+                      </div>
+                    </div>
+                    <img id="browserScreenshot" class="browser-screenshot" style="display: none;" alt="Browser Screenshot">
+                    <div id="browserLoading" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                      <div style="font-size: 24px; animation: pulse 1s infinite;">⏳</div>
+                      <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">Loading...</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="prd-browser-controls">
+                  <button onclick="browserExecuteJS()" title="Execute JavaScript">
+                    ⚡ Execute JS
+                  </button>
+                  <button onclick="browserExtractDOM()" title="Extract DOM Structure">
+                    📄 Extract DOM
+                  </button>
+                  <button class="danger" onclick="stopBrowserSession()" id="stopBrowserBtn" style="display: none;">
+                    ⏹ Stop Session
+                  </button>
+                  <button class="primary" onclick="startBrowserSession()" id="startBrowserBtn">
+                    🚀 Start Session
+                  </button>
+                </div>
+
+                <div class="prd-browser-log" id="browserLog">
+                  <div class="browser-log-entry">
+                    <span class="browser-log-time">[--:--:--]</span>
+                    <span>Browser ready. Click "Start Session" to begin.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prd-modal-footer">
+        <div class="prd-footer-info">
+          <span id="prdStatus">Ready</span>
+          <span id="prdTimestamp">--</span>
+        </div>
+        <div class="prd-footer-actions">
+          <button class="prd-action-btn" onclick="closePrdModal()">Cancel</button>
+          <button class="prd-action-btn" onclick="savePrdToFile()">💾 Save to File</button>
+          <button class="prd-action-btn primary" onclick="usePrdAndStartRalph()">🚀 Use & Start Ralph</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Module -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

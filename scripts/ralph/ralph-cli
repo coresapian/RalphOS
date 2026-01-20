@@ -1,0 +1,499 @@
+#!/usr/bin/env python3
+"""
+Ralph CLI - Command line interface for common RalphOS tasks
+
+Usage:
+    ralph-cli status              Show pipeline health and source status
+    ralph-cli sources             List all sources with pipeline progress
+    ralph-cli source <id>         Show detailed info for a specific source
+    ralph-cli retry <source>      Retry a blocked source
+    ralph-cli add <url>           Add a new source to the queue
+    ralph-cli validate [source]   Validate builds for a source (or all)
+    ralph-cli sync                Sync progress from disk to sources.json
+    ralph-cli checkpoint          Show checkpoint status
+    ralph-cli config              Show current configuration
+"""
+
+import argparse
+import json
+import os
+import sys
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional
+
+# Paths
+SCRIPT_DIR = Path(__file__).parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent
+SOURCES_FILE = SCRIPT_DIR / "sources.json"
+CONFIG_FILE = SCRIPT_DIR / "config.json"
+CHECKPOINT_DIR = SCRIPT_DIR / "checkpoints"
+CHECKPOINT_FILE = CHECKPOINT_DIR / "current_checkpoint.json"
+DATA_DIR = PROJECT_ROOT / "data"
+
+# Colors for terminal output
+class Colors:
+    RED = '\033[0;31m'
+    GREEN = '\033[0;32m'
+    YELLOW = '\033[1;33m'
+    BLUE = '\033[0;34m'
+    MAGENTA = '\033[0;35m'
+    CYAN = '\033[0;36m'
+    WHITE = '\033[1;37m'
+    DIM = '\033[2m'
+    BOLD = '\033[1m'
+    NC = '\033[0m'  # No Color
+
+def color(text: str, c: str) -> str:
+    """Apply color to text."""
+    return f"{c}{text}{Colors.NC}"
+
+
+def load_sources() -> Dict:
+    """Load sources.json."""
+    if not SOURCES_FILE.exists():
+        return {"sources": []}
+    with open(SOURCES_FILE, 'r') as f:
+        return json.load(f)
+
+
+def load_config() -> Dict:
+    """Load config.json."""
+    if not CONFIG_FILE.exists():
+        return {}
+    with open(CONFIG_FILE, 'r') as f:
+        return json.load(f)
+
+
+def save_sources(data: Dict):
+    """Save sources.json."""
+    with open(SOURCES_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+
+
+def count_html_files(source_dir: Path) -> int:
+    """Count HTML files in a source directory."""
+    html_dir = source_dir / "html"
+    if not html_dir.exists():
+        return 0
+    return len(list(html_dir.glob("*.html")))
+
+
+def count_urls(source_dir: Path) -> int:
+    """Count URLs in urls.json."""
+    urls_file = source_dir / "urls.json"
+    if not urls_file.exists():
+        return 0
+    try:
+        with open(urls_file, 'r') as f:
+            data = json.load(f)
+        return len(data.get('urls', []))
+    except:
+        return 0
+
+
+def cmd_status(args):
+    """Show pipeline health and source status."""
+    data = load_sources()
+    sources = data.get("sources", [])
+    
+    # Calculate totals
+    total_urls = 0
+    total_html = 0
+    total_builds = 0
+    total_mods = 0
+    
+    status_counts = {
+        "pending": 0,
+        "in_progress": 0,
+        "blocked": 0,
+        "completed": 0
+    }
+    
+    for source in sources:
+        status = source.get("status", "pending")
+        status_counts[status] = status_counts.get(status, 0) + 1
+        
+        pipeline = source.get("pipeline", {})
+        total_urls += pipeline.get("urlsFound", 0) or 0
+        total_html += pipeline.get("htmlScraped", 0) or 0
+        total_builds += pipeline.get("builds", 0) or 0
+        total_mods += pipeline.get("mods", 0) or 0
+    
+    print(f"""
+{color('╔═══════════════════════════════════════════════════════════╗', Colors.CYAN)}
+{color('║', Colors.CYAN)}                 {color('📊 RalphOS Status', Colors.WHITE)}                        {color('║', Colors.CYAN)}
+{color('╚═══════════════════════════════════════════════════════════╝', Colors.CYAN)}
+
+{color('Sources:', Colors.WHITE)}
+  {color('●', Colors.GREEN)} Completed:   {status_counts.get('completed', 0)}
+  {color('●', Colors.YELLOW)} In Progress: {status_counts.get('in_progress', 0)}
+  {color('●', Colors.RED)} Blocked:     {status_counts.get('blocked', 0)}
+  {color('●', Colors.DIM)} Pending:     {status_counts.get('pending', 0)}
+  
+{color('Pipeline Totals:', Colors.WHITE)}
+  🔍 URLs Found:    {color(str(total_urls), Colors.CYAN)}
+  📥 HTML Scraped:  {color(str(total_html), Colors.CYAN)}
+  🏗️  Builds:        {color(str(total_builds), Colors.CYAN)}
+  🔧 Mods:          {color(str(total_mods), Colors.CYAN)}
+""")
+    
+    # Show current source if in_progress
+    in_progress = [s for s in sources if s.get("status") == "in_progress"]
+    if in_progress:
+        current = in_progress[0]
+        pipeline = current.get("pipeline", {})
+        print(f"{color('Current Source:', Colors.WHITE)} {color(current.get('name', 'Unknown'), Colors.YELLOW)}")
+        print(f"  URL: {current.get('url', 'N/A')}")
+        print(f"  URLs: {pipeline.get('urlsFound', 0)} | HTML: {pipeline.get('htmlScraped', 0)} | Builds: {pipeline.get('builds', 'null')}")
+    
+    # Show blocked sources if any
+    blocked = [s for s in sources if s.get("status") == "blocked"]
+    if blocked:
+        print(f"\n{color('⚠️  Blocked Sources:', Colors.RED)}")
+        for source in blocked:
+            print(f"  • {source.get('id')} - run: python scripts/tools/stealth_scraper.py --source {source.get('id')}")
+
+
+def cmd_sources(args):
+    """List all sources with pipeline progress."""
+    data = load_sources()
+    sources = data.get("sources", [])
+    
+    print(f"\n{color('Sources', Colors.WHITE)} ({len(sources)} total)\n")
+    print(f"{'ID':<25} {'Status':<12} {'URLs':<8} {'HTML':<8} {'Builds':<8} {'Mods':<8}")
+    print("-" * 77)
+    
+    for source in sources:
+        status = source.get("status", "pending")
+        pipeline = source.get("pipeline", {})
+        
+        status_color = {
+            "completed": Colors.GREEN,
+            "in_progress": Colors.YELLOW,
+            "blocked": Colors.RED,
+            "pending": Colors.DIM
+        }.get(status, Colors.NC)
+        
+        urls = pipeline.get("urlsFound", 0) or 0
+        html = pipeline.get("htmlScraped", 0) or 0
+        builds = pipeline.get("builds") or "null"
+        mods = pipeline.get("mods") or "null"
+        
+        status_str = f"{status:<12}"
+        print(f"{source.get('id', 'unknown'):<25} {color(status_str, status_color)} {urls:<8} {html:<8} {str(builds):<8} {str(mods):<8}")
+
+
+def cmd_source(args):
+    """Show detailed info for a specific source."""
+    data = load_sources()
+    sources = data.get("sources", [])
+    
+    source = None
+    for s in sources:
+        if s.get("id") == args.source_id:
+            source = s
+            break
+    
+    if not source:
+        print(f"Source '{args.source_id}' not found")
+        return 1
+    
+    pipeline = source.get("pipeline", {})
+    output_dir = Path(PROJECT_ROOT) / source.get("outputDir", f"data/{args.source_id}")
+    
+    # Get actual file counts from disk
+    actual_html = count_html_files(output_dir)
+    actual_urls = count_urls(output_dir)
+    
+    print(f"""
+{color('Source Details:', Colors.WHITE)} {color(source.get('name', 'Unknown'), Colors.CYAN)}
+
+  ID:          {source.get('id')}
+  URL:         {source.get('url', 'N/A')}
+  Status:      {source.get('status', 'unknown')}
+  Priority:    {source.get('priority', 5)}
+  Output Dir:  {source.get('outputDir', 'N/A')}
+
+{color('Pipeline Progress:', Colors.WHITE)}
+  URLs Found:    {pipeline.get('urlsFound', 0)} (on disk: {actual_urls})
+  HTML Scraped:  {pipeline.get('htmlScraped', 0)} (on disk: {actual_html})
+  HTML Failed:   {pipeline.get('htmlFailed', 0)}
+  HTML Blocked:  {pipeline.get('htmlBlocked', 0)}
+  Builds:        {pipeline.get('builds') or 'null'}
+  Mods:          {pipeline.get('mods') or 'null'}
+
+{color('Retry Info:', Colors.WHITE)}
+  Attempted:     {source.get('attempted', 0)}
+  Last Attempt:  {source.get('lastAttempted') or 'Never'}
+""")
+    
+    # Show files in output directory
+    if output_dir.exists():
+        files = list(output_dir.iterdir())
+        print(f"{color('Files:', Colors.WHITE)}")
+        for f in sorted(files):
+            if f.is_dir():
+                count = len(list(f.glob("*")))
+                print(f"  📁 {f.name}/ ({count} files)")
+            else:
+                print(f"  📄 {f.name}")
+
+
+def cmd_retry(args):
+    """Retry a blocked source."""
+    import subprocess
+    
+    data = load_sources()
+    sources = data.get("sources", [])
+    
+    source = None
+    for s in sources:
+        if s.get("id") == args.source_id:
+            source = s
+            break
+    
+    if not source:
+        print(f"Source '{args.source_id}' not found")
+        return 1
+    
+    if source.get("status") != "blocked" and not args.force:
+        print(f"Source '{args.source_id}' is not blocked (status: {source.get('status')})")
+        print("Use --force to retry anyway")
+        return 1
+    
+    print(f"Retrying source: {args.source_id}")
+    
+    # Use retry_manager
+    retry_script = SCRIPT_DIR / "retry_manager.py"
+    cmd = ["python3", str(retry_script), "retry", "--source", args.source_id]
+    if args.force:
+        cmd.append("--force")
+    
+    result = subprocess.run(cmd)
+    return result.returncode
+
+
+def cmd_add(args):
+    """Add a new source to the queue."""
+    from urllib.parse import urlparse
+    
+    url = args.url
+    parsed = urlparse(url)
+    
+    if not parsed.scheme or not parsed.netloc:
+        print(f"Invalid URL: {url}")
+        return 1
+    
+    # Generate source ID from domain
+    domain = parsed.netloc.replace("www.", "")
+    source_id = domain.replace(".", "_").replace("-", "_")
+    
+    # Check if source already exists
+    data = load_sources()
+    sources = data.get("sources", [])
+    
+    for source in sources:
+        if source.get("id") == source_id:
+            print(f"Source '{source_id}' already exists")
+            return 1
+    
+    # Create new source entry
+    new_source = {
+        "id": source_id,
+        "name": args.name or domain.replace(".", " ").title(),
+        "url": url,
+        "outputDir": f"data/{source_id}",
+        "status": "pending",
+        "priority": args.priority or 5,
+        "attempted": 0,
+        "lastAttempted": None,
+        "pipeline": {
+            "expectedUrls": 0,
+            "urlsFound": 0,
+            "htmlScraped": 0,
+            "htmlFailed": 0,
+            "htmlBlocked": 0,
+            "builds": 0,
+            "mods": 0
+        }
+    }
+    
+    sources.append(new_source)
+    data["sources"] = sources
+    save_sources(data)
+    
+    # Create output directory
+    output_dir = PROJECT_ROOT / "data" / source_id
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "html").mkdir(exist_ok=True)
+    
+    # Create empty urls.json
+    urls_file = output_dir / "urls.json"
+    with open(urls_file, 'w') as f:
+        json.dump({"urls": [], "lastUpdated": None, "totalCount": 0}, f, indent=2)
+    
+    print(f"✓ Added source: {source_id}")
+    print(f"  URL: {url}")
+    print(f"  Output: {new_source['outputDir']}")
+
+
+def cmd_validate(args):
+    """Validate pipeline stages or builds for a source."""
+    import subprocess
+    
+    # If --stage specified, use stage validator
+    if args.stage:
+        validate_script = PROJECT_ROOT / "scripts" / "tools" / "validate_stage.py"
+        
+        if not args.source_id:
+            print("Error: --source required when using --stage")
+            return 1
+        
+        source_dir = DATA_DIR / args.source_id
+        if not source_dir.exists():
+            print(f"Source directory not found: {source_dir}")
+            return 1
+        
+        cmd = ["python3", str(validate_script), args.stage, str(source_dir)]
+        result = subprocess.run(cmd)
+        return result.returncode
+    
+    # Default: validate builds.json
+    validate_script = PROJECT_ROOT / "scripts" / "tools" / "validate_builds.py"
+    
+    if args.source_id:
+        builds_file = DATA_DIR / args.source_id / "builds.json"
+        if not builds_file.exists():
+            print(f"No builds.json found for source '{args.source_id}'")
+            return 1
+        cmd = ["python3", str(validate_script), str(builds_file)]
+    else:
+        cmd = ["python3", str(validate_script), "--all"]
+    
+    result = subprocess.run(cmd)
+    return result.returncode
+
+
+def cmd_sync(args):
+    """Sync progress from disk to sources.json."""
+    import subprocess
+    
+    sync_script = PROJECT_ROOT / "scripts" / "tools" / "sync_progress.py"
+    result = subprocess.run(["python3", str(sync_script)])
+    return result.returncode
+
+
+def cmd_checkpoint(args):
+    """Show checkpoint status."""
+    if not CHECKPOINT_FILE.exists():
+        print("No checkpoint found - starting fresh")
+        return 0
+    
+    with open(CHECKPOINT_FILE, 'r') as f:
+        checkpoint = json.load(f)
+    
+    print(f"""
+{color('📦 Checkpoint Status:', Colors.WHITE)}
+  Iteration:   {checkpoint.get('iteration', 'N/A')}
+  Source:      {checkpoint.get('source_id') or 'N/A'}
+  Timestamp:   {checkpoint.get('timestamp', 'N/A')}
+  PRD File:    {checkpoint.get('prd_file', 'N/A')}
+""")
+
+
+def cmd_config(args):
+    """Show current configuration."""
+    config = load_config()
+    
+    if not config:
+        print("No config.json found")
+        return 1
+    
+    print(f"\n{color('RalphOS Configuration:', Colors.WHITE)}\n")
+    print(json.dumps(config, indent=2))
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Ralph CLI - Command line interface for RalphOS",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  ralph-cli status              Show pipeline health
+  ralph-cli sources             List all sources
+  ralph-cli source mysite       Show details for 'mysite'
+  ralph-cli retry mysite        Retry blocked source
+  ralph-cli add https://ex.com  Add new source
+  ralph-cli validate            Validate all builds
+  ralph-cli sync                Sync progress from disk
+"""
+    )
+    
+    subparsers = parser.add_subparsers(dest="command", help="Command to run")
+    
+    # status
+    subparsers.add_parser("status", help="Show pipeline health and source status")
+    
+    # sources
+    subparsers.add_parser("sources", help="List all sources with pipeline progress")
+    
+    # source <id>
+    source_parser = subparsers.add_parser("source", help="Show detailed info for a source")
+    source_parser.add_argument("source_id", help="Source ID")
+    
+    # retry <source>
+    retry_parser = subparsers.add_parser("retry", help="Retry a blocked source")
+    retry_parser.add_argument("source_id", help="Source ID to retry")
+    retry_parser.add_argument("--force", "-f", action="store_true", help="Force retry even if not blocked")
+    
+    # add <url>
+    add_parser = subparsers.add_parser("add", help="Add a new source to the queue")
+    add_parser.add_argument("url", help="URL of the source")
+    add_parser.add_argument("--name", "-n", help="Display name for the source")
+    add_parser.add_argument("--priority", "-p", type=int, help="Priority (1-10, default 5)")
+    
+    # validate
+    validate_parser = subparsers.add_parser("validate", help="Validate pipeline stages or builds")
+    validate_parser.add_argument("source_id", nargs="?", help="Source ID (required for --stage)")
+    validate_parser.add_argument("--stage", "-s", choices=["1", "2", "3", "4", "all"],
+                                help="Validate specific pipeline stage (1=URLs, 2=HTML, 3=Builds, 4=Mods)")
+    
+    # sync
+    subparsers.add_parser("sync", help="Sync progress from disk to sources.json")
+    
+    # checkpoint
+    subparsers.add_parser("checkpoint", help="Show checkpoint status")
+    
+    # config
+    subparsers.add_parser("config", help="Show current configuration")
+    
+    args = parser.parse_args()
+    
+    if not args.command:
+        parser.print_help()
+        return 1
+    
+    commands = {
+        "status": cmd_status,
+        "sources": cmd_sources,
+        "source": cmd_source,
+        "retry": cmd_retry,
+        "add": cmd_add,
+        "validate": cmd_validate,
+        "sync": cmd_sync,
+        "checkpoint": cmd_checkpoint,
+        "config": cmd_config
+    }
+    
+    func = commands.get(args.command)
+    if func:
+        return func(args) or 0
+    
+    parser.print_help()
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+

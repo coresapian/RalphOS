@@ -83,8 +83,8 @@ class StealthConfig:
     def __init__(
         self,
         output_dir: Path,
-        min_delay: float = 2.0,
-        max_delay: float = 5.0,
+        min_delay: float = 20.0,
+        max_delay: float = 40.0,
         timeout: int = 60000,
         headless: bool = True,
         rotate_every: int = 50,
@@ -196,7 +196,16 @@ def load_urls_from_json(json_path: Path) -> List[str]:
         data = json.load(f)
     
     if isinstance(data, dict) and "urls" in data:
-        return data["urls"]
+        urls_data = data["urls"]
+        # Handle both list of strings and list of dicts with 'url' field
+        if isinstance(urls_data, list) and len(urls_data) > 0:
+            if isinstance(urls_data[0], dict):
+                # Extract URLs from dictionary objects
+                return [item["url"] for item in urls_data if isinstance(item, dict) and "url" in item]
+            else:
+                # Already list of URL strings
+                return urls_data
+        return []
     elif isinstance(data, list):
         return data
     else:

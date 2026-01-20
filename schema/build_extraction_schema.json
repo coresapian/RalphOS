@@ -1,6 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ralphos.motormia.com/schema/build_extraction_schema.json",
   "title": "Vehicle Build Extraction Schema",
+  "version": "1.0.0",
   "description": "Schema for extracting vehicle build and modification data from scraped sources. Ralph reads this before Stage 3 (Build Extraction) and Stage 4 (Mod Extraction).",
   "type": "object",
   "required": ["build_id", "source_type", "build_type", "build_source", "source_url", "year", "make", "model"],
@@ -40,6 +42,8 @@
         "Rat Rod",
         "Hot Rod",
         "Muscle",
+        "Classic",
+        "Modern Classic",
         "JDM",
         "Euro",
         "USDM",
@@ -108,22 +112,19 @@
     },
     "build_story": {
       "type": ["string", "null"],
-      "description": "Full text content describing the build (for mod extraction)"
+      "description": "Full text content describing the vehicle/build/project-car"
     },
     "owner_username": {
       "type": ["string", "null"],
-      "description": "Username or name of the build owner"
+      "description": "Username or name of the build vehicle owner"
     },
+    
     "gallery_images": {
       "type": "array",
       "items": { "type": "string", "format": "uri" },
       "description": "Array of image URLs from the build"
     },
-    "main_image": {
-      "type": ["string", "null"],
-      "format": "uri",
-      "description": "Primary/hero image URL"
-    },
+    
     "modifications": {
       "type": "array",
       "description": "Extracted modifications (Stage 4 output)",

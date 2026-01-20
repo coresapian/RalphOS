@@ -23,104 +23,93 @@
   },
   "sources": [
     {
-      "id": "oneoff_autos",
-      "name": "OneOff Autos",
-      "url": "https://oneoffautos.com/listings",
-      "outputDir": "data/oneoff_autos",
+      "id": "luxury4play",
+      "name": "Luxury4Play",
+      "url": "https://luxury4play.com",
+      "outputDir": "data/luxury4play",
       "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T16:20:00Z",
       "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
+        "expectedUrls": 12,
+        "urlsFound": 18,
+        "htmlScraped": 12,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
-      },
-      "notes": "SKIP: Modern SPA with no public listing URLs. Site requires JavaScript rendering/authentication. Sitemap contains only static pages. No vehicle inventory available without login."
+        "builds": 7,
+        "mods": 3
+      }
     },
     {
-      "id": "racemarket",
-      "name": "RaceMarket",
-      "url": "https://racemarket.net/",
-      "outputDir": "data/racemarket",
-      "status": "completed",
+      "id": "clublexus",
+      "name": "ClubLexus",
+      "url": "https://clublexus.com",
+      "outputDir": "data/clublexus",
+      "status": "stopped",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T22:00:00Z",
       "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
+        "expectedUrls": 2715,
+        "urlsFound": 2715,
+        "htmlScraped": 301,
         "htmlFailed": 0,
         "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
-      },
-      "notes": "SKIP: JavaScript-heavy site using AJAX/masonry to load listings. Static HTML contains no item URLs. Would require browser automation (Selenium/Puppeteer) for scraping. Not feasible with HTTP-only approach."
-    },
-    {
-      "id": "lomar_refined",
-      "name": "Lomar Refined",
-      "url": "https://www.lomarefined.com/blogs/journal",
-      "outputDir": "data/lomar_refined",
-      "status": "completed",
-      "pipeline": {
-        "expectedUrls": 30,
-        "urlsFound": 30,
-        "htmlScraped": 1,
-        "htmlFailed": 0,
-        "htmlBlocked": 0,
-        "builds": 30,
-        "mods": 41
-      },
-      "notes": "COMPLETE: All 4 stages done. 30 URLs discovered, 30 builds extracted, 41 modifications extracted from 22 builds. Category breakdown: Wheel (17), Exhaust & Emission (15), Electrical (9). All content via MCP webReader. Vehicles: Ferrari (17), Lamborghini (5), Rolls-Royce (4), Aston Martin (2), Porsche (1)."
-    },
-    {
-      "id": "total_cost_involved",
-      "name": "Total Cost Involved",
-      "url": "https://totalcostinvolved.com/customer-showcase/",
-      "outputDir": "data/total_cost_involved",
-      "status": "completed",
-      "pipeline": {
-        "expectedUrls": 0,
-        "urlsFound": 0,
-        "htmlScraped": 0,
-        "htmlFailed": 0,
-        "htmlBlocked": 0,
-        "builds": 0,
-        "mods": 0
-      },
-      "notes": "SKIP: Static image gallery with ~295 car builds displayed on a single page. No individual detail page URLs - each build is shown as a thumbnail with caption (e.g., '1969 Camaro, Pro IFS, Born Vintage Hot Rods'). Builds are embedded in the page as HTML content without separate URLs. Would require parsing the single gallery page and extracting build data from the HTML/captions, but this is not the target content type (individual build pages with detailed specs, photos, modifications)."
-    },
-    {
-      "id": "ecd_auto_design",
-      "name": "ECD Auto Design",
-      "url": "https://ecdautodesign.com/ecd-showcase/",
-      "outputDir": "data/ecd_auto_design",
-      "status": "completed",
-      "pipeline": {
-        "expectedUrls": 23,
-        "urlsFound": 338,
-        "htmlScraped": 1,
-        "htmlFailed": 337,
-        "htmlBlocked": 0,
-        "builds": 1,
+        "builds": null,
         "mods": null
       },
-      "blockEvents": [
-        {
-          "timestamp": "2026-01-07T13:30:00Z",
-          "type": "javascript_blob_urls",
-          "afterUrls": 1,
-          "details": "Site migrated from static URLs to JavaScript-generated blob: URLs. Original 338 discovered URLs now return 404. Current showcase shows 23 projects but uses blob: URLs (e.g., blob:https://ecdautodesign.com/...) which are client-side JavaScript generated and not accessible via HTTP scraping."
-        }
-      ],
-      "notes": "SITE STRUCTURE CHANGE - JAVASCRIPT BLOB URLS: During URL discovery (Stage 1), 338 project URLs were extracted from 17 showcase pages. During Stage 2 (HTML scraping), 337/338 URLs (99.7%) returned 404 errors. Only Project 13 (https://ecdautodesign.com/project-13/) remains accessible. Site has migrated to JavaScript-generated blob: URLs for project navigation - current showcase shows 23 projects (Project Inizio, Harry Hart, War Eagle, Kaimana, Camel Trophy, Malvern Commission, Slow Horse, Must-Be-Nice, Snowy Range, Nantucket, Pembrokeshire, Gravette, Liberty, A Bit Dodgy, Lancashire, Rutland, Oliver, 69 Miles, Daybreak, Titan, Pearl, Cornwall, Arbo, Brownie) but these use blob: URLs which require browser automation (Selenium/Puppeteer) to access. The original 338 URLs discovered are legacy/outdated - the site completely restructured its project system between URL discovery and scraping phases. Build extracted from Project 13: Defender 90 with Chevrolet LC9 5.3L V8, Keswick green, 18\" Boost wheels, Masai roof rack."
+      "notes": "Stage 1 COMPLETE: 2715 URLs discovered from 12 search queries (build thread, build, project, mods, modified, etc). vBulletin forum. Ready for Stage 2 HTML scraping."
     },
     {
-      "id": "charlies_custom_creations",
-      "name": "Charlie's Custom Creations",
-      "url": "https://charliescustomcreations.com/",
-      "outputDir": "data/charlies_custom_creations",
+      "id": "motoringexposure",
+      "name": "Motoring Exposure",
+      "url": "https://motoringexposure.com",
+      "outputDir": "data/motoringexposure",
       "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T05:00:00Z",
+      "pipeline": {
+        "expectedUrls": 338,
+        "urlsFound": 338,
+        "htmlScraped": 338,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 338,
+        "mods": 557
+      },
+      "notes": "COMPLETE: 338 builds, 557 mods. Featured Fitment articles - wheel/vehicle builds with high-end supercars. Top makes: BMW (47), Lamborghini (44), Porsche (38), Ferrari (30), Audi (26). Wheel brands: Brixton Forged, PUR, ADV.1, Vorsteiner, HRE."
+    },
+    {
+      "id": "nicheroadwheels",
+      "name": "Niche Road Wheels",
+      "url": "https://nicheroadwheels.com",
+      "outputDir": "data/nicheroadwheels",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T22:30:00Z",
+      "pipeline": {
+        "expectedUrls": 97,
+        "urlsFound": 97,
+        "htmlScraped": 97,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 97,
+        "mods": 114
+      },
+      "notes": "COMPLETE: 97 builds, 114 mods. Premium wheel gallery. Top makes: Ford (12), Chevrolet (12), Mercedes-Benz (11), BMW (10). Mods: Wheels (97), Tires (14), Suspension (3). Tire brands: Nitto, Toyo, Michelin."
+    },
+    {
+      "id": "vwvortex",
+      "name": "VWVortex",
+      "url": "https://forums.vwvortex.com",
+      "outputDir": "data/vwvortex",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
         "expectedUrls": 0,
         "urlsFound": 0,
@@ -129,15 +118,17 @@
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
-      },
-      "notes": "SKIP: Static single-page gallery with ~69 car builds. Image thumbnails with captions (e.g., 'Michaels 1956 Ford F100', 'Jameys 1968 Plymouth Road Runner'). No individual detail page URLs - builds embedded as HTML content. Filterable by category (Cars/Trucks/Other) but all on same page. Not target content type."
+      }
     },
     {
-      "id": "utv_source",
-      "name": "UTV Source",
-      "url": "https://www.utvsource.com/gallery",
-      "outputDir": "data/utv_source",
-      "status": "completed",
+      "id": "adv1wheels",
+      "name": "ADV.1 Wheels",
+      "url": "https://adv1wheels.com",
+      "outputDir": "data/adv1wheels",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
         "expectedUrls": 0,
         "urlsFound": 0,
@@ -146,15 +137,17 @@
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
-      },
-      "notes": "SKIP: Static gallery with no individual detail pages. Verified via MCP webReader: Page shows 47 build cards (thumbnails with names like '2024 Can-Am Maverick R - Janey Lee') but these are display elements only, not clickable links to detail pages. Pagination links exist (?page=2, ?page=3) but return identical content. This is a marketing showcase page, not a browsable catalog of build detail pages. Not target content type."
+      }
     },
     {
-      "id": "creative_bespoke",
-      "name": "Creative Bespoke",
-      "url": "https://creativebespoke.com/vehicles",
-      "outputDir": "data/creative_bespoke",
-      "status": "completed",
+      "id": "nasioc",
+      "name": "NASIOC",
+      "url": "https://forums.nasioc.com",
+      "outputDir": "data/nasioc",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
         "expectedUrls": 0,
         "urlsFound": 0,
@@ -163,15 +156,17 @@
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
-      },
-      "notes": "SKIP: DEALERSHIP INVENTORY - Verified via MCP webReader. Shows luxury cars for sale (Bentley Flying Spur, Ferrari 812, Lamborghini Aventador, etc.) with prices and 'Photos (21)' links to dealer inventory detail pages. These are dealer listings, not custom build project pages with modifications. Not target content type."
+      }
     },
     {
-      "id": "lifted_trucks",
-      "name": "Lifted Trucks",
-      "url": "https://www.liftedtrucks.com/used-inventory/index.htm",
-      "outputDir": "data/lifted_trucks",
-      "status": "completed",
+      "id": "mazdas247",
+      "name": "Mazdas247",
+      "url": "https://mazdas247.com",
+      "outputDir": "data/mazdas247",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
         "expectedUrls": 0,
         "urlsFound": 0,
@@ -180,15 +175,17 @@
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
-      },
-      "notes": "SKIP: DEALERSHIP INVENTORY - Verified via MCP webReader. Marketing copy page about 'why buy a lifted truck' with no vehicle listings visible. JavaScript-heavy dealer site showing lifted trucks/SUVs for sale (not custom build projects). Dealer inventory pages, not target content type."
+      }
     },
     {
-      "id": "revmatch",
-      "name": "RevMatch",
-      "url": "https://www.revmatch.app/",
-      "outputDir": "data/revmatch",
-      "status": "completed",
+      "id": "ft86club",
+      "name": "FT86Club",
+      "url": "https://ft86club.com",
+      "outputDir": "data/ft86club",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
       "pipeline": {
         "expectedUrls": 0,
         "urlsFound": 0,
@@ -197,33 +194,1839 @@
         "htmlBlocked": 0,
         "builds": 0,
         "mods": 0
-      },
-      "notes": "SKIP: Web application requiring authentication. No public build gallery. Users create build sheets behind login - not scrapable via HTTP."
+      }
     },
     {
-      "id": "tacoma_world_builds",
-      "name": "Tacoma World Build Threads",
-      "url": "https://www.tacomaworld.com/",
-      "outputDir": "data/tacoma_world_builds",
+      "id": "gencoupe",
+      "name": "GenCoupe",
+      "url": "https://gencoupe.com",
+      "outputDir": "data/gencoupe",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "priuschat",
+      "name": "PriusChat",
+      "url": "https://priuschat.com",
+      "outputDir": "data/priuschat",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "rav4world",
+      "name": "RAV4World",
+      "url": "https://rav4world.com",
+      "outputDir": "data/rav4world",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "vwgolf",
+      "name": "Vwgolf",
+      "url": "https://vwgolf.net.au",
+      "outputDir": "data/vwgolf",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "wheeldude",
+      "name": "WheelDude",
+      "url": "https://wheeldude.com",
+      "outputDir": "data/wheeldude",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "jukecom",
+      "name": "Jukecom",
+      "url": "https://jukeforums.com",
+      "outputDir": "data/jukecom",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "evolutionm",
+      "name": "EvolutionM",
+      "url": "https://evolutionm.net",
+      "outputDir": "data/evolutionm",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "optimacom",
+      "name": "Optimacom",
+      "url": "https://optimaforums.com",
+      "outputDir": "data/optimacom",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "scionlife",
+      "name": "ScionLife",
+      "url": "https://scionlife.com",
+      "outputDir": "data/scionlife",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "rx8club",
+      "name": "RX8Club",
+      "url": "https://rx8club.com",
+      "outputDir": "data/rx8club",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "teslamotorsclub",
+      "name": "Tesla Motors Club",
+      "url": "https://teslamotorsclub.com",
+      "outputDir": "data/teslamotorsclub",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "the370z",
+      "name": "The370Z",
+      "url": "https://the370z.com",
+      "outputDir": "data/the370z",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mazda6club",
+      "name": "Mazda6Club",
+      "url": "https://forum.mazda6club.com",
+      "outputDir": "data/mazda6club",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "maxima",
+      "name": "Maxima",
+      "url": "https://maxima.org",
+      "outputDir": "data/maxima",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "tundratalk",
+      "name": "TundraTalk",
+      "url": "https://tundratalk.net",
+      "outputDir": "data/tundratalk",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "ramforumz",
+      "name": "RamForumz",
+      "url": "https://ramforumz.com",
+      "outputDir": "data/ramforumz",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "toyotanation",
+      "name": "ToyotaNation",
+      "url": "https://toyotanation.com",
+      "outputDir": "data/toyotanation",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mbworld",
+      "name": "MBWorld",
+      "url": "https://mbworld.org",
+      "outputDir": "data/mbworld",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "nissanclub",
+      "name": "NissanClub",
+      "url": "https://nissanclub.com",
+      "outputDir": "data/nissanclub",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "toyota_4runner",
+      "name": "Toyota 4Runner",
+      "url": "https://toyota-4runner.org",
+      "outputDir": "data/toyota_4runner",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mazdaspeedorg",
+      "name": "Mazdaspeedorg",
+      "url": "https://mazdaspeedforums.org",
+      "outputDir": "data/mazdaspeedorg",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "northamericanmotoring",
+      "name": "North American Motoring",
+      "url": "https://northamericanmotoring.com",
+      "outputDir": "data/northamericanmotoring",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "hyundai_com",
+      "name": "Hyundai Com",
+      "url": "https://hyundai-forums.com",
+      "outputDir": "data/hyundai_com",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "wheelspecialists",
+      "name": "Wheel Specialists",
+      "url": "https://wheelspecialists.com",
+      "outputDir": "data/wheelspecialists",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 2,
+      "lastAttempted": "2026-01-16T22:30:00Z",
+      "pipeline": {
+        "expectedUrls": 4654,
+        "urlsFound": 4654,
+        "htmlScraped": 4654,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 4627,
+        "mods": 4587
+      },
+      "notes": "COMPLETE! All 4 stages done. 4654 URLs scraped, 4627 builds extracted, 4587 wheel mods. Top brands: Giovanna (792), Vossen (791), Gianelle (562)."
+    },
+    {
+      "id": "jeepgarage",
+      "name": "Jeep Garage",
+      "url": "https://jeepgarage.org",
+      "outputDir": "data/jeepgarage",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "lotustalk",
+      "name": "LotusTalk",
+      "url": "https://lotustalk.com",
+      "outputDir": "data/lotustalk",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "huracantalk",
+      "name": "HuracanTalk",
+      "url": "https://huracantalk.com",
+      "outputDir": "data/huracantalk",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mazdaroadster",
+      "name": "MazdaRoadster",
+      "url": "https://mazdaroadster.net",
+      "outputDir": "data/mazdaroadster",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "veloster",
+      "name": "Veloster",
+      "url": "https://veloster.org",
+      "outputDir": "data/veloster",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "swedespeed",
+      "name": "SwedeSpeed",
+      "url": "https://forums.swedespeed.com",
+      "outputDir": "data/swedespeed",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "cumminscom",
+      "name": "Cumminscom",
+      "url": "https://cumminsforum.com",
+      "outputDir": "data/cumminscom",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mercedesclacom",
+      "name": "Mercedesclacom",
+      "url": "https://mercedesclaforum.com",
+      "outputDir": "data/mercedesclacom",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "planet_9",
+      "name": "Planet-9",
+      "url": "https://planet-9.com",
+      "outputDir": "data/planet_9",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mazda3revolution",
+      "name": "Mazda3Revolution",
+      "url": "https://mazda3revolution.com",
+      "outputDir": "data/mazda3revolution",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "rennlist",
+      "name": "Rennlist",
+      "url": "https://rennlist.com",
+      "outputDir": "data/rennlist",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "gtrlife",
+      "name": "GTRLife",
+      "url": "https://gtrlife.com",
+      "outputDir": "data/gtrlife",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mazdacom",
+      "name": "Mazdacom",
+      "url": "https://mazdaforum.com",
+      "outputDir": "data/mazdacom",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "fortecom",
+      "name": "Fortecom",
+      "url": "https://forteforums.com",
+      "outputDir": "data/fortecom",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "kia_com",
+      "name": "Kia Com",
+      "url": "https://kia-forums.com",
+      "outputDir": "data/kia_com",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "nissancubelife",
+      "name": "Nissan Cube Life",
+      "url": "https://nissancubelife.com",
+      "outputDir": "data/nissancubelife",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "benzworld",
+      "name": "BenzWorld",
+      "url": "https://benzworld.org",
+      "outputDir": "data/benzworld",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "6speedonline",
+      "name": "6SpeedOnline",
+      "url": "https://6speedonline.com",
+      "outputDir": "data/6speedonline",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "macancom",
+      "name": "Macancom",
+      "url": "https://macanforum.com",
+      "outputDir": "data/macancom",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "wheelsboutique",
+      "name": "Wheels Boutique",
+      "url": "https://wheelsboutique.com",
+      "outputDir": "data/wheelsboutique",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "audizine",
+      "name": "Audizine",
+      "url": "https://audizine.com",
+      "outputDir": "data/audizine",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "jeepcherokeeclub",
+      "name": "Jeep Cherokee Club",
+      "url": "https://jeepcherokeeclub.com",
+      "outputDir": "data/jeepcherokeeclub",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "nissanmurano",
+      "name": "Nissanmurano",
+      "url": "https://nissanmurano.org",
+      "outputDir": "data/nissanmurano",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "clubtouareg",
+      "name": "Club Touareg",
+      "url": "https://clubtouareg.com",
+      "outputDir": "data/clubtouareg",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "elantraclub",
+      "name": "Elantra Club",
+      "url": "https://elantraclub.com",
+      "outputDir": "data/elantraclub",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "fancytuning",
+      "name": "Fancy Tuning",
+      "url": "https://fancytuning.com",
+      "outputDir": "data/fancytuning",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "ih8mud",
+      "name": "IH8MUD",
+      "url": "https://forum.ih8mud.com",
+      "outputDir": "data/ih8mud",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mercedescla",
+      "name": "Mercedescla",
+      "url": "https://mercedescla.org",
+      "outputDir": "data/mercedescla",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "minif56",
+      "name": "Mini F56",
+      "url": "https://minif56.com",
+      "outputDir": "data/minif56",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "rangerovers",
+      "name": "Rangerovers",
+      "url": "https://rangerovers.net",
+      "outputDir": "data/rangerovers",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "subaruforester",
+      "name": "Subaru Forester",
+      "url": "https://subaruforester.org",
+      "outputDir": "data/subaruforester",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "team_bhp",
+      "name": "Team-BHP",
+      "url": "https://team-bhp.com",
+      "outputDir": "data/team_bhp",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "titantalk",
+      "name": "TitanTalk",
+      "url": "https://titantalk.com",
+      "outputDir": "data/titantalk",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "650scom",
+      "name": "650Scom",
+      "url": "https://650sforum.com",
+      "outputDir": "data/650scom",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 3,
+      "lastAttempted": "2026-01-16T19:30:00Z",
+      "pipeline": {
+        "expectedUrls": 288,
+        "urlsFound": 288,
+        "htmlScraped": 288,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 39,
+        "mods": 13
+      },
+      "notes": "COMPLETE: 39 builds, 13 mods. 9 builds with mods. Categories: Exhaust (7), Wheels (5), Brakes (1). Brands: IPE, AWE, Fabspeed, PUR, ADV. McLaren 650S enthusiast forum."
+    },
+    {
+      "id": "autoevolution",
+      "name": "AutoEvolution",
+      "url": "https://autoevolution.com",
+      "outputDir": "data/autoevolution",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "bccwheels",
+      "name": "BCC Wheels",
+      "url": "https://bccwheels.com",
+      "outputDir": "data/bccwheels",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "wtwcorp",
+      "name": "Wtwcorp",
+      "url": "https://blog.wtwcorp.com",
+      "outputDir": "data/wtwcorp",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "cardomain",
+      "name": "CarDomain",
+      "url": "https://cardomain.com",
+      "outputDir": "data/cardomain",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "dfwmiata",
+      "name": "DFW Miata",
+      "url": "https://dfwmiata.com",
+      "outputDir": "data/dfwmiata",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "digitaltrends",
+      "name": "Digital Trends",
+      "url": "https://digitaltrends.com",
+      "outputDir": "data/digitaltrends",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "f150com",
+      "name": "F150Com",
+      "url": "https://f150forum.com",
+      "outputDir": "data/f150com",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "santafe_autoclub",
+      "name": "Santafe Autoclub",
+      "url": "https://forum.santafe-autoclub.ru",
+      "outputDir": "data/santafe_autoclub",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "nwp4life",
+      "name": "NWP4Life",
+      "url": "https://forums.nwp4life.com",
+      "outputDir": "data/nwp4life",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "hyundaicom",
+      "name": "Hyundaicom",
+      "url": "https://hyundaiforum.com",
+      "outputDir": "data/hyundaicom",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "m3net",
+      "name": "M3Net",
+      "url": "https://m3forum.net",
+      "outputDir": "data/m3net",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mitsubishicom",
+      "name": "Mitsubishicom",
+      "url": "https://mitsubishiforum.com",
+      "outputDir": "data/mitsubishicom",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "motorward",
+      "name": "Motorward",
+      "url": "https://motorward.com",
+      "outputDir": "data/motorward",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mycarcom",
+      "name": "Mycarcom",
+      "url": "https://mycarforum.com",
+      "outputDir": "data/mycarcom",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "mynissanleaf",
+      "name": "MyNissanLeaf",
+      "url": "https://mynissanleaf.com",
+      "outputDir": "data/mynissanleaf",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "stanceworks",
+      "name": "StanceWorks",
+      "url": "https://stanceworks.com/articles/",
+      "outputDir": "data/stanceworks",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "tamparacing",
+      "name": "Tampa Racing",
+      "url": "https://tamparacing.com",
+      "outputDir": "data/tamparacing",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "thegalantcenter",
+      "name": "The Galant Center",
+      "url": "https://thegalantcenter.org",
+      "outputDir": "data/thegalantcenter",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "tundras",
+      "name": "Tundras",
+      "url": "https://tundras.com",
+      "outputDir": "data/tundras",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "volvoforums",
+      "name": "VolvoForums",
+      "url": "https://volvoforums.com",
+      "outputDir": "data/volvoforums",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "miataturbo",
+      "name": "MiataTurbo",
+      "url": "https://www.miataturbo.net/cars-sale-trade-6/",
+      "outputDir": "data/miataturbo",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "clubrsx",
+      "name": "ClubRSX",
+      "url": "https://www.clubrsx.com",
+      "outputDir": "data/clubrsx",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "clubintegra",
+      "name": "ClubIntegra",
+      "url": "https://www.clubintegra.com",
+      "outputDir": "data/clubintegra",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "integraforums",
+      "name": "IntegraForums",
+      "url": "https://www.integraforums.com",
+      "outputDir": "data/integraforums",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 0,
+        "urlsFound": 0,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 0,
+        "mods": 0
+      }
+    },
+    {
+      "id": "carandclassic",
+      "name": "Car and Classic",
+      "url": "https://carandclassic.com",
+      "outputDir": "data/carandclassic",
       "status": "blocked",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T17:26:00Z",
       "pipeline": {
-        "expectedUrls": 7854,
-        "urlsFound": 148,
-        "htmlScraped": null,
-        "htmlFailed": null,
-        "htmlBlocked": 7706,
+        "expectedUrls": 9406,
+        "urlsFound": 9406,
+        "htmlScraped": 225,
+        "htmlFailed": 0,
+        "htmlBlocked": 9353,
         "builds": null,
         "mods": null
       },
       "blockEvents": [
         {
-          "timestamp": "2026-01-07T12:10:00Z",
-          "type": "pagination_blocked",
-          "afterUrls": 148,
-          "details": "Tacoma World blocks all paginated URLs beyond page 1 (returns 404 'The requested page could not be found'). Only first page of each forum accessible without authentication/session cookies. Total accessible: 148 threads from 3 first pages. Missing: 7,706 threads (98.1%)."
+          "timestamp": "2026-01-16T17:26:00Z",
+          "type": "429",
+          "afterUrls": 52
         }
       ],
-      "notes": "BLOCKED: Tacoma World pagination requires authentication/session cookies. Verified via MCP webReader that page-2/ and beyond return 404 errors. Only 148/7,854 threads accessible (1.9%). Site uses anti-scraping protection - pagination links exist but return errors when accessed directly. Consider browser automation (Selenium/Puppeteer) with valid session or API access if available. URLs saved to urls.json represent accessible content only."
+      "notes": "BLOCKED: 429 after 52/9406 URLs. Previous scrape had corrupted HTML (not decompressed). Run: python scripts/tools/stealth_scraper.py --source carandclassic"
+    },
+    {
+      "id": "audiocityusa",
+      "name": "AudioCityUSA",
+      "url": "https://audiocityusa.com",
+      "outputDir": "data/audiocityusa",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T19:30:00Z",
+      "pipeline": {
+        "expectedUrls": 3731,
+        "urlsFound": 3731,
+        "htmlScraped": 3731,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 3717,
+        "mods": 8049
+      },
+      "notes": "Wheel gallery source - 3717 builds with wheel/tire/suspension fitment data. Top makes: Chevrolet (496), Ford (318), BMW (298)."
+    },
+    {
+      "id": "hennesseyperformance",
+      "name": "Hennessey Performance",
+      "url": "https://hennesseyperformance.com",
+      "outputDir": "data/hennesseyperformance",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T01:00:00Z",
+      "pipeline": {
+        "expectedUrls": 141,
+        "urlsFound": 141,
+        "htmlScraped": 141,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 141,
+        "mods": 47
+      },
+      "notes": "COMPLETE: 141 builds, 47 mods. Hennessey packages: H1000, H850, VelociRaptor 500/600, MAMMOTH 1000, Venom 800/850/1000, GOLIATH 650, HPE1000."
+    },
+    {
+      "id": "tunedbyanton",
+      "name": "Tuned By Anton",
+      "url": "https://tunedbyanton.com",
+      "outputDir": "data/tunedbyanton",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T17:14:02Z",
+      "pipeline": {
+        "expectedUrls": 427,
+        "urlsFound": 427,
+        "htmlScraped": 387,
+        "htmlFailed": 40,
+        "htmlBlocked": 0,
+        "builds": 387,
+        "mods": 0
+      }
+    },
+    {
+      "id": "pistonheads_auctions",
+      "name": "PistonHeads Auctions",
+      "url": "https://pistonheads.com",
+      "outputDir": "data/pistonheads_auctions",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T01:55:00Z",
+      "pipeline": {
+        "expectedUrls": 414,
+        "urlsFound": 414,
+        "htmlScraped": 105,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 105,
+        "mods": 0
+      },
+      "notes": "COMPLETE: 105 builds, 0 mods (auction vehicles are stock). UK auctions. Top makes: Porsche (20), BMW (17), Mazda (6), Renault (6), Mercedes-Benz (6)."
+    },
+    {
+      "id": "goo_net_exchange",
+      "name": "Goo-net Exchange",
+      "url": "https://goo-net-exchange.com",
+      "outputDir": "data/goo_net_exchange",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T06:40:00Z",
+      "pipeline": {
+        "expectedUrls": 100,
+        "urlsFound": 100,
+        "htmlScraped": 89,
+        "htmlFailed": 11,
+        "htmlBlocked": 0,
+        "builds": 89,
+        "mods": 164
+      },
+      "notes": "COMPLETE: 89 JDM builds, 164 factory package mods. Top models: GR Yaris (31), Mark II (16), Chaser (15). Factory mods: GR, RZ, TOURER V, GRMN, HIGH PERFORMANCE packages."
+    },
+    {
+      "id": "autotempest",
+      "name": "AutoTempest",
+      "url": "https://autotempest.com",
+      "outputDir": "data/autotempest",
+      "status": "blocked",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T06:50:00Z",
+      "pipeline": {
+        "expectedUrls": 199,
+        "urlsFound": 199,
+        "htmlScraped": 10,
+        "htmlFailed": 63,
+        "htmlBlocked": 20,
+        "builds": null,
+        "mods": null
+      },
+      "blockEvents": [
+        {
+          "timestamp": "2026-01-17T06:50:00Z",
+          "type": "403+timeout",
+          "afterUrls": 10
+        }
+      ],
+      "notes": "BLOCKED: autohunter.com 403, cars.com timeouts. 10/199 scraped from smaller sources. Run: python scripts/tools/stealth_scraper.py --source autotempest"
+    },
+    {
+      "id": "roushperformance",
+      "name": "Roush Performance",
+      "url": "https://roushperformance.com",
+      "outputDir": "data/roushperformance",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T01:35:00Z",
+      "pipeline": {
+        "expectedUrls": 59,
+        "urlsFound": 59,
+        "htmlScraped": 59,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 59,
+        "mods": 33
+      },
+      "notes": "COMPLETE: 59 builds, 33 mods. Packages: Stage 1-3, NITEMARE, JACKHAMMER, TRAKPAK, P-51, RS, SC, 450R, ROUSHCHARGED. Models: Mustang (23), F-150 (20), Super Duty (8), Raptor (4), Ranger (3), Slingshot (1)."
+    },
+    {
+      "id": "amc_ebay",
+      "name": "AMC eBay",
+      "url": "https://ebay.com",
+      "outputDir": "data/amc_ebay",
+      "status": "pending",
+      "priority": 5,
+      "attempted": 0,
+      "lastAttempted": null,
+      "pipeline": {
+        "expectedUrls": 35,
+        "urlsFound": 35,
+        "htmlScraped": 0,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": null,
+        "mods": null
+      }
+    },
+    {
+      "id": "hamann_motorsport",
+      "name": "Hamann Motorsport",
+      "url": "https://hamann-motorsport.com",
+      "outputDir": "data/hamann_motorsport",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-16T19:50:00Z",
+      "pipeline": {
+        "expectedUrls": 23,
+        "urlsFound": 23,
+        "htmlScraped": 23,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 23,
+        "mods": 119
+      },
+      "notes": "COMPLETE: 23 builds, 119 mods. BMW tuner. Categories: Body (46), Wheels (22), Exhaust (19), Suspension (14), Interior (12), Aero (4)."
+    },
+    {
+      "id": "twostepperformance",
+      "name": "Two Step Performance",
+      "url": "https://twostepperformance.com",
+      "outputDir": "data/twostepperformance",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T09:00:00Z",
+      "pipeline": {
+        "expectedUrls": 9,
+        "urlsFound": 9,
+        "htmlScraped": 9,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 9,
+        "mods": 252
+      },
+      "notes": "COMPLETE: 9 builds, 252 mods. Honda specialist tuner (8 Honda + 1 Ford). Chassis: FK8/FL5 Type R, FE1 Si, FC4/FL1 Civic, CV2 Accord, ED8 CRX, EJ6 Civic, FX4 F-150. Top brands: PRL (33), TSP (27), Hybrid Racing (18), 27WON (14). Categories: Engine (62), Suspension (38), Exterior (31), Tuning (28)."
+    },
+    {
+      "id": "paramount_performance",
+      "name": "Paramount Performance",
+      "url": "https://paramount-performance.com",
+      "outputDir": "data/paramount_performance",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T08:15:00Z",
+      "pipeline": {
+        "expectedUrls": 7,
+        "urlsFound": 7,
+        "htmlScraped": 7,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 7,
+        "mods": 77
+      },
+      "notes": "COMPLETE: 7 builds, 77 mods. UK performance tuner. Packages: GRAVITY WAVE (BMW M3), PREDATOR/PREDATOR II (Jaguar F-Type), BEAST (Land Rover Defender), KRAKEN (Mercedes A45), TYPHON (Range Rover SVR), KATANA FIRE (VW Golf R). Categories: Exhaust (22), Exterior (19), Engine (15)."
+    },
+    {
+      "id": "manhart_automotive",
+      "name": "Manhart Automotive",
+      "url": "https://manhart-automotive.de",
+      "outputDir": "data/manhart_automotive",
+      "status": "completed",
+      "priority": 5,
+      "attempted": 1,
+      "lastAttempted": "2026-01-17T07:30:00Z",
+      "pipeline": {
+        "expectedUrls": 5,
+        "urlsFound": 5,
+        "htmlScraped": 5,
+        "htmlFailed": 0,
+        "htmlBlocked": 0,
+        "builds": 5,
+        "mods": 70
+      },
+      "notes": "COMPLETE: 5 builds, 70 mods. German high-end tuner. Vehicles: AMG GT R (585hp), Cayenne CRT 800 (800hp), Defender DP 500, MH1 350, Supra GR 450. Categories: Exhaust (16), Engine (14), Exterior (14), Wheels (12), Suspension (11), Interior (3). Top parts: MHtronik Powerbox, ECU Remapping, Coilover Kits."
     }
   ]
 }

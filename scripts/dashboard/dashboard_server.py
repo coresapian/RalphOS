@@ -9,18 +9,99 @@ import os
 import subprocess
 import http.server
 import socketserver
+import threading
 from pathlib import Path
 from datetime import datetime
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
+import sys
+
+# Add Ralph scripts to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "ralph"))
+
+# Import RalphDuckDB for PRD storage
+try:
+    from ralph_duckdb import RalphDuckDB
+    PRD_DB_AVAILABLE = True
+except ImportError:
+    PRD_DB_AVAILABLE = False
+    print("Warning: RalphDuckDB not available, PRDs will only be stored as JSON files")
 
 # Configuration
 PORT = 8765
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
-SOURCES_FILE = SCRIPT_DIR / "sources.json"
-LOG_FILE = PROJECT_ROOT / "ralph_output.log"
-PRD_FILE = SCRIPT_DIR / "prd.json"
-SCRAPED_BUILDS_DIR = PROJECT_ROOT / "scraped_builds"
+SOURCES_FILE = PROJECT_ROOT / "scripts" / "ralph" / "sources.json"
+LOG_FILE = PROJECT_ROOT / "logs" / "ralph_output.log"
+SCRAPER_LOG_FILE = PROJECT_ROOT / "logs" / "scraper_output.log"
+PRD_FILE = PROJECT_ROOT / "scripts" / "ralph" / "prd.json"  # Active PRD (symlink/copy)
+DATA_DIR = PROJECT_ROOT / "data"
+PRD_DB_PATH = DATA_DIR / "prds.duckdb"  # DuckDB database for PRD storage
+
+# Singleton database connection
+_prd_db = None
+
+def get_prd_db() -> "RalphDuckDB":
+    """Get or create the PRD database connection."""
+    global _prd_db
+    if not PRD_DB_AVAILABLE:
+        return None
+    if _prd_db is None:
+        _prd_db = RalphDuckDB(str(PRD_DB_PATH))
+        _prd_db.init_prd_tables()
+    return _prd_db
+
+def get_source_prd_path(source_id: str) -> Path:
+    """Get the PRD path for a specific source (stored in source's data folder)"""
+    return DATA_DIR / source_id / "prd.json"
+
+def save_prd_to_source(prd: dict, source_id: str = None):
+    """
+    Save PRD to multiple storage locations.
+
+    This multi-save approach:
+    1. Stores PRD in DuckDB database (data/prds.duckdb) for querying and history
+    2. Stores PRD in data/{source_id}/prd.json for file-based access
+    3. Copies to scripts/ralph/prd.json as the "active" PRD for Ralph to read
+    """
+    if source_id is None:
+        source_id = prd.get('sourceId') or prd.get('outputDir', '').split('/')[-1]
+
+    if not source_id:
+        raise ValueError("Cannot save PRD without source_id")
+
+    # 1. Save to DuckDB (primary storage with history tracking)
+    db = get_prd_db()
+    if db:
+        try:
+            db.save_prd(prd, source_id)
+            print(f"PRD saved to DuckDB: {source_id}")
+        except Exception as e:
+            print(f"Warning: DuckDB PRD save failed: {e}")
+
+    # 2. Save to source folder (file-based backup)
+    source_prd_path = get_source_prd_path(source_id)
+    source_prd_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(source_prd_path, 'w') as f:
+        json.dump(prd, f, indent=2)
+
+    # 3. Save to active PRD location (for Ralph to read)
+    with open(PRD_FILE, 'w') as f:
+        json.dump(prd, f, indent=2)
+
+    print(f"PRD saved: {source_prd_path} (source) + {PRD_FILE} (active)")
+    return source_prd_path
+
+STEALTH_SCRAPER = PROJECT_ROOT / "scripts" / "tools" / "aggressive_stealth_scraper.py"
+RALPH_SCRIPT = PROJECT_ROOT / "scripts" / "ralph" / "ralph.sh"
+
+# Track running processes
+scraper_process = None
+scraper_lock = threading.Lock()
+ralph_process = None
+ralph_lock = threading.Lock()
+browser_process = None
+browser_lock = threading.Lock()
+browser_cdp_port = 9222
 
 class DashboardHandler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
@@ -31,7 +112,7 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header('Content-Type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
         self.wfile.write(json.dumps(data).encode())
@@ -39,9 +120,57 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
+    
+    def do_POST(self):
+        path = urlparse(self.path).path
+        content_length = int(self.headers.get('Content-Length', 0))
+        body = self.rfile.read(content_length).decode('utf-8') if content_length > 0 else '{}'
+        
+        try:
+            data = json.loads(body) if body else {}
+        except json.JSONDecodeError:
+            data = {}
+        
+        if path == '/scraper/start':
+            self.handle_start_scraper(data)
+        elif path == '/scraper/stop':
+            self.handle_stop_scraper()
+        elif path == '/ralph/start':
+            self.handle_start_ralph(data)
+        elif path == '/ralph/stop':
+            self.handle_stop_ralph()
+        elif path == '/ralph/kill-all':
+            self.handle_kill_all_ralphs()
+        elif path == '/prd/generate':
+            self.handle_generate_prd(data)
+        elif path == '/prd/save':
+            self.handle_save_prd(data)
+        elif path == '/prd/check-file':
+            self.handle_check_prd_file(data)
+        elif path == '/prd/analyze-domain':
+            self.handle_analyze_domain(data)
+        elif path == '/prd/generate-from-analysis':
+            self.handle_generate_prd_from_analysis(data)
+        elif path == '/browser/start':
+            self.handle_browser_start(data)
+        elif path == '/browser/stop':
+            self.handle_browser_stop()
+        elif path == '/browser/screenshot':
+            self.handle_browser_screenshot()
+        elif path == '/browser/navigate':
+            self.handle_browser_navigate(data)
+        elif path == '/browser/save-dom':
+            self.handle_browser_save_dom(data)
+        elif path == '/analyze-error':
+            self.handle_analyze_error(data)
+        elif path.startswith('/source/') and path.endswith('/retry'):
+            source_id = path.split('/')[2]
+            self.handle_retry_source(source_id)
+        else:
+            self.send_json({'error': 'Not found'}, 404)
     
     def do_GET(self):
         path = urlparse(self.path).path
@@ -50,8 +179,22 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             self.handle_status()
         elif path == '/log':
             self.handle_log()
+        elif path == '/log/fresh':
+            self.handle_log_fresh()
         elif path == '/sources':
             self.handle_sources()
+        elif path == '/scraper/status':
+            self.handle_scraper_status()
+        elif path == '/scraper/log':
+            self.handle_scraper_log()
+        elif path == '/ralph/status':
+            self.handle_ralph_status()
+        elif path == '/browser/screenshot':
+            self.handle_browser_screenshot()
+        elif path == '/prds':
+            self.handle_list_prds()
+        elif path == '/prds/stats':
+            self.handle_prd_stats()
         elif path == '/':
             self.serve_dashboard()
         else:
@@ -70,13 +213,17 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
     
     def handle_status(self):
         """Return comprehensive status data"""
+        all_sources = self.get_all_sources()
+        builds_mods = self.count_builds_and_mods(all_sources)
         data = {
             'timestamp': datetime.now().isoformat(),
             'running': self.check_ralph_running(),
             'sources': self.get_sources_summary(),
             'current_source': self.get_current_source(),
-            'all_sources': self.get_all_sources(),
+            'all_sources': all_sources,
             'html_files': self.count_html_files(),
+            'total_builds': builds_mods['builds'],
+            'total_mods': builds_mods['mods'],
             'log_tail': self.get_log_tail(100)
         }
         self.send_json(data)
@@ -89,6 +236,1810 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
     def handle_sources(self):
         """Return all sources"""
         self.send_json({'sources': self.get_all_sources()})
+
+    def handle_list_prds(self):
+        """Return all PRDs from database"""
+        db = get_prd_db()
+        if not db:
+            # Fallback to file-based PRD listing
+            prds = []
+            for source_dir in DATA_DIR.iterdir():
+                if source_dir.is_dir():
+                    prd_path = source_dir / "prd.json"
+                    if prd_path.exists():
+                        try:
+                            with open(prd_path) as f:
+                                prd = json.load(f)
+                                stories = prd.get('userStories', [])
+                                prds.append({
+                                    'source_id': source_dir.name,
+                                    'project_name': prd.get('projectName', ''),
+                                    'target_url': prd.get('targetUrl', ''),
+                                    'status': 'complete' if all(s.get('passes') for s in stories) else 'active',
+                                    'stories_total': len(stories),
+                                    'stories_completed': sum(1 for s in stories if s.get('passes')),
+                                })
+                        except:
+                            pass
+            self.send_json({'prds': prds, 'source': 'files'})
+            return
+
+        try:
+            prds = db.list_prds()
+            self.send_json({'prds': prds, 'source': 'duckdb'})
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+
+    def handle_prd_stats(self):
+        """Return PRD statistics from database"""
+        db = get_prd_db()
+        if not db:
+            self.send_json({'error': 'DuckDB not available'}, 503)
+            return
+
+        try:
+            stats = db.get_prd_stats()
+            self.send_json(stats)
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+
+    def handle_start_scraper(self, data):
+        """Start the aggressive stealth scraper"""
+        global scraper_process
+        
+        with scraper_lock:
+            if scraper_process and scraper_process.poll() is None:
+                self.send_json({'error': 'Scraper already running', 'running': True}, 400)
+                return
+            
+            source = data.get('source')
+            if not source:
+                self.send_json({'error': 'Source is required'}, 400)
+                return
+            
+            # Build command
+            cmd = ['python3', str(STEALTH_SCRAPER), '--source', source]
+            
+            # Add optional parameters
+            if data.get('minDelay'):
+                cmd.extend(['--min-delay', str(data['minDelay'])])
+            if data.get('maxDelay'):
+                cmd.extend(['--max-delay', str(data['maxDelay'])])
+            if data.get('dailyLimit'):
+                cmd.extend(['--daily-limit', str(data['dailyLimit'])])
+            if data.get('rotateEvery'):
+                cmd.extend(['--rotate-every', str(data['rotateEvery'])])
+            if data.get('limit'):
+                cmd.extend(['--limit', str(data['limit'])])
+            if data.get('initialBackoff'):
+                cmd.extend(['--initial-backoff', str(data['initialBackoff'])])
+            if data.get('noHeadless'):
+                cmd.append('--no-headless')
+            
+            # Start scraper process
+            SCRAPER_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+            log_file = open(SCRAPER_LOG_FILE, 'w')
+            
+            try:
+                scraper_process = subprocess.Popen(
+                    cmd,
+                    stdout=log_file,
+                    stderr=subprocess.STDOUT,
+                    cwd=str(PROJECT_ROOT)
+                )
+                
+                self.send_json({
+                    'success': True,
+                    'pid': scraper_process.pid,
+                    'command': ' '.join(cmd),
+                    'message': f'Scraper started for {source}'
+                })
+            except Exception as e:
+                self.send_json({'error': str(e)}, 500)
+    
+    def handle_stop_scraper(self):
+        """Stop the running scraper"""
+        global scraper_process
+        
+        with scraper_lock:
+            if scraper_process and scraper_process.poll() is None:
+                scraper_process.terminate()
+                try:
+                    scraper_process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    scraper_process.kill()
+                self.send_json({'success': True, 'message': 'Scraper stopped'})
+            else:
+                self.send_json({'success': True, 'message': 'No scraper running'})
+    
+    def handle_scraper_status(self):
+        """Get scraper status"""
+        global scraper_process
+        
+        with scraper_lock:
+            running = scraper_process and scraper_process.poll() is None
+            pid = scraper_process.pid if running else None
+            
+            # Get checkpoint data if exists
+            checkpoint_data = {}
+            if running or True:  # Always try to get checkpoint
+                # Find checkpoint from most recent source
+                sources = self.load_sources()
+                for source in sources:
+                    checkpoint_path = PROJECT_ROOT / source.get('outputDir', '') / 'aggressive_checkpoint.json'
+                    if checkpoint_path.exists():
+                        try:
+                            with open(checkpoint_path) as f:
+                                checkpoint_data = json.load(f)
+                                checkpoint_data['source'] = source.get('id')
+                                break
+                        except:
+                            pass
+            
+            self.send_json({
+                'running': running,
+                'pid': pid,
+                'checkpoint': checkpoint_data
+            })
+    
+    def handle_scraper_log(self):
+        """Get scraper log tail"""
+        lines = 100
+        try:
+            if SCRAPER_LOG_FILE.exists():
+                result = subprocess.run(
+                    ['tail', '-n', str(lines), str(SCRAPER_LOG_FILE)],
+                    capture_output=True,
+                    text=True
+                )
+                self.send_json({'log': result.stdout})
+            else:
+                self.send_json({'log': 'No scraper log available'})
+        except Exception as e:
+            self.send_json({'log': f'Error reading log: {e}'})
+    
+    def handle_log_fresh(self):
+        """Get fresh log tail - forces re-read from disk"""
+        lines = int(self.path.split('?lines=')[-1]) if '?lines=' in self.path else 150
+        try:
+            if LOG_FILE.exists():
+                # Force fresh read by not caching
+                with open(LOG_FILE, 'r') as f:
+                    all_lines = f.readlines()
+                    tail_lines = all_lines[-lines:] if len(all_lines) > lines else all_lines
+                    log_content = ''.join(tail_lines)
+                self.send_json({
+                    'log': log_content,
+                    'timestamp': datetime.now().isoformat(),
+                    'total_lines': len(all_lines)
+                })
+            else:
+                self.send_json({'log': 'No log file found', 'timestamp': datetime.now().isoformat()})
+        except Exception as e:
+            self.send_json({'log': f'Error reading log: {e}', 'timestamp': datetime.now().isoformat()})
+    
+    def handle_start_ralph(self, data):
+        """Start the Ralph loop"""
+        global ralph_process
+        
+        with ralph_lock:
+            if ralph_process and ralph_process.poll() is None:
+                self.send_json({'error': 'Ralph already running', 'running': True}, 400)
+                return
+            
+            iterations = data.get('iterations', 25)
+            selected_sources = data.get('sources', [])
+            
+            # If sources are selected, update sources.json to prioritize them
+            if selected_sources:
+                try:
+                    self._set_source_priority(selected_sources)
+                except Exception as e:
+                    print(f"Warning: Failed to set source priority: {e}")
+            
+            # Build command
+            cmd = ['bash', str(RALPH_SCRIPT), str(iterations)]
+            
+            try:
+                # Create/clear log file
+                LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+                log_file = open(LOG_FILE, 'a')
+                
+                # Set environment with selected sources
+                env = {**os.environ, 'TERM': 'xterm-256color'}
+                if selected_sources:
+                    env['RALPH_TARGET_SOURCES'] = ','.join(selected_sources)
+                
+                ralph_process = subprocess.Popen(
+                    cmd,
+                    stdout=log_file,
+                    stderr=subprocess.STDOUT,
+                    cwd=str(PROJECT_ROOT),
+                    env=env
+                )
+                
+                self.send_json({
+                    'success': True,
+                    'pid': ralph_process.pid,
+                    'iterations': iterations,
+                    'sources': selected_sources,
+                    'message': f'Ralph started with {iterations} iterations' + 
+                              (f' targeting {len(selected_sources)} source(s)' if selected_sources else '')
+                })
+            except Exception as e:
+                self.send_json({'error': str(e)}, 500)
+    
+    def _set_source_priority(self, source_ids):
+        """Set selected sources to high priority and create PRD for first one"""
+        try:
+            with open(SOURCES_FILE, 'r') as f:
+                data = json.load(f)
+            
+            selected_source = None
+            for source in data.get('sources', []):
+                if source.get('id') in source_ids:
+                    # Set to in_progress and high priority
+                    source['status'] = 'in_progress'
+                    source['priority'] = 1
+                    if not selected_source:
+                        selected_source = source
+                else:
+                    # Lower priority for non-selected sources
+                    if source.get('priority', 5) < 5:
+                        source['priority'] = 5
+            
+            with open(SOURCES_FILE, 'w') as f:
+                json.dump(data, f, indent=2)
+            
+            # Create a new PRD for the selected source
+            if selected_source:
+                self._create_prd_for_source(selected_source)
+                
+        except Exception as e:
+            raise Exception(f"Failed to update sources.json: {e}")
+    
+    def _create_prd_for_source(self, source):
+        """Create a new PRD file for the selected source"""
+        pipeline = source.get('pipeline', {})
+        urls_found = pipeline.get('urlsFound', 0)
+        html_scraped = pipeline.get('htmlScraped', 0)
+        builds = pipeline.get('builds', 0)
+        
+        # Determine which stage to start from
+        stories = []
+        
+        # Stage 1: URL Discovery
+        if urls_found == 0:
+            stories.append({
+                "id": "URL-001",
+                "title": "Discover all build/vehicle URLs on the site",
+                "acceptanceCriteria": [
+                    "urls.json contains all discoverable URLs",
+                    "URLs are deduplicated and normalized"
+                ],
+                "priority": 1,
+                "passes": False
+            })
+        
+        # Stage 2: HTML Scraping
+        if urls_found > 0 and html_scraped < urls_found:
+            stories.append({
+                "id": "HTML-001",
+                "title": "Scrape HTML for all discovered URLs",
+                "acceptanceCriteria": [
+                    "HTML files saved for each URL",
+                    "Use stealth scraper for protected sites"
+                ],
+                "priority": 1,
+                "passes": False,
+                "notes": "Use aggressive_stealth_scraper.py for anti-bot protection"
+            })
+        
+        # Stage 3: Build Extraction
+        if html_scraped > 0 and (builds is None or builds == 0):
+            stories.append({
+                "id": "BUILD-001",
+                "title": "Extract build data from HTML files",
+                "acceptanceCriteria": [
+                    "builds.json contains structured vehicle data",
+                    "Follow schema/build_extraction_schema.json"
+                ],
+                "priority": 1,
+                "passes": False
+            })
+        
+        # Stage 4: Mod Extraction
+        if builds and builds > 0:
+            stories.append({
+                "id": "MOD-001",
+                "title": "Extract modifications from builds",
+                "acceptanceCriteria": [
+                    "mods.json contains part/modification data",
+                    "Follow schema/Vehicle_Componets.json"
+                ],
+                "priority": 1,
+                "passes": False
+            })
+        
+        # Default story if nothing else
+        if not stories:
+            stories.append({
+                "id": "VERIFY-001",
+                "title": "Verify source data completeness",
+                "acceptanceCriteria": [
+                    "All pipeline stages verified",
+                    "Data quality checked"
+                ],
+                "priority": 1,
+                "passes": False
+            })
+        
+        prd = {
+            "projectName": f"{source.get('name', source.get('id'))} Scraping",
+            "sourceId": source.get('id'),
+            "branchName": "main",
+            "targetUrl": source.get('url', ''),
+            "outputDir": source.get('outputDir', f"data/{source.get('id')}"),
+            "userStories": stories,
+            "createdAt": datetime.now().isoformat(),
+            "createdBy": "dashboard"
+        }
+        
+        # Write the PRD to both source folder and active location
+        source_prd_path = save_prd_to_source(prd, source.get('id'))
+
+        print(f"Created PRD for {source.get('id')} with {len(stories)} stories at {source_prd_path}")
+    
+    def handle_save_prd(self, data):
+        """Save PRD to file"""
+        prd = data.get('prd')
+        if not prd:
+            self.send_json({'error': 'PRD content is required'}, 400)
+            return
+        
+        try:
+            # Ensure it's valid JSON
+            if isinstance(prd, str):
+                prd = json.loads(prd)
+
+            # Write to both source folder and active location
+            source_id = prd.get('sourceId') or prd.get('outputDir', '').split('/')[-1]
+            source_prd_path = save_prd_to_source(prd, source_id)
+
+            self.send_json({
+                'success': True,
+                'message': 'PRD saved successfully',
+                'path': str(source_prd_path),
+                'active_path': str(PRD_FILE)
+            })
+
+            print(f"PRD saved for {source_id}")
+            
+        except json.JSONDecodeError as e:
+            self.send_json({'error': f'Invalid JSON: {str(e)}'}, 400)
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+    
+    def handle_check_prd_file(self, data):
+        """Check if a PRD-related file exists and return its content"""
+        filename = data.get('filename')
+        if not filename:
+            self.send_json({'error': 'filename is required'}, 400)
+            return
+        
+        # Security: Only allow specific file patterns
+        if not filename.endswith(('_domain_analysis.md', '_prd.md', '_prd.json')):
+            self.send_json({'error': 'Invalid filename pattern'}, 400)
+            return
+        
+        # Check in multiple locations
+        search_paths = [
+            PROJECT_ROOT / "scripts" / "ralph" / filename,
+            PROJECT_ROOT / "data" / filename,
+            PROJECT_ROOT / filename,
+        ]
+        
+        # Also check in source-specific data directories
+        source_id = filename.split('_')[0] if '_' in filename else None
+        if source_id:
+            search_paths.insert(0, PROJECT_ROOT / "data" / source_id / filename)
+        
+        for file_path in search_paths:
+            if file_path.exists():
+                try:
+                    content = file_path.read_text()
+                    self.send_json({
+                        'exists': True,
+                        'path': str(file_path),
+                        'content': content[:10000]  # Limit content size
+                    })
+                    return
+                except Exception as e:
+                    self.send_json({'exists': True, 'path': str(file_path), 'error': str(e)})
+                    return
+        
+        self.send_json({'exists': False})
+    
+    def handle_analyze_domain(self, data):
+        """Run domain analysis for a source using Claude CLI with browser automation"""
+        source_id = data.get('sourceId')
+        source_name = data.get('sourceName')
+        source_url = data.get('sourceUrl')
+        
+        if not source_id:
+            self.send_json({'error': 'sourceId is required'}, 400)
+            return
+        
+        if not source_url:
+            self.send_json({'error': 'sourceUrl is required for browser analysis'}, 400)
+            return
+        
+        # Create output directory
+        output_dir = PROJECT_ROOT / "data" / source_id
+        output_dir.mkdir(parents=True, exist_ok=True)
+        analysis_file = output_dir / f"{source_id}_domain_analysis.md"
+        
+        # Try Claude CLI with browser first, fallback to Gemini
+        try:
+            analysis_content = self._run_claude_browser_analysis(source_id, source_name, source_url, output_dir)
+            
+            if analysis_content:
+                analysis_file.write_text(analysis_content)
+                self.send_json({
+                    'success': True,
+                    'analysis': analysis_content,
+                    'path': str(analysis_file),
+                    'method': 'claude-browser'
+                })
+                return
+            
+            # Fallback to Gemini
+            import os
+            gemini_key = os.environ.get('GEMINI_API_KEY')
+            if gemini_key:
+                analysis_content = self._run_gemini_analysis(source_id, source_name, source_url, gemini_key)
+                if analysis_content:
+                    analysis_file.write_text(analysis_content)
+                    self.send_json({
+                        'success': True,
+                        'analysis': analysis_content,
+                        'path': str(analysis_file),
+                        'method': 'gemini'
+                    })
+                    return
+            
+            # Final fallback: template
+            template = self._create_analysis_template(source_id, source_name, source_url)
+            analysis_file.write_text(template)
+            self.send_json({
+                'success': True,
+                'analysis': template,
+                'path': str(analysis_file),
+                'method': 'template',
+                'note': 'Claude CLI unavailable - template generated'
+            })
+            
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+    
+    def _run_claude_browser_analysis(self, source_id, source_name, source_url, output_dir):
+        """Run domain analysis using Claude CLI with browser automation"""
+        try:
+            # Create prompt file for Claude
+            prompt_file = output_dir / "analysis_prompt.md"
+            screenshot_path = output_dir / f"{source_id}_screenshot.png"
+            
+            prompt_content = f"""# Domain Analysis Task: {source_name or source_id}
+
+You are analyzing an automotive website for a web scraping project.
+
+## Target
+- **URL**: {source_url}
+- **Source ID**: {source_id}
+- **Output Directory**: {output_dir}
+
+## Instructions
+
+1. **Navigate to the site** using browser tools:
+   - Use `mcp_cursor-ide-browser_browser_navigate` to go to {source_url}
+   - Wait for the page to load
+
+2. **Take a snapshot** to understand the page structure:
+   - Use `mcp_cursor-ide-browser_browser_snapshot` to get the accessibility tree
+   - This shows all interactive elements and content structure
+
+3. **Take a screenshot** for visual reference:
+   - Use `mcp_cursor-ide-browser_browser_take_screenshot` and save to {screenshot_path}
+
+4. **Analyze and document** the following in Markdown format:
+
+### Site Analysis Report
+
+#### 1. Site Type & Content
+- What type of automotive content is this? (vehicle listings, builds, forum, gallery, auction)
+- What's the primary focus? (sales, community, builds showcase)
+- Estimated content volume
+
+#### 2. URL Structure
+- Homepage layout and navigation
+- URL patterns for vehicle/build pages (e.g., `/vehicle/123`, `/builds/slug`)
+- Category/make/model organization
+- Pagination style (numbered pages, infinite scroll, load more)
+
+#### 3. Data Fields Available
+Based on what you can see:
+- Vehicle info: year, make, model, trim, VIN
+- Modifications/parts lists
+- Images (count, quality)
+- Build story/description
+- Seller/owner info
+- Price/auction data
+
+#### 4. Technical Assessment
+- JavaScript rendering: Heavy SPA or server-rendered?
+- Anti-bot indicators: Cloudflare, CAPTCHAs, rate limiting warnings
+- Page load behavior: lazy loading, dynamic content
+- Recommended approach: httpx (simple) or Camoufox (stealth)
+
+#### 5. Key Selectors (from snapshot)
+- Main content container
+- Vehicle/build card selectors
+- Pagination controls
+- Image gallery selectors
+
+#### 6. Scraping Strategy Recommendation
+- URL discovery approach
+- HTML scraping method
+- Rate limiting (recommended delay between requests)
+- Special considerations
+
+5. **Output** the complete analysis as a Markdown document.
+
+IMPORTANT: Actually visit the site with the browser tools - don't just describe what you would do.
+"""
+            prompt_file.write_text(prompt_content)
+            
+            # Run Claude CLI with browser access
+            cmd = [
+                'claude',
+                '--print',
+                '--dangerously-skip-permissions',
+                '-p', str(prompt_file),
+                '--output-format', 'text'
+            ]
+            
+            print(f"Running Claude browser analysis for {source_id}...")
+            
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=180,  # 3 minute timeout
+                cwd=str(PROJECT_ROOT)
+            )
+            
+            if result.returncode == 0 and result.stdout:
+                output = result.stdout.strip()
+                
+                # Add header and metadata
+                analysis = f"""# Domain Analysis: {source_name or source_id}
+
+**URL**: {source_url}  
+**Generated**: {datetime.now().isoformat()}  
+**Method**: Claude CLI with Browser Automation
+
+---
+
+{output}
+
+---
+
+*Screenshot saved to: {screenshot_path}*
+"""
+                # Clean up prompt file
+                prompt_file.unlink(missing_ok=True)
+                
+                return analysis
+            else:
+                print(f"Claude CLI failed: {result.stderr}")
+                return None
+                
+        except subprocess.TimeoutExpired:
+            print(f"Claude analysis timed out for {source_id}")
+            return None
+        except FileNotFoundError:
+            print("Claude CLI not found - install with: npm install -g @anthropic-ai/claude-code")
+            return None
+        except Exception as e:
+            print(f"Claude browser analysis failed: {e}")
+            return None
+    
+    def _create_analysis_template(self, source_id, source_name, source_url):
+        """Create a template analysis when automated analysis fails"""
+        return f"""# Domain Analysis: {source_name or source_id}
+
+**URL**: {source_url}  
+**Generated**: {datetime.now().isoformat()}  
+**Method**: Template (automated analysis unavailable)
+
+---
+
+## ⚠️ Manual Analysis Required
+
+Automated browser analysis was not available. Please manually analyze the site.
+
+### Quick Checklist
+
+1. **Visit the site**: {source_url}
+
+2. **Check sitemap**: {source_url}/sitemap.xml
+
+3. **Identify content type**:
+   - [ ] Vehicle listings / sales
+   - [ ] Build threads / project cars
+   - [ ] Forum discussions
+   - [ ] Gallery / showcase
+   - [ ] Auction house
+
+4. **Note URL patterns**:
+   - Individual build/vehicle URLs
+   - Category/make/model pages
+   - Pagination format
+
+5. **Check for anti-bot**:
+   - [ ] Cloudflare challenge
+   - [ ] CAPTCHA on entry
+   - [ ] Rate limiting warnings
+   - [ ] JavaScript required
+
+6. **Recommended scraping approach**:
+   - Simple sites: `httpx` with 2-3 second delays
+   - Protected sites: `aggressive_stealth_scraper.py`
+
+### Commands to Test
+
+```bash
+# Check sitemap
+curl -s "{source_url}/sitemap.xml" | head -50
+
+# Test basic fetch
+curl -s -o /dev/null -w "%{{http_code}}" "{source_url}"
+
+# Run stealth scraper test
+python scripts/tools/aggressive_stealth_scraper.py --source {source_id} --limit 5
+```
+
+---
+
+*Complete this analysis manually, then generate PRD*
+"""
+    
+    def _run_gemini_analysis(self, source_id, source_name, source_url, api_key):
+        """Run analysis using Gemini API (fallback)"""
+        try:
+            import google.generativeai as genai
+            
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            
+            prompt = f"""You are an expert web scraping analyst. Analyze this automotive website for a scraping project.
+
+Website: {source_name or source_id}
+URL: {source_url}
+
+Please provide a detailed analysis covering:
+
+1. **Site Type**: What kind of automotive content is this? (listings, builds, forum, gallery)
+
+2. **URL Discovery Strategy**: 
+   - How to find all vehicle/build URLs
+   - Pagination approach (pages, infinite scroll, load more)
+   - Category/make/model organization
+
+3. **Data Fields Available**:
+   - Vehicle info (year, make, model, trim)
+   - Modifications/parts
+   - Images
+   - Build story/description
+
+4. **Technical Assessment**:
+   - JavaScript rendering requirements
+   - Anti-bot protection (Cloudflare, rate limits)
+   - Recommended scraping tool (httpx for simple, Camoufox for protected)
+   - Rate limiting recommendations
+
+5. **Extraction Strategy**:
+   - Key HTML selectors or patterns
+   - API endpoints if any
+   - Special considerations
+
+Be specific and actionable. This analysis will guide automated scraping."""
+
+            response = model.generate_content(prompt)
+            return f"""# Domain Analysis: {source_name or source_id}
+
+**URL**: {source_url}  
+**Generated**: {datetime.now().isoformat()}  
+**Method**: Gemini API Analysis
+
+---
+
+{response.text}
+"""
+            
+        except Exception as e:
+            print(f"Gemini analysis failed: {e}")
+            return None
+    
+    def handle_generate_prd_from_analysis(self, data):
+        """Generate PRD from domain analysis using LLM"""
+        source_id = data.get('sourceId')
+        source_name = data.get('sourceName')
+        source_url = data.get('sourceUrl')
+        
+        if not source_id:
+            self.send_json({'error': 'sourceId is required'}, 400)
+            return
+        
+        # Find and read domain analysis
+        analysis_file = PROJECT_ROOT / "data" / source_id / f"{source_id}_domain_analysis.md"
+        analysis_content = ""
+        
+        if analysis_file.exists():
+            analysis_content = analysis_file.read_text()
+        
+        # Output files
+        output_dir = PROJECT_ROOT / "data" / source_id
+        output_dir.mkdir(parents=True, exist_ok=True)
+        prd_md_file = output_dir / f"{source_id}_prd.md"
+        
+        try:
+            import os
+            gemini_key = os.environ.get('GEMINI_API_KEY')
+            
+            if gemini_key and analysis_content:
+                prd_content = self._generate_prd_with_gemini(
+                    source_id, source_name, source_url, 
+                    analysis_content, gemini_key
+                )
+                if prd_content:
+                    # Save PRD markdown
+                    prd_md_file.write_text(prd_content)
+
+                    # Create JSON PRD and save to both source folder and active location
+                    prd_json = self._convert_prd_to_json(source_id, source_name, source_url, prd_content)
+                    if prd_json:
+                        source_prd_path = save_prd_to_source(prd_json, source_id)
+
+                    self.send_json({
+                        'success': True,
+                        'prd': prd_content,
+                        'path': str(prd_md_file),
+                        'json_path': str(get_source_prd_path(source_id)),
+                        'active_path': str(PRD_FILE)
+                    })
+                    return
+
+            # Fallback: Generate template PRD
+            prd_content = self._generate_template_prd(source_id, source_name, source_url, analysis_content)
+            prd_md_file.write_text(prd_content)
+
+            # Create JSON PRD and save to both locations
+            prd_json = self._convert_prd_to_json(source_id, source_name, source_url, prd_content)
+            if prd_json:
+                source_prd_path = save_prd_to_source(prd_json, source_id)
+
+            self.send_json({
+                'success': True,
+                'prd': prd_content,
+                'path': str(prd_md_file),
+                'json_path': str(get_source_prd_path(source_id)),
+                'note': 'Template PRD - customize user stories as needed'
+            })
+            
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+    
+    def _generate_prd_with_gemini(self, source_id, source_name, source_url, analysis, api_key):
+        """Generate PRD using Gemini based on domain analysis"""
+        try:
+            import google.generativeai as genai
+            
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            
+            prompt = f"""Based on this domain analysis, create a detailed PRD (Product Requirements Document) for scraping this automotive website.
+
+## Domain Analysis:
+{analysis}
+
+## Source Info:
+- Source ID: {source_id}
+- Source Name: {source_name or source_id}
+- URL: {source_url or 'Unknown'}
+
+## Create a PRD with:
+
+### Project Overview
+Brief description of what we're scraping and why.
+
+### User Stories
+
+Create 3-5 specific, actionable user stories following this format:
+
+#### US-001: URL Discovery
+**Goal**: [What we want to achieve]
+**Acceptance Criteria**:
+- [ ] Specific, measurable criterion 1
+- [ ] Specific, measurable criterion 2
+
+**Implementation Notes**:
+- Specific technical guidance based on the analysis
+- Tools to use (sitemap crawler, pagination handler, etc.)
+
+#### US-002: HTML Scraping  
+**Goal**: [What we want to achieve]
+**Acceptance Criteria**:
+- [ ] Specific criterion
+
+**Implementation Notes**:
+- Whether to use httpx or Camoufox stealth
+- Rate limiting requirements
+- Session handling needs
+
+#### US-003: Data Extraction
+**Goal**: [What we want to achieve]  
+**Acceptance Criteria**:
+- [ ] Fields to extract
+- [ ] Data quality requirements
+
+**Implementation Notes**:
+- Key selectors/patterns
+- Data normalization needs
+
+### Technical Requirements
+- Scraping mode (standard/stealth)
+- Rate limits
+- Error handling approach
+
+### Success Metrics
+- Expected number of builds
+- Data completeness targets
+
+Be specific and base recommendations on the domain analysis provided."""
+
+            response = model.generate_content(prompt)
+            return response.text
+            
+        except Exception as e:
+            print(f"Gemini PRD generation failed: {e}")
+            return None
+    
+    def _generate_template_prd(self, source_id, source_name, source_url, analysis):
+        """Generate template PRD when LLM is not available"""
+        has_analysis = bool(analysis and len(analysis) > 100)
+        
+        return f"""# PRD: {source_name or source_id} Scraping Project
+
+## Project Overview
+Scrape vehicle build data from {source_name or source_id} ({source_url or 'URL TBD'}).
+
+## Source Information
+- **Source ID**: {source_id}
+- **Source Name**: {source_name or source_id}
+- **URL**: {source_url or 'Not specified'}
+- **Analysis Available**: {'Yes' if has_analysis else 'No - manual review needed'}
+
+---
+
+## User Stories
+
+### US-001: URL Discovery
+**Goal**: Discover all vehicle/build URLs on the site
+
+**Acceptance Criteria**:
+- [ ] urls.jsonl contains all discoverable URLs
+- [ ] URLs are deduplicated and normalized
+- [ ] Pagination/infinite scroll handled
+
+**Implementation Notes**:
+- Check for sitemap at /sitemap.xml
+- Identify category/listing pages
+- Handle pagination or infinite scroll
+
+---
+
+### US-002: HTML Scraping
+**Goal**: Scrape HTML for all discovered URLs
+
+**Acceptance Criteria**:
+- [ ] HTML files saved for each URL
+- [ ] Success rate > 95%
+- [ ] Respectful rate limiting applied
+
+**Implementation Notes**:
+- Use `aggressive_stealth_scraper.py` if anti-bot detected
+- Otherwise use standard httpx scraper
+- Rate limit: 2-5 second delays minimum
+
+---
+
+### US-003: Build Data Extraction
+**Goal**: Extract structured build data from HTML
+
+**Acceptance Criteria**:
+- [ ] builds.jsonl contains vehicle data
+- [ ] Required fields: build_id, year, make, model, source_url
+- [ ] Images extracted to gallery_images array
+
+**Implementation Notes**:
+- Create extractor in src/scrapers/core/extractors/{source_id}.py
+- Follow BaseExtractor pattern
+- Register with @register_extractor decorator
+
+---
+
+### US-004: Modification Extraction
+**Goal**: Extract parts/modifications from builds
+
+**Acceptance Criteria**:
+- [ ] mods.jsonl contains modification data
+- [ ] Categories assigned (Engine, Suspension, etc.)
+- [ ] Brand/part names extracted where visible
+
+**Implementation Notes**:
+- Use LLM extraction pipeline if build_story available
+- Otherwise extract from structured mod lists
+
+---
+
+## Technical Requirements
+
+| Setting | Value |
+|---------|-------|
+| Scrape Mode | {'Stealth (Camoufox)' if 'protected' in analysis.lower() or 'cloudflare' in analysis.lower() else 'Standard (httpx)'} |
+| Min Delay | 2 seconds |
+| Max Delay | 5 seconds |
+| Concurrency | 1-2 |
+| Daily Limit | 500 |
+
+---
+
+## Success Metrics
+- URLs discovered: TBD after US-001
+- HTML scraped: 95%+ success rate
+- Builds extracted: Match HTML count
+- Data quality: All required fields populated
+
+---
+
+*PRD generated: {datetime.now().isoformat()}*
+*Review and customize user stories based on actual site structure*
+"""
+    
+    def _convert_prd_to_json(self, source_id, source_name, source_url, prd_markdown):
+        """Convert markdown PRD to JSON format for Ralph"""
+        try:
+            # Parse user stories from markdown
+            stories = []
+            
+            # Look for US-XXX patterns
+            import re
+            story_pattern = r'###\s+US-(\d+):\s*(.+?)(?=\n)'
+            matches = re.findall(story_pattern, prd_markdown)
+            
+            for i, (story_num, title) in enumerate(matches):
+                story_id = f"US-{story_num.zfill(3)}"
+                
+                # Determine acceptance criteria
+                criteria = []
+                if 'url' in title.lower() or 'discover' in title.lower():
+                    criteria = [
+                        "urls.jsonl contains all discoverable URLs",
+                        "URLs are deduplicated and normalized"
+                    ]
+                elif 'html' in title.lower() or 'scrap' in title.lower():
+                    criteria = [
+                        "HTML files saved for each URL",
+                        "Success rate > 95%"
+                    ]
+                elif 'build' in title.lower() or 'extract' in title.lower():
+                    criteria = [
+                        "builds.jsonl contains vehicle data",
+                        "Required fields populated"
+                    ]
+                elif 'mod' in title.lower():
+                    criteria = [
+                        "mods.jsonl contains modification data",
+                        "Categories assigned correctly"
+                    ]
+                else:
+                    criteria = ["Task completed successfully"]
+                
+                stories.append({
+                    "id": story_id,
+                    "title": title.strip(),
+                    "acceptanceCriteria": criteria,
+                    "priority": i + 1,
+                    "passes": False
+                })
+            
+            # Default stories if none found
+            if not stories:
+                stories = [
+                    {
+                        "id": "URL-001",
+                        "title": "Discover all build/vehicle URLs",
+                        "acceptanceCriteria": ["urls.jsonl populated"],
+                        "priority": 1,
+                        "passes": False
+                    },
+                    {
+                        "id": "HTML-001", 
+                        "title": "Scrape HTML for all URLs",
+                        "acceptanceCriteria": ["HTML files saved"],
+                        "priority": 2,
+                        "passes": False
+                    },
+                    {
+                        "id": "BUILD-001",
+                        "title": "Extract build data",
+                        "acceptanceCriteria": ["builds.jsonl populated"],
+                        "priority": 3,
+                        "passes": False
+                    }
+                ]
+            
+            return {
+                "projectName": f"{source_name or source_id} Scraping",
+                "sourceId": source_id,
+                "branchName": "main",
+                "targetUrl": source_url or "",
+                "outputDir": f"data/{source_id}",
+                "userStories": stories,
+                "createdAt": datetime.now().isoformat(),
+                "createdBy": "dashboard-prd-generator"
+            }
+            
+        except Exception as e:
+            print(f"Error converting PRD to JSON: {e}")
+            return None
+
+    def handle_generate_prd(self, data):
+        """Generate PRD using browser analysis"""
+        source_id = data.get('sourceId')
+        url = data.get('url')
+        name = data.get('name')
+        use_browser = data.get('useBrowser', True)
+        
+        if not source_id or not url:
+            self.send_json({'error': 'sourceId and url are required'}, 400)
+            return
+        
+        try:
+            # Find source in sources.json
+            sources = self.load_sources()
+            source = next((s for s in sources if s.get('id') == source_id), None)
+            
+            if not source:
+                self.send_json({'error': f'Source {source_id} not found'}, 404)
+                return
+            
+            if use_browser:
+                # Create a prompt file for Claude to analyze the site
+                self._generate_prd_with_browser(source)
+            else:
+                # Use basic PRD generation
+                self._create_prd_for_source(source)
+            
+            self.send_json({
+                'success': True,
+                'message': f'PRD generated for {name}',
+                'sourceId': source_id
+            })
+            
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+    
+    def _generate_prd_with_browser(self, source):
+        """Generate PRD by running Claude with browser tools to analyze the site"""
+        source_id = source.get('id')
+        url = source.get('url')
+        name = source.get('name', source_id)
+        output_dir = source.get('outputDir', f'data/{source_id}')
+        
+        # Create the analysis prompt
+        prompt = f'''You are analyzing a website to create a scraping PRD (Product Requirements Document).
+
+TARGET SITE: {name}
+URL: {url}
+OUTPUT DIR: {output_dir}
+
+YOUR TASK:
+1. Use the browser tools to navigate to {url}
+2. Take a snapshot to understand the site structure
+3. Identify:
+   - What type of content is on this site (vehicle listings, build threads, gallery, etc.)
+   - How to find all vehicle/build URLs (pagination, infinite scroll, categories)
+   - What data can be extracted (year, make, model, mods, images, etc.)
+   - Any anti-bot protections (Cloudflare, rate limiting)
+
+4. Create a PRD file at scripts/ralph/prd.json with appropriate user stories
+
+IMPORTANT: 
+- Use browser_navigate to go to the URL
+- Use browser_snapshot to see the page structure
+- Create realistic, actionable user stories based on what you find
+- If the site has anti-bot protection, note to use aggressive_stealth_scraper.py
+
+After analysis, write the PRD to: {PRD_FILE}
+
+The PRD format should be:
+{{
+  "projectName": "{name} Scraping",
+  "sourceId": "{source_id}",
+  "branchName": "main", 
+  "targetUrl": "{url}",
+  "outputDir": "{output_dir}",
+  "userStories": [
+    {{
+      "id": "URL-001",
+      "title": "Discover all vehicle/build URLs",
+      "acceptanceCriteria": ["..."],
+      "priority": 1,
+      "passes": false,
+      "notes": "Based on site analysis..."
+    }}
+  ],
+  "siteAnalysis": {{
+    "contentType": "...",
+    "paginationType": "...",
+    "antiBot": "...",
+    "dataFields": ["..."]
+  }}
+}}
+
+START by navigating to the URL and taking a snapshot.
+'''
+        
+        # Write prompt to a temp file
+        prompt_file = PROJECT_ROOT / "scripts" / "ralph" / "prd_gen_prompt.md"
+        prompt_file.write_text(prompt)
+        
+        # Run Claude CLI with browser tools to generate the PRD
+        # This runs in background so the API can return quickly
+        cmd = [
+            'claude',
+            '--print',
+            '--dangerously-skip-permissions',
+            '-p', str(prompt_file)
+        ]
+        
+        log_file = PROJECT_ROOT / "logs" / "prd_gen.log"
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(log_file, 'w') as f:
+            subprocess.Popen(
+                cmd,
+                stdout=f,
+                stderr=subprocess.STDOUT,
+                cwd=str(PROJECT_ROOT)
+            )
+        
+        print(f"Started PRD generation for {source_id} - check logs/prd_gen.log")
+    
+    def handle_stop_ralph(self):
+        """Stop the Ralph loop"""
+        global ralph_process
+        
+        with ralph_lock:
+            if ralph_process and ralph_process.poll() is None:
+                ralph_process.terminate()
+                try:
+                    ralph_process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    ralph_process.kill()
+                self.send_json({'success': True, 'message': 'Ralph stopped'})
+            else:
+                # Try to kill any running ralph.sh processes
+                try:
+                    subprocess.run(['pkill', '-f', 'ralph.sh'], capture_output=True)
+                    self.send_json({'success': True, 'message': 'Ralph processes terminated'})
+                except:
+                    self.send_json({'success': True, 'message': 'No Ralph running'})
+    
+    def handle_kill_all_ralphs(self):
+        """Gracefully kill ALL Ralph-related processes (SIGTERM first, then SIGKILL)"""
+        global ralph_process
+        import time
+        
+        # Process patterns to kill
+        patterns = [
+            ('ralph.sh', 'ralph.sh loops'),
+            ('claude.*--dangerously-skip-permissions', 'claude CLI'),
+            ('stealth_scraper.py', 'stealth scrapers'),
+            ('aggressive_stealth_scraper.py', 'aggressive scrapers'),
+            ('run_factory_ralph', 'factory ralph'),
+            ('camoufox', 'camoufox browsers'),
+        ]
+        
+        graceful = []
+        forced = []
+        
+        # Step 1: Handle our tracked process gracefully
+        with ralph_lock:
+            if ralph_process and ralph_process.poll() is None:
+                ralph_process.terminate()  # SIGTERM first
+                try:
+                    ralph_process.wait(timeout=3)
+                    graceful.append('tracked ralph process')
+                except subprocess.TimeoutExpired:
+                    ralph_process.kill()  # SIGKILL if needed
+                    forced.append('tracked ralph process')
+                ralph_process = None
+        
+        # Step 2: Send SIGTERM to all patterns
+        for pattern, name in patterns:
+            try:
+                result = subprocess.run(['pkill', '-TERM', '-f', pattern], capture_output=True)
+                if result.returncode == 0:
+                    graceful.append(name)
+            except Exception as e:
+                print(f"Error sending SIGTERM to {name}: {e}")
+        
+        # Step 3: Wait for graceful shutdown
+        if graceful:
+            time.sleep(3)  # Give processes time to clean up
+        
+        # Step 4: Force kill any remaining processes
+        for pattern, name in patterns:
+            try:
+                # Check if still running
+                check = subprocess.run(['pgrep', '-f', pattern], capture_output=True)
+                if check.returncode == 0:
+                    # Still running, force kill
+                    subprocess.run(['pkill', '-9', '-f', pattern], capture_output=True)
+                    if name in graceful:
+                        graceful.remove(name)
+                    forced.append(name)
+            except Exception as e:
+                print(f"Error force killing {name}: {e}")
+        
+        # Step 5: Reset any "in_progress" sources to "stopped" in sources.json
+        stopped_sources = []
+        try:
+            if SOURCES_FILE.exists():
+                data = json.loads(SOURCES_FILE.read_text())
+                sources = data.get('sources', [])
+                
+                for source in sources:
+                    if source.get('status') == 'in_progress':
+                        source['status'] = 'stopped'
+                        stopped_sources.append(source.get('name', source.get('id', 'unknown')))
+                
+                if stopped_sources:
+                    with open(SOURCES_FILE, 'w') as f:
+                        json.dump(data, f, indent=2)
+                    print(f"Reset {len(stopped_sources)} in_progress sources to stopped")
+        except Exception as e:
+            print(f"Error resetting source status: {e}")
+        
+        # Build response message
+        parts = []
+        if graceful:
+            parts.append(f"✓ Gracefully stopped: {', '.join(graceful)}")
+        if forced:
+            parts.append(f"⚡ Force killed: {', '.join(forced)}")
+        if stopped_sources:
+            parts.append(f"📋 Reset status: {', '.join(stopped_sources)}")
+        
+        if parts:
+            message = ' | '.join(parts)
+        else:
+            message = "No Ralph processes found"
+        
+        self.send_json({
+            'success': True, 
+            'message': message, 
+            'graceful': graceful,
+            'forced': forced,
+            'reset_sources': stopped_sources
+        })
+    
+    def handle_ralph_status(self):
+        """Get Ralph status"""
+        global ralph_process
+        
+        with ralph_lock:
+            # Check our tracked process
+            process_running = ralph_process and ralph_process.poll() is None
+            
+            # Also check for any ralph.sh in process list
+            try:
+                result = subprocess.run(['pgrep', '-f', 'ralph.sh'], capture_output=True, text=True)
+                system_running = result.returncode == 0
+            except:
+                system_running = False
+            
+            running = process_running or system_running
+            pid = ralph_process.pid if process_running else None
+            
+            # Get current PRD info
+            prd_info = {}
+            try:
+                if PRD_FILE.exists():
+                    prd = json.loads(PRD_FILE.read_text())
+                    stories = prd.get('userStories', [])
+                    completed = sum(1 for s in stories if s.get('passes'))
+                    prd_info = {
+                        'project': prd.get('projectName', 'Unknown'),
+                        'source': prd.get('sourceId', prd.get('outputDir', '').split('/')[-1]),
+                        'stories_total': len(stories),
+                        'stories_completed': completed,
+                        'current_story': next((s for s in stories if not s.get('passes')), None)
+                    }
+            except:
+                pass
+            
+            self.send_json({
+                'running': running,
+                'pid': pid,
+                'prd': prd_info
+            })
+    
+    # ============================================
+    # Browser Preview (CDP) Handlers
+    # ============================================
+    
+    def handle_browser_start(self, data):
+        """Start Chrome/Chromium with CDP debugging enabled"""
+        global browser_process, browser_cdp_port
+        
+        with browser_lock:
+            # Check if already running
+            if browser_process and browser_process.poll() is None:
+                self.send_json({
+                    'success': True,
+                    'message': 'Browser already running',
+                    'port': browser_cdp_port,
+                    'ws_url': self._get_cdp_ws_url()
+                })
+                return
+            
+            # Find Chrome/Chromium executable
+            chrome_paths = [
+                '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+                '/Applications/Chromium.app/Contents/MacOS/Chromium',
+                '/usr/bin/google-chrome',
+                '/usr/bin/chromium',
+                '/usr/bin/chromium-browser',
+            ]
+            
+            chrome_path = None
+            for path in chrome_paths:
+                if Path(path).exists():
+                    chrome_path = path
+                    break
+            
+            if not chrome_path:
+                self.send_json({'error': 'Chrome/Chromium not found'}, 500)
+                return
+            
+            # Start Chrome with remote debugging
+            user_data_dir = PROJECT_ROOT / "data" / ".chrome-profile"
+            user_data_dir.mkdir(parents=True, exist_ok=True)
+            
+            cmd = [
+                chrome_path,
+                '--headless=new',  # Run headless (new Chrome headless mode)
+                f'--remote-debugging-port={browser_cdp_port}',
+                f'--user-data-dir={user_data_dir}',
+                '--no-first-run',
+                '--no-default-browser-check',
+                '--disable-background-networking',
+                '--disable-sync',
+                '--disable-translate',
+                '--disable-gpu',  # Often needed for headless
+                '--metrics-recording-only',
+                '--safebrowsing-disable-auto-update',
+                '--window-size=1280,800',
+                '--disable-extensions',
+                '--hide-scrollbars',
+                '--mute-audio',
+                'about:blank'
+            ]
+            
+            try:
+                browser_process = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE
+                )
+                
+                # Wait for CDP endpoint to be available
+                import time
+                ws_url = None
+                for _ in range(50):  # Wait up to 5 seconds
+                    time.sleep(0.1)
+                    ws_url = self._get_cdp_page_ws_url()
+                    if ws_url:
+                        break
+                
+                if ws_url:
+                    print(f"Browser started with CDP on port {browser_cdp_port}, page WS: {ws_url}")
+                    self.send_json({
+                        'success': True,
+                        'port': browser_cdp_port,
+                        'ws_url': ws_url,
+                        'pid': browser_process.pid
+                    })
+                else:
+                    browser_process.kill()
+                    browser_process = None
+                    self.send_json({'error': 'Failed to get CDP WebSocket URL'}, 500)
+                    
+            except Exception as e:
+                self.send_json({'error': str(e)}, 500)
+    
+    def _get_cdp_ws_url(self):
+        """Get the WebSocket URL for a page target (not browser-level)"""
+        import urllib.request
+        try:
+            # First get list of targets (pages)
+            with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json', timeout=1) as response:
+                targets = json.loads(response.read().decode())
+                # Find a page target
+                for target in targets:
+                    if target.get('type') == 'page':
+                        return target.get('webSocketDebuggerUrl')
+            
+            # If no page target, create one by navigating and try again
+            # Or return browser URL as fallback
+            with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json/version', timeout=1) as response:
+                data = json.loads(response.read().decode())
+                return data.get('webSocketDebuggerUrl')
+        except Exception as e:
+            print(f"Error getting CDP URL: {e}")
+            return None
+    
+    def _get_cdp_page_ws_url(self):
+        """Get WebSocket URL specifically for a page target, creating one if needed"""
+        import urllib.request
+        try:
+            # Get list of targets
+            with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json', timeout=1) as response:
+                targets = json.loads(response.read().decode())
+                
+                # Find existing page target
+                for target in targets:
+                    if target.get('type') == 'page':
+                        return target.get('webSocketDebuggerUrl')
+            
+            # No page target exists, create one
+            with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json/new?about:blank', timeout=2) as response:
+                target = json.loads(response.read().decode())
+                return target.get('webSocketDebuggerUrl')
+        except Exception as e:
+            print(f"Error getting page WS URL: {e}")
+            return None
+    
+    def handle_browser_stop(self):
+        """Stop the browser"""
+        global browser_process
+        
+        with browser_lock:
+            if browser_process and browser_process.poll() is None:
+                browser_process.terminate()
+                try:
+                    browser_process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    browser_process.kill()
+                browser_process = None
+                self.send_json({'success': True, 'message': 'Browser stopped'})
+            else:
+                # Try to kill any Chrome with our debugging port
+                try:
+                    subprocess.run(['pkill', '-f', f'--remote-debugging-port={browser_cdp_port}'], capture_output=True)
+                except:
+                    pass
+                browser_process = None
+                self.send_json({'success': True, 'message': 'Browser stopped'})
+    
+    def handle_browser_screenshot(self):
+        """Take a screenshot of the current browser page via CDP HTTP API"""
+        import urllib.request
+        import base64
+        
+        try:
+            # Get page target
+            with urllib.request.urlopen(f'http://localhost:{browser_cdp_port}/json', timeout=2) as response:
+                targets = json.loads(response.read().decode())
+                page_id = None
+                for target in targets:
+                    if target.get('type') == 'page':
+                        page_id = target.get('id')
+                        break
+                
+                if not page_id:
+                    self.send_json({'error': 'No page target found'}, 404)
+                    return
+            
+            # Use CDP HTTP endpoint to capture screenshot
+            # We need to send a command via the /json/protocol endpoint
+            # Actually, for screenshots we need WebSocket, so let's use a different approach
+            # Use subprocess to call chrome-remote-interface or puppeteer
+            
+            # Alternative: Use the devtools protocol via fetch
+            import http.client
+            conn = http.client.HTTPConnection('localhost', browser_cdp_port, timeout=5)
+            
+            # Send CDP command via HTTP (this is a simplified approach)
+            # For proper CDP, we'd need WebSocket, but we can use /json/protocol
+            
+            # Simpler approach: Use headless chrome's screenshot capability directly
+            # via command line or a helper script
+            
+            # For now, return a placeholder indicating polling mode works
+            # but actual screenshot requires WebSocket or external tool
+            self.send_json({
+                'success': False, 
+                'error': 'Screenshot via HTTP not fully implemented. Use WebSocket mode.',
+                'note': 'Browser is running - WebSocket connection may work from browser DevTools'
+            })
+            
+        except Exception as e:
+            self.send_json({'error': f'Screenshot failed: {str(e)}'}, 500)
+    
+    def handle_browser_navigate(self, data):
+        """Navigate browser to URL via CDP"""
+        import urllib.request
+        import http.client
+        import websocket
+        
+        url = data.get('url')
+        if not url:
+            self.send_json({'error': 'URL required'}, 400)
+            return
+        
+        try:
+            # Get page WebSocket URL
+            ws_url = self._get_cdp_page_ws_url()
+            if not ws_url:
+                self.send_json({'error': 'No browser page available'}, 500)
+                return
+            
+            # Connect to WebSocket and send navigation command
+            ws = websocket.create_connection(ws_url, timeout=10)
+            
+            # Send Page.navigate command
+            nav_cmd = json.dumps({
+                'id': 1,
+                'method': 'Page.navigate',
+                'params': {'url': url}
+            })
+            ws.send(nav_cmd)
+            
+            # Wait for response
+            result = ws.recv()
+            ws.close()
+            
+            response_data = json.loads(result)
+            if 'error' in response_data:
+                self.send_json({'error': response_data['error'].get('message', 'Navigation failed')}, 500)
+            else:
+                self.send_json({'success': True, 'url': url})
+                
+        except Exception as e:
+            self.send_json({'error': f'Navigation failed: {str(e)}'}, 500)
+    
+    def handle_browser_save_dom(self, data):
+        """Save DOM HTML to file"""
+        html = data.get('html', '')
+        url = data.get('url', 'unknown')
+        
+        if not html:
+            self.send_json({'error': 'No HTML provided'}, 400)
+            return
+        
+        # Generate filename from URL
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        domain = parsed.hostname or 'unknown'
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        
+        output_dir = PROJECT_ROOT / "data" / "browser_extracts"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        filename = f"{domain}_{timestamp}.html"
+        filepath = output_dir / filename
+        
+        try:
+            filepath.write_text(html)
+            self.send_json({
+                'success': True,
+                'path': str(filepath),
+                'size': len(html)
+            })
+            print(f"DOM saved to {filepath}")
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
+    
+    # ============================================
+    # End Browser Preview Handlers
+    # ============================================
+    
+    # ============================================
+    # Error Analysis Handlers
+    # ============================================
+    
+    def handle_analyze_error(self, data):
+        """Analyze source error with LLM and provide fix suggestions"""
+        source_id = data.get('sourceId')
+        source_name = data.get('sourceName', source_id)
+        source_url = data.get('sourceUrl', '')
+        error_type = data.get('errorType', 'error')
+        log_context = data.get('logContext', '')
+        pipeline = data.get('pipeline', {})
+        
+        # Build analysis prompt
+        analysis_prompt = f"""Analyze this web scraping error and provide a concise fix suggestion.
+
+Source: {source_name} ({source_id})
+URL: {source_url}
+Error Type: {error_type}
+Pipeline Status: URLs={pipeline.get('urlsFound', 0)}, HTML={pipeline.get('htmlScraped', 0)}, Builds={pipeline.get('builds', 0)}
+
+Recent Log Context:
+{log_context[:2000] if log_context else 'No log context available'}
+
+Provide your response as JSON with these fields:
+- summary: One-line description of the error (max 80 chars)
+- suggestion: Specific fix recommendation (max 200 chars)
+- error_category: One of [rate_limit, blocked, selector_change, network, auth, captcha, other]
+- confidence: 0-1 how confident you are in the diagnosis
+
+Focus on actionable fixes like:
+- Adjusting rate limits/delays
+- Updating PRD settings
+- Changing scrape_mode to stealth
+- Updating CSS selectors
+- Handling auth/captcha
+"""
+        
+        try:
+            # Try Claude CLI first (preferred for code analysis)
+            result = subprocess.run(
+                ['claude', '-p', analysis_prompt, '--output-format', 'json'],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=str(PROJECT_ROOT)
+            )
+            
+            if result.returncode == 0 and result.stdout.strip():
+                try:
+                    response = json.loads(result.stdout)
+                    # Extract from claude response format
+                    analysis_text = response.get('result', response.get('text', result.stdout))
+                    
+                    # Try to parse as JSON
+                    if isinstance(analysis_text, str):
+                        # Find JSON in response
+                        import re
+                        json_match = re.search(r'\{[^{}]*"summary"[^{}]*\}', analysis_text, re.DOTALL)
+                        if json_match:
+                            analysis = json.loads(json_match.group())
+                        else:
+                            analysis = {
+                                'summary': analysis_text[:80],
+                                'suggestion': self._get_default_suggestion(error_type),
+                                'error_category': error_type
+                            }
+                    else:
+                        analysis = analysis_text
+                    
+                    self.send_json({
+                        'success': True,
+                        'summary': analysis.get('summary', f'{error_type.title()} detected'),
+                        'suggestion': analysis.get('suggestion', self._get_default_suggestion(error_type)),
+                        'error_category': analysis.get('error_category', error_type),
+                        'confidence': analysis.get('confidence', 0.7)
+                    })
+                    return
+                except json.JSONDecodeError:
+                    pass
+            
+            # Fallback to pattern-based analysis
+            self._send_pattern_analysis(error_type, log_context, source_url)
+            
+        except subprocess.TimeoutExpired:
+            self._send_pattern_analysis(error_type, log_context, source_url)
+        except FileNotFoundError:
+            # Claude CLI not available, use pattern matching
+            self._send_pattern_analysis(error_type, log_context, source_url)
+        except Exception as e:
+            print(f"Error analysis failed: {e}")
+            self._send_pattern_analysis(error_type, log_context, source_url)
+    
+    def _send_pattern_analysis(self, error_type, log_context, source_url):
+        """Fallback pattern-based error analysis"""
+        log_lower = log_context.lower() if log_context else ''
+        
+        # Pattern matching for common errors
+        if '403' in log_lower or 'forbidden' in log_lower:
+            summary = 'Access denied (403 Forbidden)'
+            suggestion = 'Enable stealth mode in PRD, increase delays to 5-10s, rotate proxy.'
+            category = 'blocked'
+        elif '429' in log_lower or 'rate limit' in log_lower or 'too many' in log_lower:
+            summary = 'Rate limit exceeded (429)'
+            suggestion = 'Increase min_delay to 10-15s, reduce concurrency, add exponential backoff.'
+            category = 'rate_limit'
+        elif 'captcha' in log_lower or 'challenge' in log_lower or 'verify' in log_lower:
+            summary = 'CAPTCHA or verification required'
+            suggestion = 'Mark as hitl status, consider using browser with saved session cookies.'
+            category = 'captcha'
+        elif 'timeout' in log_lower or 'timed out' in log_lower:
+            summary = 'Request timeout'
+            suggestion = 'Increase timeout in PRD, check if site is slow, try different time of day.'
+            category = 'network'
+        elif 'selector' in log_lower or 'not found' in log_lower or 'none' in log_lower:
+            summary = 'Selector/element not found'
+            suggestion = 'Site structure may have changed. Re-run domain analysis, update selectors.'
+            category = 'selector_change'
+        elif 'cloudflare' in log_lower or 'cf_' in log_lower:
+            summary = 'Cloudflare protection detected'
+            suggestion = 'Use aggressive stealth mode, enable browser fingerprint rotation.'
+            category = 'blocked'
+        elif 'login' in log_lower or 'auth' in log_lower or 'sign in' in log_lower:
+            summary = 'Authentication required'
+            suggestion = 'Site requires login. Use browser tool to login and export cookies.'
+            category = 'auth'
+        else:
+            summary = f'{error_type.title()} state detected'
+            suggestion = self._get_default_suggestion(error_type)
+            category = error_type
+        
+        self.send_json({
+            'success': True,
+            'summary': summary,
+            'suggestion': suggestion,
+            'error_category': category,
+            'confidence': 0.6
+        })
+    
+    def _get_default_suggestion(self, error_type):
+        """Get default suggestion based on error type"""
+        suggestions = {
+            'blocked': 'Try increasing delays (5-10s), enable stealth mode, or rotate proxies.',
+            'error': 'Check if website structure changed. Re-run domain analysis to update selectors.',
+            'hitl': 'Human verification needed. Check for CAPTCHA or login requirements.',
+            'rate_limit': 'Reduce request rate, increase delays, implement exponential backoff.'
+        }
+        return suggestions.get(error_type, 'Review logs and PRD configuration for issues.')
+    
+    def handle_retry_source(self, source_id):
+        """Reset source status to pending for retry"""
+        try:
+            if SOURCES_FILE.exists():
+                with open(SOURCES_FILE, 'r+') as f:
+                    data = json.load(f)
+                    sources = data.get('sources', [])
+                    
+                    for source in sources:
+                        if source.get('id') == source_id:
+                            source['status'] = 'pending'
+                            source['retry_count'] = source.get('retry_count', 0) + 1
+                            break
+                    
+                    f.seek(0)
+                    json.dump(data, f, indent=2)
+                    f.truncate()
+                    
+                self.send_json({'success': True, 'message': f'Source {source_id} queued for retry'})
+            else:
+                self.send_json({'error': 'Sources file not found'}, 404)
+        except Exception as e:
+            self.send_json({'error': str(e)}, 500)
     
     def check_ralph_running(self):
         """Check if ralph.sh is currently running"""
@@ -112,10 +2063,29 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
             'pending': 0,
             'blocked': 0
         }
+        
+        # Get current source from PRD to mark as in_progress
+        current_source_id = None
+        try:
+            if PRD_FILE.exists():
+                prd = json.loads(PRD_FILE.read_text())
+                current_source_id = prd.get('sourceId') or prd.get('outputDir', '').split('/')[-1]
+        except:
+            pass
+        
+        ralph_running = self.check_ralph_running()
+        
         for source in sources:
+            source_id = source.get('id')
             status = source.get('status', 'pending')
+            
+            # If Ralph is running and this is the current source, mark as in_progress
+            if ralph_running and current_source_id and source_id == current_source_id:
+                status = 'in_progress'
+            
             if status in summary:
                 summary[status] += 1
+        
         return summary
     
     def get_current_source(self):
@@ -152,13 +2122,36 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
     def get_all_sources(self):
         """Get all sources with their pipeline data"""
         sources = self.load_sources()
-        return [{
-            'id': s.get('id'),
-            'name': s.get('name'),
-            'url': s.get('url'),
-            'status': s.get('status'),
-            'pipeline': s.get('pipeline', {})
-        } for s in sources]
+        
+        # Get current source from PRD to mark as in_progress
+        current_source_id = None
+        try:
+            if PRD_FILE.exists():
+                prd = json.loads(PRD_FILE.read_text())
+                current_source_id = prd.get('sourceId') or prd.get('outputDir', '').split('/')[-1]
+        except:
+            pass
+        
+        ralph_running = self.check_ralph_running()
+        
+        result = []
+        for s in sources:
+            source_id = s.get('id')
+            status = s.get('status', 'pending')
+            
+            # If Ralph is running and this is the current source, mark as in_progress
+            if ralph_running and current_source_id and source_id == current_source_id:
+                status = 'in_progress'
+            
+            result.append({
+                'id': source_id,
+                'name': s.get('name'),
+                'url': s.get('url'),
+                'status': status,
+                'pipeline': s.get('pipeline', {})
+            })
+        
+        return result
     
     def load_sources(self):
         """Load sources from sources.json"""
@@ -171,17 +2164,31 @@ class DashboardHandler(http.server.BaseHTTPRequestHandler):
         return []
     
     def count_html_files(self):
-        """Count total HTML files across all scraped_builds"""
+        """Count total HTML files across all data sources"""
         total = 0
         try:
-            if SCRAPED_BUILDS_DIR.exists():
-                for source_dir in SCRAPED_BUILDS_DIR.iterdir():
+            if DATA_DIR.exists():
+                for source_dir in DATA_DIR.iterdir():
                     html_dir = source_dir / 'html'
                     if html_dir.exists():
                         total += len(list(html_dir.glob('*.html')))
         except:
             pass
         return total
+    
+    def count_builds_and_mods(self, all_sources):
+        """Aggregate builds and mods from all sources"""
+        total_builds = 0
+        total_mods = 0
+        for source in all_sources:
+            pipeline = source.get('pipeline', {})
+            builds = pipeline.get('builds')
+            mods = pipeline.get('mods')
+            if builds is not None:
+                total_builds += builds
+            if mods is not None:
+                total_mods += mods
+        return {'builds': total_builds, 'mods': total_mods}
     
     def get_log_tail(self, lines=50):
         """Get last N lines of the log file"""
@@ -217,7 +2224,11 @@ def main():
     import webbrowser
     webbrowser.open(f'http://localhost:{PORT}/')
     
-    with socketserver.TCPServer(("", PORT), DashboardHandler) as httpd:
+    # Allow socket reuse to prevent "Address already in use" errors
+    class ReusableTCPServer(socketserver.TCPServer):
+        allow_reuse_address = True
+    
+    with ReusableTCPServer(("", PORT), DashboardHandler) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

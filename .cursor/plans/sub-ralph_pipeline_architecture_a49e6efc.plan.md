@@ -47,6 +47,8 @@ flowchart LR
     MOD -.->|writes| mods_json[mods.json]
 ```
 
+
+
 ## Execution Flow
 
 ```mermaid
@@ -81,6 +83,8 @@ sequenceDiagram
     Main->>Main: Next source
 ```
 
+
+
 ## Files to Create
 
 ### 1. Sub-Ralph Prompt Files
@@ -98,6 +102,8 @@ sequenceDiagram
 # - Watches builds.json count, triggers mod-extractor at 20
 # - Waits for all 4 to complete before next source
 ```
+
+
 
 ### 3. Progress Monitor
 
@@ -117,6 +123,8 @@ def check_triggers(source_id):
     }
 ```
 
+
+
 ## Sub-Ralph Responsibilities
 
 ### url-detective
@@ -124,17 +132,7 @@ def check_triggers(source_id):
 - Focus: URL discovery ONLY
 - Input: source URL from sources.json
 - Output: `{outputDir}/urls.json`
-- `Tools:`
--    `1. web-reader        ✔ connected · Enter to view details`
--    `2. web-search-prime  ✔ connected · Enter to view details`
--    `3. zai-mcp-server    ✔ connected · Enter to view details`
-
-a`. ui_to_artifact                                                                                                     │`		`b. extract_text_from_screenshot`
-
-- 		`c. diagnose_error_screenshot                                                                                          │`
-- `│   d. understand_technical_diagram                                                                                       │`
-- `│ ↓ e. analyze_data_visualization` 
--    `4. zread             ✔ connected · Enter to view details`
+- Tools: MCP webReader, webSearchPrime
 - Stories: URL-001 through URL-004
 - Stops when: All URLs discovered, expectedUrls updated
 
@@ -183,4 +181,3 @@ After all sub-ralphs complete:
 
 1. Create prompt files for each sub-ralph (focused, minimal)
 2. Create `pipeline_monitor.py` for threshold checking
-3. Create `pipeline.sh` orchestrator

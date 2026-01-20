@@ -5,15 +5,15 @@
 RalphOS wraps Claude CLI in a bash loop, enabling fully autonomous execution of complex, multi-step projects. Define your tasks in a simple JSON file, and Ralph works through them one by one—reading files, writing code, scraping websites, analyzing data, committing changes, and learning from each iteration.
 
 ```
-╔═══════════════════════════════════════════════════════════╗
-║   ██████╗  █████╗ ██╗     ██████╗ ██╗  ██╗              ║
-║   ██╔══██╗██╔══██╗██║     ██╔══██╗██║  ██║              ║
-║   ██████╔╝███████║██║     ██████╔╝███████║              ║
-║   ██╔══██╗██╔══██║██║     ██╔═══╝ ██╔══██║              ║
-║   ██║  ██║██║  ██║███████╗██║     ██║  ██║              ║
-║   ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝  ╚═╝              ║
-║                   Autonomous AI                   ║
-╚═══════════════════════════════════════════════════════════╝
+
+ 
+ 
+ 
+ 
+ 
+ 
+ Autonomous AI Agent Loop 
+
 ```
 
 ## Quick Start
@@ -29,46 +29,46 @@ claude --version
 # 3. Define your task in scripts/ralph/prd.json
 
 # 4. Run Ralph
-./scripts/ralph/ralph.sh 25  # Run up to 25 iterations
+./scripts/ralph/ralph.sh 25 # Run up to 25 iterations
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 RalphOS/
-├── scripts/
-│   ├── ralph/              # Core orchestration
-│   │   ├── ralph.sh        # Main loop script
-│   │   ├── prompt.md       # Agent instructions
-│   │   ├── prd.json        # Current project tasks
-│   │   ├── progress.txt    # Learnings & patterns
-│   │   ├── sources.json    # Queue of projects
-│   │   └── archive/        # Completed archives
-│   │
-│   ├── tools/              # Utility scripts
-│   │   ├── sync_progress.py
-│   │   ├── stealth_scraper.py
-│   │   ├── diagnose_scraper.py
-│   │   └── ...
-│   │
-│   └── dashboard/          # Monitoring UI
-│       ├── dashboard.html
-│       └── dashboard_server.py
-│
-├── data/                   # Scraped data output
-│   ├── source_a/
-│   ├── source_b/
-│   └── ...
-│
-├── logs/                   # Log files
-│   ├── ralph_output.log
-│   └── ralph_debug.log
-│
-├── schema/                 # Data schemas
-└── README.md
+ scripts/
+ ralph/ # Core orchestration
+ ralph.sh # Main loop script
+ prompt.md # Agent instructions
+ prd.json # Current project tasks
+ progress.txt # Learnings & patterns
+ sources.json # Queue of projects
+ archive/ # Completed archives
+ 
+ tools/ # Utility scripts
+ sync_progress.py
+ stealth_scraper.py
+ diagnose_scraper.py
+ ...
+ 
+ dashboard/ # Monitoring UI
+ dashboard.html
+ dashboard_server.py
+
+ data/ # Scraped data output
+ source_a/
+ source_b/
+ ...
+
+ logs/ # Log files
+ ralph_output.log
+ ralph_debug.log
+
+ schema/ # Data schemas
+ README.md
 ```
 
-## 🎯 How It Works
+## How It Works
 
 ### The Loop
 
@@ -84,34 +84,34 @@ RalphOS/
 
 ```json
 {
-  "projectName": "My Awesome Project",
-  "branchName": "main",
-  "outputDir": "data/my_project",
-  "userStories": [
-    {
-      "id": "US-001",
-      "title": "Setup project structure",
-      "acceptanceCriteria": [
-        "Create output directory",
-        "Initialize config file"
-      ],
-      "priority": 1,
-      "passes": false,
-      "notes": "First step"
-    },
-    {
-      "id": "US-002",
-      "title": "Fetch data from API",
-      "acceptanceCriteria": [
-        "Call API endpoint",
-        "Save response to JSON",
-        "Handle errors gracefully"
-      ],
-      "priority": 2,
-      "passes": false,
-      "notes": "Requires API key in .env"
-    }
-  ]
+ "projectName": "My Awesome Project",
+ "branchName": "main",
+ "outputDir": "data/my_project",
+ "userStories": [
+ {
+ "id": "US-001",
+ "title": "Setup project structure",
+ "acceptanceCriteria": [
+ "Create output directory",
+ "Initialize config file"
+ ],
+ "priority": 1,
+ "passes": false,
+ "notes": "First step"
+ },
+ {
+ "id": "US-002",
+ "title": "Fetch data from API",
+ "acceptanceCriteria": [
+ "Call API endpoint",
+ "Save response to JSON",
+ "Handle errors gracefully"
+ ],
+ "priority": 2,
+ "passes": false,
+ "notes": "Requires API key in .env"
+ }
+ ]
 }
 ```
 
@@ -133,8 +133,8 @@ Ralph accumulates learnings across iterations:
 - Created project structure
 - Files: data/my_project/config.json
 - **Learnings:**
-  - Git doesn't track empty directories
-  - Use .gitkeep for empty folders
+ - Git doesn't track empty directories
+ - Use .gitkeep for empty folders
 
 ---
 
@@ -142,11 +142,11 @@ Ralph accumulates learnings across iterations:
 - Fetched data from API
 - Files: data/my_project/data.json
 - **Learnings:**
-  - API returns paginated results
-  - Need to handle 429 rate limit errors
+ - API returns paginated results
+ - Need to handle 429 rate limit errors
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### prompt.md
 
@@ -162,65 +162,65 @@ For processing multiple projects sequentially:
 
 ```json
 {
-  "sources": [
-    {
-      "id": "project_a",
-      "name": "Project A",
-      "url": "https://example.com/a",
-      "outputDir": "data/project_a",
-      "status": "completed"
-    },
-    {
-      "id": "project_b",
-      "name": "Project B", 
-      "url": "https://example.com/b",
-      "outputDir": "data/project_b",
-      "status": "in_progress"
-    },
-    {
-      "id": "project_c",
-      "name": "Project C",
-      "url": "https://example.com/c",
-      "outputDir": "data/project_c",
-      "status": "pending"
-    }
-  ]
+ "sources": [
+ {
+ "id": "project_a",
+ "name": "Project A",
+ "url": "https://example.com/a",
+ "outputDir": "data/project_a",
+ "status": "completed"
+ },
+ {
+ "id": "project_b",
+ "name": "Project B", 
+ "url": "https://example.com/b",
+ "outputDir": "data/project_b",
+ "status": "in_progress"
+ },
+ {
+ "id": "project_c",
+ "name": "Project C",
+ "url": "https://example.com/c",
+ "outputDir": "data/project_c",
+ "status": "pending"
+ }
+ ]
 }
 ```
 
-## 📊 Terminal Output
+## Terminal Output
 
 Ralph provides rich terminal output:
 
 ```
-╭─────────────────────── 📋 Project Status ───────────────────────╮
-│  📁 Project:    My Awesome Project                              │
-│  🌐 Target:     https://api.example.com                         │
-│  📊 Progress:   2/4 stories complete                            │
-│  ▶️  Next:       US-003: Process and analyze data                │
-╰──────────────────────────────────────────────────────────────────╯
+ Project Status 
+ Project: My Awesome Project 
+ Target: https://api.example.com 
+ Progress: 2/4 stories complete 
+ Next: US-003: Process and analyze data 
 
-═══ Iteration 3 of 25 │ 5m 23s elapsed ═══════════════════
+
+ Iteration 3 of 25 5m 23s elapsed 
 
 [15:32:01] ℹ Working on: US-003: Process and analyze data
 [15:32:01] ℹ Progress: 2/4 stories
-[15:32:01] ▶ Calling Claude CLI (streaming)...
+[15:32:01] Calling Claude CLI (streaming)...
 
-────────────────────── Claude Output ──────────────────────
+ Claude Output 
 ...
-─────────────────────────────────────────────────────────────
 
-[15:33:45] ✓ Iteration completed in 104s
+
+[15:33:45] Iteration completed in 104s
 [15:33:45] ℹ Updated progress: 3/4 stories
 ```
 
-## 🗄️ Archiving
+## Archiving
 
 When a project completes, Ralph automatically archives:
 - `prd.json` → `archive/{timestamp}_{project}_prd.json`
 - `progress.txt` → `archive/{timestamp}_{project}_progress.txt`
 
-## 🎮 Commands
+## Commands
 
 ```bash
 # Run with 10 iterations (default)
@@ -245,7 +245,7 @@ python3 scripts/tools/sync_progress.py
 python3 scripts/tools/diagnose_scraper.py data/source_name/
 ```
 
-## 💡 Use Cases
+## Use Cases
 
 RalphOS excels at:
 
@@ -256,11 +256,11 @@ RalphOS excels at:
 - **Content Processing** - Transform, clean, and organize content
 - **Automation** - Any multi-step task that can be broken into stories
 
-## 📚 Examples
+## Examples
 
 Check out the `examples/` directory for ready-to-use templates:
 
-### [📈 Earnings Analysis](examples/earnings_analysis/)
+### [ Earnings Analysis](examples/earnings_analysis/)
 
 Autonomously research and analyze quarterly earnings reports:
 - Fetch earnings calendar and dates
@@ -275,24 +275,24 @@ cp examples/earnings_analysis/progress.txt scripts/ralph/
 ./scripts/ralph/ralph.sh 25
 ```
 
-## 🔐 Requirements
+## Requirements
 
 - **Claude CLI** - Install via `npm install -g @anthropic-ai/claude-code`
 - **jq** - For JSON parsing in bash
 - **Git** - For version control and commits
 - **Bash 4+** - For the loop script
 
-## ⚠️ Important Notes
+## Important Notes
 
 1. **Permissions**: Ralph runs with `--dangerously-skip-permissions` - only use in trusted environments
 2. **Rate Limiting**: Add delays for API calls and web scraping
 3. **Iterations**: Set max iterations appropriate for your task complexity
 4. **Monitoring**: Watch the terminal output and `logs/ralph_output.log` for progress
 
-## 📄 License
+## License
 
 MIT License - Use freely, modify as needed.
 
 ---
 
-**Built for autonomous AI workflows.** 🤖
+**Built for autonomous AI workflows.** 

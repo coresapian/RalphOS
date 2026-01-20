@@ -17,29 +17,12 @@ If all stories are complete → generate new PRD for next stage or source.
 If there's work to do → do it immediately.
 Make decisions autonomously. Never wait for user input.
 
-## Execution Modes
+## Execution
 
-### Classic Mode (default)
 ```bash
 ./scripts/ralph/ralph.sh 25  # Run 25 iterations
 ```
 Ralph handles all 4 stages sequentially for each source.
-
-### Pipeline Mode (sub-ralphs)
-```bash
-./scripts/ralph/ralph.sh --pipeline custom_wheel_offset
-./scripts/ralph/ralph.sh --pipeline-all
-```
-4 specialized sub-ralphs work in parallel on the same source:
-
-| Sub-Ralph | Focus | Trigger | Output |
-|-----------|-------|---------|--------|
-| url-detective | URL discovery | Starts immediately | urls.json |
-| html-scraper | HTML download | After 20 URLs | html/*.html |
-| build-extractor | Data extraction | After 20 HTMLs | builds.json |
-| mod-extractor | Mod extraction | After 20 builds | mods.json |
-
-Each sub-ralph has its own prompt in `scripts/ralph/prompts/`.
 
 ## Available Tools
 
@@ -49,11 +32,136 @@ Each sub-ralph has its own prompt in `scripts/ralph/prompts/`.
 | `build_id_generator.py` | Generate build_id from URL | `from build_id_generator import url_to_build_id` |
 | `category_detector.py` | Assign mod categories | `from category_detector import detect_category` |
 | `check_completion.sh` | Validate source status | `./scripts/ralph/check_completion.sh --summary` |
-| `pipeline_monitor.py` | Track pipeline progress | `python scripts/dashboard/pipeline_monitor.py --source {id}` |
 | `stealth_scraper.py` | Anti-bot scraping (human runs) | `python scripts/tools/stealth_scraper.py --source {id}` |
 | `diagnose_scraper.py` | **Diagnose scraper issues** | `python scripts/tools/diagnose_scraper.py {outputDir}/` |
 | `test_url_discovery.py` | **Test URL discovery** | `python scripts/tools/test_url_discovery.py {outputDir}/` |
 | `test_scraper.py` | **Test HTML scraper** | `python scripts/tools/test_scraper.py {outputDir}/scrape_html.py` |
+
+## Factory Ralph Enhanced Tools
+
+**IMPORTANT:** For robust, consistent operations, use these enhanced tools instead of raw Python/shell commands.
+
+See `scripts/ralph/TOOLS.md` for complete documentation.
+
+### Core Utilities (`ralph_utils.py`)
+
+```python
+from ralph_utils import safe_write, safe_write_json, safe_read_json, logger
+from ralph_utils import normalize_url, deduplicate_urls, get_robust_session
+
+# ALWAYS use safe_write (atomic, crash-safe)
+safe_write_json("output.json", data)
+
+# Use structured logging (NOT print)
+logger.info("Scraping started", {"source": "luxury4play"})
+logger.error("Request failed", {"status": 403})
+
+# URL operations
+urls = deduplicate_urls(url_list)
+clean_url = normalize_url(messy_url)
+
+# HTTP with auto-retry
+session = get_robust_session(retries=3)
+response = session.get(url)
+```
+
+### DuckDB Database (`ralph_duckdb.py`)
+
+```python
+from ralph_duckdb import RalphDuckDB
+
+db = RalphDuckDB("ralph_data.duckdb")
+
+# Import data (auto-detects format)
+db.import_file("builds.json", "builds")
+
+# Query
+df = db.query_to_df("SELECT * FROM builds WHERE year > 2020")
+
+# Export
+db.export_table("builds", "output.parquet")  # Best performance
+
+# DuckDB-specific SQL:
+# - Use GROUP BY ALL (auto-group non-aggregated columns)
+# - Use SELECT * EXCLUDE (columns) for cleaner queries
+```
+
+### Vision Analysis (`ralph_vlm.py`)
+
+```python
+from ralph_vlm import MoondreamClient
+
+vlm = MoondreamClient(provider="ollama")
+
+# Ask questions about images
+result = vlm.analyze_image("screenshot.png", "What color is the button?")
+
+# OCR
+text = vlm.extract_text("code_screenshot.png")
+
+# UI analysis
+description = vlm.describe_ui("dashboard.png")
+```
+
+### Visual Validation Gate (`ralph_validator.py`)
+
+**MANDATORY before marking tasks complete!**
+
+```python
+from ralph_validator import RalphValidator
+
+validator = RalphValidator()
+
+# Validate visual criteria
+result = validator.validate("screenshot.png", "Submit button is blue and visible")
+
+if result['passed']:
+    create_success_file()  # Safe to proceed
+else:
+    print(f"Fix needed: {result['reasoning']}")
+    # DO NOT mark as complete - fix the issue first
+```
+
+### Browser Helper (`browser_helper.js`)
+
+Inject into browser context, then use:
+
+```javascript
+// Find by text (most robust - ignores CSS class changes)
+RALPH.findByText('Submit').click()
+
+// Wait for elements (efficient MutationObserver)
+await RALPH.waitFor('.modal-content')
+
+// Extract data
+const data = RALPH.extractTable('table.results')
+const links = RALPH.getLinks({ internal: true })
+
+// Form filling (with React/Vue event dispatch)
+RALPH.fillForm({ '#email': 'test@example.com', '#pass': '123' })
+
+// React/Vue state inspection
+const props = RALPH.getReactProps('.product-card')
+```
+
+### Tool Selection Guide
+
+| Task | Tool |
+|------|------|
+| File I/O | `ralph_utils.safe_write`, `safe_read_json` |
+| HTTP requests | `ralph_utils.get_robust_session` |
+| Data storage | `ralph_duckdb.RalphDuckDB` |
+| Image analysis | `ralph_vlm.MoondreamClient` |
+| Visual validation | `ralph_validator.RalphValidator` |
+| DOM traversal | `browser_helper.js` (RALPH.*) |
+
+### Mandatory Rules for Tool Usage
+
+1. **NEVER use `open()` directly** - Always use `safe_write()` / `safe_read_json()`
+2. **NEVER use `print()` for logging** - Use `logger.info()` / `logger.error()`
+3. **NEVER guess selectors** - Use `RALPH.findByText()` for robustness
+4. **ALWAYS validate visually** - Use `RalphValidator` before declaring success
+5. **ALWAYS use GROUP BY ALL** - Avoid listing columns in DuckDB aggregations
 
 ## REQUIRED: Run Tests Before Marking Complete
 
@@ -202,11 +310,54 @@ Before scraping, try to determine the total count:
 2. Read `scripts/ralph/prd.json` for current active project (if any)
 3. Read `scripts/ralph/progress.txt` for learnings and patterns
 
+### PRD Storage Architecture
+
+PRDs are stored in **three locations** for redundancy and queryability:
+
+1. **DuckDB Database**: `data/prds.duckdb` - **primary storage** with history tracking
+   - Tables: `prds` (current state), `prd_history` (audit trail)
+   - Query PRDs: `db.list_prds()`, `db.get_prd(source_id)`
+   - Track progress: `db.get_prd_stats()`, `db.get_prd_history(source_id)`
+
+2. **Source folder**: `data/{source_id}/prd.json` - **file-based backup**
+   - Useful for direct file access and debugging
+   - Human-readable JSON format
+
+3. **Active copy**: `scripts/ralph/prd.json` - **working copy** Ralph reads from
+   - This is what Ralph actively uses during execution
+
+When generating or updating a PRD, use the dashboard API which saves to all three locations automatically.
+
+**Using the PRD Database** (from Python):
+
+```python
+from ralph_duckdb import RalphDuckDB
+
+db = RalphDuckDB("data/prds.duckdb")
+db.init_prd_tables()
+
+# Save a PRD (auto-calculates stats, tracks history)
+db.save_prd(prd_dict, source_id)
+
+# Get PRD for a source
+prd = db.get_prd("luxury4play")
+
+# List all PRDs
+all_prds = db.list_prds()  # or db.list_prds(status='active')
+
+# Get statistics
+stats = db.get_prd_stats()  # {total, active, complete, blocked, total_stories, completed_stories}
+
+# Update a specific story
+db.update_prd_story("luxury4play", "US-003", passes=True)
+```
+
 ### If NO active PRD exists:
 1. Find a source that needs work (check pipeline fields)
 2. Generate a new `prd.json` with appropriate user stories based on what stage is needed
-3. Set source status to "in_progress" in sources.json
-4. Begin work
+3. Save PRD using the dashboard (saves to DuckDB, source folder, and active location)
+4. Set source status to "in_progress" in sources.json
+5. Begin work
 
 ### If active PRD exists:
 1. Check you're on the correct branch (see `branchName` in prd.json)
@@ -214,7 +365,7 @@ Before scraping, try to determine the total count:
 3. Pick the highest priority story where `passes: false`
 4. Implement that ONE story completely
 5. Commit your changes: `feat: [ID] - [Title]`
-6. Update prd.json: set `passes: true` for completed story
+6. Update prd.json: set `passes: true` for completed story (saves to all locations via dashboard)
 7. Update sources.json pipeline fields with current counts
 8. Append learnings to progress.txt
 

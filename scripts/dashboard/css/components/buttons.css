@@ -1,0 +1,228 @@
+/**
+ * Button Components
+ * All button styles and variants
+ */
+
+.btn {
+  padding: var(--spacing-md) var(--spacing-xl);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow 0.15s, background-color 0.15s;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  will-change: transform;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  color: var(--bg-primary);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-danger {
+  background: var(--accent-red);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #ef4444;
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent-cyan);
+}
+
+/* Button Group */
+.btn-group {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+/* Header Kill Button */
+.header-kill-btn {
+  position: absolute;
+  left: 270px;
+  top: -19px;
+  height: 35px;
+  width: 100px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--accent-red);
+  background: rgba(248, 113, 113, 0.15);
+  color: var(--accent-red);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.header-kill-btn:hover {
+  background: rgba(248, 113, 113, 0.3);
+}
+
+.header-kill-btn.killing {
+  animation: pulse-red 0.5s infinite;
+  pointer-events: none;
+  background: rgba(248, 113, 113, 0.4);
+  box-shadow: 0 0 20px rgba(248, 113, 113, 0.5);
+}
+
+.header-kill-btn.killed-success {
+  background: rgba(74, 222, 128, 0.3);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+}
+
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Settings Button */
+.settings-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-btn:hover {
+  border-color: var(--accent-cyan);
+  background: var(--bg-secondary);
+  transform: rotate(30deg);
+}
+
+/* Log Controls */
+.log-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-left: auto;
+}
+
+.log-collapse-btn {
+  padding: var(--spacing-xs) 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  margin-left: var(--spacing-md);
+}
+
+.log-collapse-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--accent-red);
+}
+
+.log-controls button {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.log-controls button:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.log-controls button.active {
+  background: rgba(34, 211, 238, 0.2);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.log-controls button.kill-btn {
+  background: rgba(248, 113, 113, 0.15);
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+  font-weight: 600;
+}
+
+.log-controls button.kill-btn:hover {
+  background: rgba(248, 113, 113, 0.3);
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
+.log-controls button.kill-btn.killing {
+  animation: pulse-red 0.5s infinite;
+  pointer-events: none;
+}
+
+/* Preset Buttons */
+.preset-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.preset-btn {
+  padding: 6px var(--spacing-md);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.preset-btn:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+.preset-btn.active {
+  background: rgba(34, 211, 238, 0.1);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
